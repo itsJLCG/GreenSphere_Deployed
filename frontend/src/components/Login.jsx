@@ -1,0 +1,210 @@
+import React, { useContext, useState } from "react";
+import {
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+  Button,
+  Box,
+  Link,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { SetIsLoggedInContext, SetUserRoleContext } from "../App"; // ✅ Import SetUserRoleContext
+import greensphereLogo from "../assets/images/greenspherelogo.png";
+import greensphereImage from "../assets/images/greensphereloginsignup.png";
+
+const Login = () => {
+  const setIsLoggedIn = useContext(SetIsLoggedInContext);
+  const setUserRole = useContext(SetUserRoleContext); // ✅ Get setUserRole from context
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+        const loginResponse = await axios.post(
+            "http://localhost:3001/login",
+            { email, password },
+            { withCredentials: true }
+        );
+
+        if (loginResponse.data.message === "Success") {
+            toast.success("Login successful!", { position: "top-right", autoClose: 3000 });
+
+            const userRole = loginResponse.data.role; // ✅ Get role from response
+            
+            setIsLoggedIn(true);
+            setUserRole(userRole); // ✅ Set role in context
+
+            if (userRole === "admin") {
+                navigate("/adminhome");
+            } else {
+                navigate("/home");
+            }
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            toast.error("Login failed: User does not exist or incorrect credentials", { position: "top-right", autoClose: 3000 });
+        } else {
+            toast.error("An error occurred. Please try again later.", { position: "top-right", autoClose: 3000 });
+        }
+    }
+};
+
+  return (
+    <Grid
+      container
+      sx={{
+        height: "100vh",
+        background: "linear-gradient(to right, #05002E, #191540)",
+      }}
+    >
+      {/* Left Section */}
+      <Grid
+        item
+        xs={12}
+        md={5}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "2rem",
+        }}
+      >
+        {/* Logo */}
+        <Box sx={{ mb: 4 }}>
+          <img
+            src={greensphereLogo}
+            alt="GreenSphere Logo"
+            style={{ width: "150px" }}
+          />
+        </Box>
+        <Paper
+          elevation={3}
+          sx={{
+            padding: "2rem",
+            borderRadius: "1rem",
+            width: "100%",
+            maxWidth: "400px",
+            background: "#0F1238",
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              color: "#FFFFFF",
+              textAlign: "center",
+              mb: 2,
+            }}
+          >
+            Welcome Back!
+          </Typography>
+          <Typography
+            sx={{
+              color: "#CCCCCC",
+              textAlign: "center",
+              mb: 3,
+            }}
+          >
+            Sign in to your Account!
+          </Typography>
+          <form onSubmit={handleLogin}>
+            <TextField
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              fullWidth
+              type="email"
+              label="Email"
+              variant="outlined"
+              sx={{
+                mb: 2,
+                "& .MuiInputLabel-root": { color: "#CCCCCC" },
+                "& .MuiOutlinedInput-root": {
+                  color: "#FFFFFF",
+                  "& fieldset": { borderColor: "#3333FF" },
+                },
+              }}
+            />
+            <TextField
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              fullWidth
+              type="password"
+              label="Password"
+              variant="outlined"
+              sx={{
+                mb: 2,
+                "& .MuiInputLabel-root": { color: "#CCCCCC" },
+                "& .MuiOutlinedInput-root": {
+                  color: "#FFFFFF",
+                  "& fieldset": { borderColor: "#3333FF" },
+                },
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                backgroundColor: "#3333FF",
+                color: "#FFFFFF",
+                fontWeight: "bold",
+                textTransform: "none",
+                fontSize: "1rem",
+                mb: 2,
+                "&:hover": { backgroundColor: "#5555FF" },
+              }}
+            >
+              Log in
+            </Button>
+          </form>
+          <Typography sx={{ color: "#CCCCCC", textAlign: "center" }}>
+            Don’t have an account?{" "}
+            <Link
+              href="/signup"
+              sx={{
+                color: "#FFFFFF",
+                textDecoration: "none",
+                fontWeight: "bold",
+              }}
+            >
+              Sign up
+            </Link>
+          </Typography>
+        </Paper>
+      </Grid>
+
+      {/* Right Section */}
+      <Grid
+        item
+        xs={12}
+        md={7}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Box>
+          <img
+            src={greensphereImage}
+            alt="Solar Panels"
+            style={{
+              width: "100%",
+              maxWidth: "700px",
+              borderRadius: "1rem",
+            }}
+          />
+        </Box>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default Login;
