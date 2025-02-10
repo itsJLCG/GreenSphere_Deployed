@@ -7,6 +7,9 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const UserModel = require("./model/User");
 const FeedbackModel = require("./model/Feedback");
+const { verifyUser } = require("./middleware/auth");
+const sendOtpEmail = require("./mailer");
+const generateOtp = require("./otp");
 
 dotenv.config();
 const app = express();
@@ -43,9 +46,12 @@ app.post("/signup", async (req, res) => {
             return res.status(400).json({ message: "Email already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new UserModel({ name, email, password: hashedPassword, role: "user" });
+        const otp = generateOtp();
+        const otpExpires = Date.now() + 3600000; // 1 hour from now
+        const newUser = new UserModel({ name, email, password: hashedPassword, role: "user", otp, otpExpires });
         const savedUser = await newUser.save();
-        res.status(201).json(savedUser);
+        sendOtpEmail(email, otp);
+        res.status(201).json({ message: "User created successfully. Please check your email for the OTP." });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -58,8 +64,10 @@ app.post("/login", async (req, res) => {
         if (user) {
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (passwordMatch) {
+                if (!user.isVerified) {
+                    return res.status(401).json({ message: "Please verify your email with the OTP sent to you." });
+                }
                 req.session.user = { id: user._id, name: user.name, email: user.email, role: user.role };
-                console.log("Session user:", req.session.user); // Debugging log
                 res.json({ message: "Success", role: user.role });
             } else {
                 res.status(401).json("Password does not match!");
@@ -118,6 +126,30 @@ app.get("/feedback", async (req, res) => {
     try {
         const feedbacks = await FeedbackModel.find();
         res.status(200).json(feedbacks);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// otp verification (user/admin)
+app.post("/verify-otp", async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+        if (user.otp !== otp) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+        if (user.otpExpires < Date.now()) {
+            return res.status(400).json({ message: "OTP has expired" });
+        }
+        user.isVerified = true;
+        user.otp = null; // Clear the OTP
+        user.otpExpires = null; // Clear the OTP expiration
+        await user.save();
+        res.status(200).json({ message: "OTP verified successfully" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

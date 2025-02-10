@@ -24,6 +24,18 @@ const UserSchema = new mongoose.Schema({
         enum: ["user", "admin"], // Restricts role values
         default: "user" // Sets default role
     },
+    otp: {
+        type: String,
+        required: false
+    },
+    otpExpires: {
+        type: Date,
+        required: false
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const UserModel = mongoose.model("users", UserSchema);
