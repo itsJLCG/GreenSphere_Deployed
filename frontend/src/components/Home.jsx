@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Stats, useTexture, useGLTF } from "@react-three/drei";
+import { OrbitControls, Stats, useTexture, useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
 import CottagesHouse from "./houseModel/Cottages.jsx";
 import TownHouse from "./houseModel/Townhouse.jsx";
@@ -10,7 +10,7 @@ import OfficeBuilding from "./buildingModel/OfficeBuilding.jsx";
 import SingleFamilyHouse from "./houseModel/SingleFamilyHouse.jsx";
 import { Roofs } from "./houseModel/SingleFamilyHouse.jsx";
 import RenewableSlots from "./RenewableSlots.jsx";
-import { Html } from "@react-three/drei";
+import GameModal from "./GameModal.jsx";
 
 const Platform = () => {
   const texture = useTexture("../assets/images/grass.webp");
@@ -46,6 +46,7 @@ const BuildingModels = {
   "Apartments": ApartmentsBuilding,
   "Office Building": OfficeBuilding,
 };
+
 const Home = () => {
   const [showHouseOptions, setShowHouseOptions] = useState(false);
   const [showBuildingOptions, setShowBuildingOptions] = useState(false);
@@ -60,11 +61,144 @@ const Home = () => {
   const [isCyberpunk, setIsCyberpunk] = useState(false);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [showSolarPanels, setShowSolarPanels] = useState(false);
+  const [showSolarRoofTiles, setShowSolarRoofTiles] = useState(false);
+  const [showSolarWaterHeating, setShowSolarWaterHeating] = useState(false);
+  const [showHeatPump, setShowHeatPump] = useState(false);
+  const [showSmallWindTurbines, setShowSmallWindTurbines] = useState(false);
+  const [showVerticalAxisWindTurbines, setShowVerticalAxisWindTurbines] = useState(false);
+  const [showMicroHydroPowerSystem, setShowMicroHydroPowerSystem] = useState(false);
+  const [showPicoHydroPower, setShowPicoHydroPower] = useState(false);
+  const [showVerticalFarming, setShowVerticalFarming] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ name: "", type: "", infrastructure: "" });
 
+  // MODAL TOGGLE
   const handleSolarPanelToggle = (state) => {
     setShowSolarPanels(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Solar Panel",
+      type: "Solar Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
   };
-  
+
+  const handleSolarRoofTilesToggle = (state) => {
+    setShowSolarRoofTiles(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Solar Roof Tiles",
+      type: "Solar Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handleSolarWaterHeatingToggle = (state) => {
+    setShowSolarWaterHeating(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Solar Water Heating",
+      type: "Solar Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handleHeatPumpToggle = (state) => {
+    setShowHeatPump(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Heat Pump",
+      type: "Geothermal Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handleSmallWindTurbinesToggle = (state) => {
+    setShowSmallWindTurbines(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Small Wind Turbines",
+      type: "Wind Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handleVerticalAxisWindTurbinesToggle = (state) => {
+    setShowVerticalAxisWindTurbines(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Vertical Axis Wind Turbines",
+      type: "Wind Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handleMicroHydroPowerSystemToggle = (state) => {
+    setShowMicroHydroPowerSystem(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Micro HydroPower System",
+      type: "HydroPower Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handlePicoHydroPowerToggle = (state) => {
+    setShowPicoHydroPower(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Pico HydroPower",
+      type: "HydrPower Energy",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
+  const handleVerticalFarmingToggle = (state) => {
+    setShowVerticalFarming(state);
+    setIsModalOpen(true);
+
+    const infrastructureName = selectedHouse || selectedBuilding;
+    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+
+    setModalContent({
+      name: "Vertical Farming",
+      type: "Urban Farming",
+      infrastructure: `${infrastructureName} ${roofInfo}`,
+    });
+  };
+
   const toggleBackgroundColor = () => {
     if (isOuterSpace || isAncient || isUnderwater || isCyberpunk || isForest) {
       setIsOuterSpace(false); setIsAncient(false); setIsUnderwater(false); setIsCyberpunk(false); setIsForest(false);
@@ -177,17 +311,25 @@ const Home = () => {
         <Platform />
         {(selectedHouse || selectedBuilding) && (
           <Html position={[0, -3, 0]}>
-            <RenewableSlots 
-              infrastructure={selectedHouse || selectedBuilding} 
-              roofType={roofType} 
-              onSolarPanelClick={handleSolarPanelToggle} 
+            <RenewableSlots
+              infrastructure={selectedHouse || selectedBuilding}
+              roofType={roofType}
+              onSolarPanelClick={handleSolarPanelToggle}
+              onSolarRoofTilesClick={handleSolarRoofTilesToggle}
+              onSolarWaterHeatingClick={handleSolarWaterHeatingToggle}
+              onHeatPumpClick={handleHeatPumpToggle}
+              onSmallWindTurbinesClick={handleSmallWindTurbinesToggle}
+              onVerticalAxisWindTurbinesClick={handleVerticalAxisWindTurbinesToggle}
+              onMicroHydroPowerSystemClick={handleMicroHydroPowerSystemToggle}
+              onPicoHydroPowerClick={handlePicoHydroPowerToggle}
+              onVerticalFarmingClick={handleVerticalFarmingToggle}
             />
           </Html>
         )}
 
         {/* Render Selected House or Building */}
-        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels })}
-        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels })}
+        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels, showSolarRoofTiles })}
+        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels, showSolarRoofTiles })}
       </Canvas>
 
       {/* Day / Night Mode Button */}
@@ -231,9 +373,13 @@ const Home = () => {
             </ul>
           ))}
         </div>
-
-
       )}
+
+      <GameModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        modalContent={modalContent}
+      />
     </div>
   );
 };

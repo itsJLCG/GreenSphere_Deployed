@@ -1,5 +1,6 @@
 import { useTexture } from "@react-three/drei";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
+import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
 import React, { useState } from "react";
 
 // Flat Roof Grid with Solar Panels Toggle
@@ -54,6 +55,57 @@ const FlatRoofGrid = ({ onSelect, solarPanels, setSolarPanels, showSolarPanels }
     );
   };
 
+  const FlatRoofGridTiles = ({ onSelect, solarRoofTiles, setSolarRoofTiles, showSolarRoofTiles }) => {
+    const gridSize = 3; // 3x3 grid
+    const cellSize = 2; // Each cell is 2x2 in size
+  
+    const handleClick = (row, col) => {
+      const cellKey = `${row}-${col}`;
+      // Toggle Solar Panel: Add if not there, remove if already placed
+      if (solarRoofTiles.some(([r, c]) => r === row && c === col)) {
+        // If the panel is already there, remove it
+        setSolarRoofTiles(solarRoofTiles.filter(([r, c]) => r !== row || c !== col));
+      } else {
+        // Otherwise, add the panel
+        setSolarRoofTiles([...solarRoofTiles, [row, col]]);
+      }
+    };
+  
+    return (
+      <group position={[0, 6.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        {showSolarRoofTiles && Array.from({ length: gridSize }).map((_, row) =>
+          Array.from({ length: gridSize }).map((_, col) => {
+            const x = (col - 1) * cellSize; // Centering the grid
+            const y = (row - 1) * cellSize;
+            const isSelected = solarRoofTiles.some(([r, c]) => r === row && c === col);
+  
+            return (
+              <mesh
+                key={`${row}-${col}`}
+                position={[x, y, 0]} // Positions grid cells flat on the roof
+                onClick={() => handleClick(row, col)}
+              >
+                <planeGeometry args={[cellSize, cellSize]} />
+                <meshStandardMaterial
+                  color={isSelected ? "yellow" : "green"}
+                  transparent={true}
+                  opacity={isSelected ? 0 : 0.5} // Make grid transparent if panel placed
+                />
+              </mesh>
+            );
+          })
+        )}
+  
+        {/* Render Solar Panels */}
+        {solarRoofTiles.map(([row, col], index) => {
+          const x = (col - 1) * cellSize;
+          const y = (row - 1) * cellSize;
+          return <SolarRoofTiles key={index} position={[x, y, 0]} />;
+        })}
+      </group>
+    );
+  };
+
   const ShedRoofGrid = ({ solarPanels, setSolarPanels, showSolarPanels }) => {
     const gridSize = 3; // 3x3 grid
     const cellSize = 2; // Each cell is 2x2
@@ -97,6 +149,54 @@ const FlatRoofGrid = ({ onSelect, solarPanels, setSolarPanels, showSolarPanels }
           const x = (col - 1) * cellSize;
           const y = (row - 1) * cellSize;
           return <SolarPanel key={index} position={[x, y, 0.1]} />;
+        })}
+      </group>
+    );
+  };
+
+  const ShedRoofGridTiles = ({ solarRoofTiles, setSolarRoofTiles, showSolarRoofTiles }) => {
+    const gridSize = 3; // 3x3 grid
+    const cellSize = 2; // Each cell is 2x2
+    const roofAngle = Math.PI / 2.221; // Adjust based on your roof's slope
+    const roofHeight = 6.5; // Raised slightly to fit exactly on the roof
+
+    const handleClick = (row, col) => {
+      const cellKey = `${row}-${col}`;
+      if (solarRoofTiles.some(([r, c]) => r === row && c === col)) {
+        setSolarRoofTiles(solarRoofTiles.filter(([r, c]) => r !== row || c !== col));
+      } else {
+        setSolarRoofTiles([...solarRoofTiles, [row, col]]);
+      }
+    };
+
+    return (
+      <group position={[0, roofHeight, 0]} rotation={[-roofAngle, 0, 0]}>
+        {/* Clickable Grid for Solar Panels */}
+        {showSolarRoofTiles &&
+          Array.from({ length: gridSize }).map((_, row) =>
+            Array.from({ length: gridSize }).map((_, col) => {
+              const x = (col - 1) * cellSize;
+              const y = (row - 1) * cellSize;
+              const isSelected = solarRoofTiles.some(([r, c]) => r === row && c === col);
+
+              return (
+                <mesh
+                  key={`${row}-${col}`}
+                  position={[x, y, 0.01]}
+                  onClick={() => handleClick(row, col)}
+                >
+                  <planeGeometry args={[cellSize, cellSize]} />
+                  <meshStandardMaterial color={isSelected ? 'yellow' : 'green'} transparent opacity={isSelected ? 0 : 0.5} />
+                </mesh>
+              );
+            })
+          )}
+
+        {/* Render Solar Roof Tiles */}
+        {solarRoofTiles.map(([row, col], index) => {
+          const x = (col - 1) * cellSize;
+          const y = (row - 1) * cellSize;
+          return <SolarRoofTiles key={index} position={[x, y, 0.1]} />;
         })}
       </group>
     );
@@ -173,10 +273,11 @@ export const Roofs = {
       </mesh>
     );
   },
-  Flat: ({ showSolarPanels }) => {
+  Flat: ({ showSolarPanels, showSolarRoofTiles }) => {
     const roofTexture = useTexture("../assets/images/roof.jpg");
     const [solarPanels, setSolarPanels] = useState([]);
-
+    const [solarRoofTiles, setSolarRoofTiles] = useState([]);
+    
     return (
       <group>
         {/* Roof Base */}
@@ -185,6 +286,12 @@ export const Roofs = {
           <meshStandardMaterial map={roofTexture} />
         </mesh>
         {/* Recommended Area Grid & Solar Panels */}
+        
+        <FlatRoofGridTiles
+        solarRoofTiles={solarRoofTiles}
+        setSolarRoofTiles={setSolarRoofTiles}
+        showSolarRoofTiles={showSolarRoofTiles}
+      />
         <FlatRoofGrid
           solarPanels={solarPanels}
           setSolarPanels={setSolarPanels}
@@ -193,9 +300,10 @@ export const Roofs = {
       </group>
     );
   },
-  Shed: ({ showSolarPanels }) => {
+  Shed: ({ showSolarPanels, showSolarRoofTiles }) => {
     const roofTexture = useTexture("../assets/images/roof.jpg");
     const [solarPanels, setSolarPanels] = useState([]);
+    const [solarRoofTiles, setSolarRoofTiles] = useState([]);
 
     return (
       <group>
@@ -209,6 +317,11 @@ export const Roofs = {
           solarPanels={solarPanels}
           setSolarPanels={setSolarPanels}
           showSolarPanels={showSolarPanels}
+        />
+        <ShedRoofGridTiles
+        solarRoofTiles={solarRoofTiles}
+        setSolarRoofTiles={setSolarRoofTiles}
+        showSolarRoofTiles={showSolarRoofTiles}
         />
       </group>
     );
@@ -244,7 +357,7 @@ export const Window = ({ position }) => {
 };
 
 // Single Family House Component
-const SingleFamilyHouse = ({ roofType, showSolarPanels }) => {
+const SingleFamilyHouse = ({ roofType, showSolarPanels, showSolarRoofTiles }) => {
   const wallTexture = useTexture("../assets/images/wall.png");
   const doorTexture = useTexture("../assets/images/door.jpg");
 
@@ -264,7 +377,7 @@ const SingleFamilyHouse = ({ roofType, showSolarPanels }) => {
       <Window position={[-2.5, 3, 3.01]} />
       <Window position={[2.5, 3, 3.01]} />
       {/* Roof */}
-      {roofType && React.createElement(Roofs[roofType], { texturePath: "../assets/images/roof.jpg", showSolarPanels })}
+      {roofType && React.createElement(Roofs[roofType], { texturePath: "../assets/images/roof.jpg", showSolarPanels, showSolarRoofTiles })}
     </group>
   );
 };

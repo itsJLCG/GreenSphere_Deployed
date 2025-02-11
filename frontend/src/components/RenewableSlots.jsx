@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import './RenewableSlots.css'; // Assuming you have a CSS file for styling
 
-const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick }) => {
+const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRoofTilesClick, onSolarWaterHeatingClick, onHeatPumpClick, onSmallWindTurbinesClick, onVerticalAxisWindTurbinesClick, onMicroHydroPowerSystemClick, onPicoHydroPowerClick, onVerticalFarmingClick }) => {
   const [hoveredSlot, setHoveredSlot] = useState(null);
   const [showSolarPanels, setShowSolarPanels] = useState(false);
+  const [showSolarRoofTiles, setShowSolarRoofTiles] = useState(false);
+  const [showSolarWaterHeating, setShowSolarWaterHeating] = useState(false);
+  const [showHeatPump, setShowHeatPump] = useState(false);
+  const [showSmallWindTurbines, setShowSmallWindTurbines] = useState(false);
+  const [showVerticalAxisWindTurbines, setShowVerticalAxisWindTurbines] = useState(false);
+  const [showMicroHydroPowerSystem, setShowMicroHydroPowerSystem] = useState(false);
+  const [showPicoHydroPower, setShowPicoHydroPower] = useState(false);
+  const [showVerticalFarming, setShowVerticalFarming] = useState(false);
+
 
   // Define the ranking of renewable energy sources for different infrastructures
   const renewableEnergyRankings = {
@@ -124,7 +133,55 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick }) => {
     setShowSolarPanels(newState);
     onSolarPanelClick(newState);  // Notify Home.jsx
   };
-  
+
+  const handleSolarRoofTilesClick = () => {
+    const newState = !showSolarRoofTiles;
+    setShowSolarRoofTiles(newState);
+    onSolarRoofTilesClick(newState);  // Notify Home.jsx
+  };
+
+  const handleSolarWaterHeatingClick = () => {
+    const newState = !showSolarWaterHeating;
+    setShowSolarWaterHeating(newState);
+    onSolarWaterHeatingClick(newState);  // Notify Home.jsx
+  };
+
+  const handleHeatPumpClick = () => {
+    const newState = !showHeatPump;
+    setShowHeatPump(newState);
+    onHeatPumpClick(newState);  // Notify Home.jsx
+  };
+
+  const handleSmallWindTurbinesClick = () => {
+    const newState = !showSmallWindTurbines;
+    setShowSmallWindTurbines(newState);
+    onSmallWindTurbinesClick(newState);  // Notify Home.jsx
+  };
+
+  const handleVerticalAxisWindTurbinesClick = () => {
+    const newState = !showVerticalAxisWindTurbines;
+    setShowVerticalAxisWindTurbines(newState);
+    onVerticalAxisWindTurbinesClick(newState);  // Notify Home.jsx
+  };
+
+  const handleMicroHydroPowerSystemClick = () => {
+    const newState = !showMicroHydroPowerSystem;
+    setShowMicroHydroPowerSystem(newState);
+    onMicroHydroPowerSystemClick(newState);  // Notify Home.jsx
+  };
+
+  const handlePicoHydroPowerClick = () => {
+    const newState = !showPicoHydroPower;
+    setShowPicoHydroPower(newState);
+    onPicoHydroPowerClick(newState);  // Notify Home.jsx
+  };
+
+  const handleVerticalFarmingClick = () => {
+    const newState = !showVerticalFarming;
+    setShowVerticalFarming(newState);
+    onVerticalFarmingClick(newState);  // Notify Home.jsx
+  };
+
 
   return (
     <div className="hotbar-container">
@@ -139,7 +196,27 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick }) => {
             className="slot"
             onMouseEnter={() => handleSlotHover(index)}
             onMouseLeave={handleSlotLeave}
-            onClick={slot.name === 'Solar Panels' ? handleSolarPanelClick : undefined}
+            onClick={
+              slot.name === 'Solar Panels'
+                ? handleSolarPanelClick
+                : slot.name === 'Solar Roof Tiles'
+                  ? handleSolarRoofTilesClick
+                  : slot.name === 'Solar Water Heating'
+                    ? handleSolarWaterHeatingClick
+                    : slot.name === 'Heat Pump'
+                      ? handleHeatPumpClick
+                      : slot.name === 'Small Wind Turbines'
+                        ? handleSmallWindTurbinesClick
+                        : slot.name === 'Vertical Axis Wind Turbines'
+                          ? handleVerticalAxisWindTurbinesClick
+                          : slot.name === 'Micro Hydropower System'
+                            ? handleMicroHydroPowerSystemClick
+                            : slot.name === 'Pico Hydropower'
+                              ? handlePicoHydroPowerClick
+                              : slot.name === 'Vertical Farming'
+                                ? handleVerticalFarmingClick
+                                : undefined
+            }
           >
             <img src={slot.image} alt={slot.name} className="slot-image" />
             {hoveredSlot === index && (
