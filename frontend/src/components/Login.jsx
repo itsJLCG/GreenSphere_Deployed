@@ -12,13 +12,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { SetIsLoggedInContext, SetUserRoleContext } from "../App"; // ✅ Import SetUserRoleContext
+import { SetIsLoggedInContext, SetUserRoleContext } from "../App"; 
 import greensphereLogo from "../assets/images/greenspherelogo.png";
 import greensphereImage from "../assets/images/greensphereloginsignup.png";
 
 const Login = () => {
   const setIsLoggedIn = useContext(SetIsLoggedInContext);
-  const setUserRole = useContext(SetUserRoleContext); // ✅ Get setUserRole from context
+  const setUserRole = useContext(SetUserRoleContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -26,34 +26,53 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-        const loginResponse = await axios.post(
-            "http://localhost:3001/login",
-            { email, password },
-            { withCredentials: true }
-        );
+      const loginResponse = await axios.post(
+        "http://localhost:3001/login",
+        { email, password },
+        { withCredentials: true }
+      );
 
-        if (loginResponse.data.message === "Success") {
-            toast.success("Login successful!", { position: "top-right", autoClose: 3000 });
+      console.log("Login response:", loginResponse.data);
 
-            const userRole = loginResponse.data.role; // ✅ Get role from response
-            
-            setIsLoggedIn(true);
-            setUserRole(userRole); // ✅ Set role in context
+      if (loginResponse.data.redirect) {
+        toast.info("Please verify your email with the OTP sent to you.", {
+          position: "top-right",
+          autoClose: 5000,
+        });
 
-            if (userRole === "admin") {
-                navigate("/adminhome");
-            } else {
-                navigate("/home");
-            }
-        }
+        setTimeout(() => {
+          navigate(loginResponse.data.redirect, { state: { email: email } });
+        }, 3000);
+        return;
+      }
+
+      if (loginResponse.data.message === "Success") {
+        toast.success("Login successful!", { position: "top-right", autoClose: 5000 });
+
+        const userRole = loginResponse.data.role;
+        setIsLoggedIn(true);
+        setUserRole(userRole);
+
+        setTimeout(() => {
+          navigate(userRole === "admin" ? "/adminhome" : "/home");
+        }, 3000);
+      }
     } catch (error) {
-        if (error.response && error.response.status === 401) {
-            toast.error("Login failed: User does not exist or incorrect credentials", { position: "top-right", autoClose: 3000 });
-        } else {
-            toast.error("An error occurred. Please try again later.", { position: "top-right", autoClose: 3000 });
-        }
+      console.error("Login error:", error);
+
+      if (error.response && error.response.status === 401) {
+        toast.error(error.response.data.message || "Incorrect credentials!", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      } else {
+        toast.error("An error occurred. Please try again later.", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
     }
-};
+  };
 
   return (
     <Grid
@@ -63,6 +82,8 @@ const Login = () => {
         background: "linear-gradient(to right, #05002E, #191540)",
       }}
     >
+      <ToastContainer /> {/* ✅ Toastify Container for notifications */}
+
       {/* Left Section */}
       <Grid
         item
@@ -78,11 +99,7 @@ const Login = () => {
       >
         {/* Logo */}
         <Box sx={{ mb: 4 }}>
-          <img
-            src={greensphereLogo}
-            alt="GreenSphere Logo"
-            style={{ width: "150px" }}
-          />
+          <img src={greensphereLogo} alt="GreenSphere Logo" style={{ width: "150px" }} />
         </Box>
         <Paper
           elevation={3}
@@ -105,13 +122,7 @@ const Login = () => {
           >
             Welcome Back!
           </Typography>
-          <Typography
-            sx={{
-              color: "#CCCCCC",
-              textAlign: "center",
-              mb: 3,
-            }}
-          >
+          <Typography sx={{ color: "#CCCCCC", textAlign: "center", mb: 3 }}>
             Sign in to your Account!
           </Typography>
           <form onSubmit={handleLogin}>
