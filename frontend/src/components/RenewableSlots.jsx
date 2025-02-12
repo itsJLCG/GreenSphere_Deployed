@@ -190,46 +190,74 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
         <span className="least-recommended">Least Recommended</span>
       </div>
       <div className="hotbar">
-        {renewableEnergySlots.map((slot, index) => (
-          <div
-            key={index}
-            className="slot"
-            onMouseEnter={() => handleSlotHover(index)}
-            onMouseLeave={handleSlotLeave}
-            onClick={
-              slot.name === 'Solar Panels'
-                ? handleSolarPanelClick
-                : slot.name === 'Solar Roof Tiles'
-                  ? handleSolarRoofTilesClick
-                  : slot.name === 'Solar Water Heating'
-                    ? handleSolarWaterHeatingClick
-                    : slot.name === 'Heat Pump'
-                      ? handleHeatPumpClick
-                      : slot.name === 'Small Wind Turbines'
-                        ? handleSmallWindTurbinesClick
-                        : slot.name === 'Vertical Axis Wind Turbines'
-                          ? handleVerticalAxisWindTurbinesClick
-                          : slot.name === 'Micro Hydropower System'
-                            ? handleMicroHydroPowerSystemClick
-                            : slot.name === 'Pico Hydropower'
-                              ? handlePicoHydroPowerClick
-                              : slot.name === 'Vertical Farming'
-                                ? handleVerticalFarmingClick
-                                : undefined
-            }
-          >
-            <img src={slot.image} alt={slot.name} className="slot-image" />
-            {hoveredSlot === index && (
-              <div className="tooltip">
-                <strong>{slot.type}</strong>
-                <div>{slot.name}</div>
-              </div>
-            )}
-          </div>
-        ))}
+        {renewableEnergySlots.map((slot, index) => {
+          const isLastTwo = index >= renewableEnergySlots.length - 2;
+  
+          return (
+            <div
+              key={index}
+              className="slot"
+              onMouseEnter={() => handleSlotHover(index)}
+              onMouseLeave={handleSlotLeave}
+              onClick={
+                slot.name === 'Solar Panels'
+                  ? handleSolarPanelClick
+                  : slot.name === 'Solar Roof Tiles'
+                    ? handleSolarRoofTilesClick
+                    : slot.name === 'Solar Water Heating'
+                      ? handleSolarWaterHeatingClick
+                      : slot.name === 'Heat Pump'
+                        ? handleHeatPumpClick
+                        : slot.name === 'Small Wind Turbines'
+                          ? handleSmallWindTurbinesClick
+                          : slot.name === 'Vertical Axis Wind Turbines'
+                            ? handleVerticalAxisWindTurbinesClick
+                            : slot.name === 'Micro Hydropower System'
+                              ? handleMicroHydroPowerSystemClick
+                              : slot.name === 'Pico Hydropower'
+                                ? handlePicoHydroPowerClick
+                                : slot.name === 'Vertical Farming'
+                                  ? handleVerticalFarmingClick
+                                  : undefined
+              }
+              style={{ position: 'relative' }}
+            >
+              <img src={slot.image} alt={slot.name} className="slot-image" style={{ width: '100%', height: 'auto' }} />
+              {isLastTwo && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(255, 0, 0, 0.3)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    fontSize: '4rem',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textShadow: '2px 2px 10px black',
+                    zIndex: 2,
+                  }}
+                >
+                  X
+                </div>
+              )}
+              {hoveredSlot === index && (
+                <div className="tooltip">
+                  <strong>{slot.type}</strong>
+                  <div>{slot.name}</div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
+  
 };
 
 export default RenewableSlots;

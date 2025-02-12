@@ -47,6 +47,21 @@ const BuildingModels = {
   "Office Building": OfficeBuilding,
 };
 
+// Home.jsx
+
+// Define the impossible sources at the top
+const impossibleSources = {
+  "Single-Family with Gable": ["Pico Hydropower", "Vertical Farming"],
+  "Single-Family with Flat": ["Pico Hydropower", "Vertical Farming"],
+  "Single-Family with Shed": ["Pico Hydropower", "Vertical Farming"],
+  "Single-Family with Butterfly": ["Pico Hydropower", "Vertical Farming"],
+  "Cottages": ["Pico Hydropower", "Vertical Farming"],
+  "TownHouse": ["Pico Hydropower", "Vertical Farming"],
+  "Mobile Home": ["Solar Roof Tiles", "Vertical Farming"],
+  "Apartments": ["Pico Hydropower", "Solar Roof Tiles"],
+  "Office Building": ["Pico Hydropower", "Solar Roof Tiles"],
+};
+
 const Home = () => {
   const [showHouseOptions, setShowHouseOptions] = useState(false);
   const [showBuildingOptions, setShowBuildingOptions] = useState(false);
@@ -90,16 +105,24 @@ const Home = () => {
   const handleSolarRoofTilesToggle = (state) => {
     setShowSolarRoofTiles(state);
     setIsModalOpen(true);
-
+  
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
-
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
+  
+    // Debugging Log
+    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+  
+    const isImpossible = impossibleSources[fullInfrastructure]?.includes("Solar Roof Tiles") || false;
+  
     setModalContent({
       name: "Solar Roof Tiles",
       type: "Solar Energy",
-      infrastructure: `${infrastructureName} ${roofInfo}`,
+      infrastructure: fullInfrastructure,
+      isImpossible,
     });
   };
+  
 
   const handleSolarWaterHeatingToggle = (state) => {
     setShowSolarWaterHeating(state);
@@ -174,30 +197,47 @@ const Home = () => {
   const handlePicoHydroPowerToggle = (state) => {
     setShowPicoHydroPower(state);
     setIsModalOpen(true);
-
+  
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
-
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
+  
+    // Debugging Log
+    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+  
+    const isImpossible = impossibleSources[fullInfrastructure]?.includes("Pico Hydropower") || false;
+  
     setModalContent({
-      name: "Pico HydroPower",
-      type: "HydrPower Energy",
-      infrastructure: `${infrastructureName} ${roofInfo}`,
+      name: "Pico Hydropower",
+      type: "HydroPower Energy",
+      infrastructure: fullInfrastructure,
+      isImpossible,
     });
   };
+  
 
   const handleVerticalFarmingToggle = (state) => {
     setShowVerticalFarming(state);
     setIsModalOpen(true);
-
+  
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
-
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
+  
+    // Debugging Log
+    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+  
+    const isImpossible = impossibleSources[fullInfrastructure]?.includes("Vertical Farming") || false;
+  
     setModalContent({
       name: "Vertical Farming",
       type: "Urban Farming",
-      infrastructure: `${infrastructureName} ${roofInfo}`,
+      infrastructure: fullInfrastructure,
+      isImpossible, 
     });
   };
+  
+  
 
   const toggleBackgroundColor = () => {
     if (isOuterSpace || isAncient || isUnderwater || isCyberpunk || isForest) {
