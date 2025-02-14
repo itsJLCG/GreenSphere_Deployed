@@ -368,8 +368,8 @@ const Home = () => {
         )}
 
         {/* Render Selected House or Building */}
-        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating })}
-        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels, showSolarRoofTiles, showSolarWaterHeating })}
+        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem})}
+        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem})}
       </Canvas>
 
       {/* Day / Night Mode Button */}
