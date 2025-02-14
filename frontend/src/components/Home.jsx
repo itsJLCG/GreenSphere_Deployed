@@ -127,10 +127,10 @@ const Home = () => {
   const handleSolarWaterHeatingToggle = (state) => {
     setShowSolarWaterHeating(state);
     setIsModalOpen(true);
-
+  
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
-
+  
     setModalContent({
       name: "Solar Water Heating",
       type: "Solar Energy",
@@ -368,8 +368,8 @@ const Home = () => {
         )}
 
         {/* Render Selected House or Building */}
-        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels, showSolarRoofTiles })}
-        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels, showSolarRoofTiles })}
+        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating })}
+        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels, showSolarRoofTiles, showSolarWaterHeating })}
       </Canvas>
 
       {/* Day / Night Mode Button */}

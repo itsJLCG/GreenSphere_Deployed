@@ -77,6 +77,17 @@ const MobileHome = ({ showSolarPanels }) => {
         <meshStandardMaterial map={wallTexture} />
       </mesh>
 
+      {/* Lamp on the Wall */}
+      <mesh position={[-4.5, 2.9, 2.40]}>
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshStandardMaterial color={showSolarPanels ? "yellow" : "black"} />
+      </mesh>
+
+      <mesh position={[4.5, 2.9, 2.40]}>
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshStandardMaterial color={showSolarPanels ? "yellow" : "black"} />
+      </mesh>
+
       {/* Door */}
       <mesh position={[0, 1.5, 2.6]}>
         <boxGeometry args={[3, 2.5, 0.1]} />
