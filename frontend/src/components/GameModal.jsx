@@ -186,17 +186,24 @@ const GameModal = ({ isOpen, onClose, modalContent }) => {
         <Button
           onClick={onClose}
           sx={{
-            mt: 3,
+            position: "absolute",
+            top: "-10px",
+            right: "-10px",
+            width: "50px",
+            height: "50px",
+            minWidth: "unset",
             background: explanations
               ? "linear-gradient(45deg, #FF5555, #CC0000)"
               : "linear-gradient(45deg, #FFCC00, #FF6600)",
             color: "#FFF",
             fontWeight: "bold",
-            px: 4,
-            py: 1,
-            borderRadius: "10px",
+            borderRadius: "50%",
             fontSize: "18px",
             textShadow: "0px 0px 5px rgba(255,255,255,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0px 0px 10px rgba(0,0,0,0.3)",
             "&:hover": {
               background: explanations
                 ? "linear-gradient(45deg, #FF0000, #990000)"
@@ -205,8 +212,9 @@ const GameModal = ({ isOpen, onClose, modalContent }) => {
             },
           }}
         >
-          OK
+          ✖
         </Button>
+
       </Box>
     </Modal>
   );
