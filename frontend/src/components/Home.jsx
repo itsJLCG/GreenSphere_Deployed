@@ -105,16 +105,16 @@ const Home = () => {
   const handleSolarRoofTilesToggle = (state) => {
     setShowSolarRoofTiles(state);
     setIsModalOpen(true);
-  
+
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
     const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-  
+
     // Debugging Log
     console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
-  
+
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Solar Roof Tiles") || false;
-  
+
     setModalContent({
       name: "Solar Roof Tiles",
       type: "Solar Energy",
@@ -122,15 +122,15 @@ const Home = () => {
       isImpossible,
     });
   };
-  
+
 
   const handleSolarWaterHeatingToggle = (state) => {
     setShowSolarWaterHeating(state);
     setIsModalOpen(true);
-  
+
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
-  
+
     setModalContent({
       name: "Solar Water Heating",
       type: "Solar Energy",
@@ -197,16 +197,16 @@ const Home = () => {
   const handlePicoHydroPowerToggle = (state) => {
     setShowPicoHydroPower(state);
     setIsModalOpen(true);
-  
+
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
     const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-  
+
     // Debugging Log
     console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
-  
+
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Pico Hydropower") || false;
-  
+
     setModalContent({
       name: "Pico Hydropower",
       type: "HydroPower Energy",
@@ -214,30 +214,30 @@ const Home = () => {
       isImpossible,
     });
   };
-  
+
 
   const handleVerticalFarmingToggle = (state) => {
     setShowVerticalFarming(state);
     setIsModalOpen(true);
-  
+
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
     const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-  
+
     // Debugging Log
     console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
-  
+
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Vertical Farming") || false;
-  
+
     setModalContent({
       name: "Vertical Farming",
       type: "Urban Farming",
       infrastructure: fullInfrastructure,
-      isImpossible, 
+      isImpossible,
     });
   };
-  
-  
+
+
 
   const toggleBackgroundColor = () => {
     if (isOuterSpace || isAncient || isUnderwater || isCyberpunk || isForest) {
@@ -253,6 +253,12 @@ const Home = () => {
     if (theme === "Underwater") setIsUnderwater(true);
     if (theme === "Cyberpunk") setIsCyberpunk(true);
     if (theme === "Forest") setIsForest(true);
+  };
+
+  const [activeRenewable, setActiveRenewable] = useState(null);
+
+  const handleRenewableToggle = (type) => {
+    setActiveRenewable((prev) => (prev === type ? null : type)); // Close if clicked again, otherwise set as active
   };
 
   return (
@@ -349,27 +355,45 @@ const Home = () => {
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <OrbitControls />
         <Platform />
+
         {(selectedHouse || selectedBuilding) && (
           <Html position={[0, -3, 0]}>
             <RenewableSlots
               infrastructure={selectedHouse || selectedBuilding}
               roofType={roofType}
-              onSolarPanelClick={handleSolarPanelToggle}
-              onSolarRoofTilesClick={handleSolarRoofTilesToggle}
-              onSolarWaterHeatingClick={handleSolarWaterHeatingToggle}
-              onHeatPumpClick={handleHeatPumpToggle}
-              onSmallWindTurbinesClick={handleSmallWindTurbinesToggle}
-              onVerticalAxisWindTurbinesClick={handleVerticalAxisWindTurbinesToggle}
-              onMicroHydroPowerSystemClick={handleMicroHydroPowerSystemToggle}
-              onPicoHydroPowerClick={handlePicoHydroPowerToggle}
-              onVerticalFarmingClick={handleVerticalFarmingToggle}
+              onSolarPanelClick={() => handleRenewableToggle("solarPanels")}
+              onSolarRoofTilesClick={() => handleRenewableToggle("solarRoofTiles")}
+              onSolarWaterHeatingClick={() => handleRenewableToggle("solarWaterHeating")}
+              onHeatPumpClick={() => handleRenewableToggle("heatPump")}
+              onSmallWindTurbinesClick={() => handleRenewableToggle("smallWindTurbines")}
+              onVerticalAxisWindTurbinesClick={() => handleRenewableToggle("verticalAxisWindTurbines")}
+              onMicroHydroPowerSystemClick={() => handleRenewableToggle("microHydroPowerSystem")}
+              onPicoHydroPowerClick={() => handleRenewableToggle("picoHydroPower")}
+              onVerticalFarmingClick={() => handleRenewableToggle("verticalFarming")}
             />
           </Html>
         )}
 
-        {/* Render Selected House or Building */}
-        {selectedHouse && React.createElement(HouseModels[selectedHouse], { roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem})}
-        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], { showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem})}
+        {selectedHouse && React.createElement(HouseModels[selectedHouse], {
+          roofType,
+          showSolarPanels: activeRenewable === "solarPanels",
+          showSolarRoofTiles: activeRenewable === "solarRoofTiles",
+          showSolarWaterHeating: activeRenewable === "solarWaterHeating",
+          showHeatPump: activeRenewable === "heatPump",
+          showSmallWindTurbines: activeRenewable === "smallWindTurbines",
+          showVerticalAxisWindTurbines: activeRenewable === "verticalAxisWindTurbines",
+          showMicroHydroPowerSystem: activeRenewable === "microHydroPowerSystem"
+        })}
+
+        {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], {
+          showSolarPanels: activeRenewable === "solarPanels",
+          showSolarRoofTiles: activeRenewable === "solarRoofTiles",
+          showSolarWaterHeating: activeRenewable === "solarWaterHeating",
+          showHeatPump: activeRenewable === "heatPump",
+          showSmallWindTurbines: activeRenewable === "smallWindTurbines",
+          showVerticalAxisWindTurbines: activeRenewable === "verticalAxisWindTurbines",
+          showMicroHydroPowerSystem: activeRenewable === "microHydroPowerSystem"
+        })}
       </Canvas>
 
       {/* Day / Night Mode Button */}
