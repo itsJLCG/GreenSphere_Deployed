@@ -92,6 +92,8 @@ const Home = () => {
     setShowSolarPanels(state);
     setIsModalOpen(true);
 
+    setActiveRenewable(state ? "solarPanels" : null);
+
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
 
@@ -105,6 +107,7 @@ const Home = () => {
   const handleSolarRoofTilesToggle = (state) => {
     setShowSolarRoofTiles(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "solarRoofTiles" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
@@ -127,6 +130,7 @@ const Home = () => {
   const handleSolarWaterHeatingToggle = (state) => {
     setShowSolarWaterHeating(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "solarWaterHeating" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
@@ -141,6 +145,7 @@ const Home = () => {
   const handleHeatPumpToggle = (state) => {
     setShowHeatPump(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "heatPump" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
@@ -155,6 +160,7 @@ const Home = () => {
   const handleSmallWindTurbinesToggle = (state) => {
     setShowSmallWindTurbines(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "smallWindTurbines" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
@@ -169,6 +175,7 @@ const Home = () => {
   const handleVerticalAxisWindTurbinesToggle = (state) => {
     setShowVerticalAxisWindTurbines(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "verticalAxisWindTurbines" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
@@ -183,6 +190,7 @@ const Home = () => {
   const handleMicroHydroPowerSystemToggle = (state) => {
     setShowMicroHydroPowerSystem(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "microHydroPowerSystem" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
@@ -197,6 +205,7 @@ const Home = () => {
   const handlePicoHydroPowerToggle = (state) => {
     setShowPicoHydroPower(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "picoHydroPower" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
@@ -215,10 +224,10 @@ const Home = () => {
     });
   };
 
-
   const handleVerticalFarmingToggle = (state) => {
     setShowVerticalFarming(state);
     setIsModalOpen(true);
+    setActiveRenewable(state ? "verticalFarming" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
     const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
@@ -237,8 +246,6 @@ const Home = () => {
     });
   };
 
-
-
   const toggleBackgroundColor = () => {
     if (isOuterSpace || isAncient || isUnderwater || isCyberpunk || isForest) {
       setIsOuterSpace(false); setIsAncient(false); setIsUnderwater(false); setIsCyberpunk(false); setIsForest(false);
@@ -256,10 +263,6 @@ const Home = () => {
   };
 
   const [activeRenewable, setActiveRenewable] = useState(null);
-
-  const handleRenewableToggle = (type) => {
-    setActiveRenewable((prev) => (prev === type ? null : type)); // Close if clicked again, otherwise set as active
-  };
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
@@ -355,25 +358,25 @@ const Home = () => {
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <OrbitControls />
         <Platform />
-
         {(selectedHouse || selectedBuilding) && (
           <Html position={[0, -3, 0]}>
             <RenewableSlots
               infrastructure={selectedHouse || selectedBuilding}
               roofType={roofType}
-              onSolarPanelClick={() => handleRenewableToggle("solarPanels")}
-              onSolarRoofTilesClick={() => handleRenewableToggle("solarRoofTiles")}
-              onSolarWaterHeatingClick={() => handleRenewableToggle("solarWaterHeating")}
-              onHeatPumpClick={() => handleRenewableToggle("heatPump")}
-              onSmallWindTurbinesClick={() => handleRenewableToggle("smallWindTurbines")}
-              onVerticalAxisWindTurbinesClick={() => handleRenewableToggle("verticalAxisWindTurbines")}
-              onMicroHydroPowerSystemClick={() => handleRenewableToggle("microHydroPowerSystem")}
-              onPicoHydroPowerClick={() => handleRenewableToggle("picoHydroPower")}
-              onVerticalFarmingClick={() => handleRenewableToggle("verticalFarming")}
+              onSolarPanelClick={handleSolarPanelToggle}
+              onSolarRoofTilesClick={handleSolarRoofTilesToggle}
+              onSolarWaterHeatingClick={handleSolarWaterHeatingToggle}
+              onHeatPumpClick={handleHeatPumpToggle}
+              onSmallWindTurbinesClick={handleSmallWindTurbinesToggle}
+              onVerticalAxisWindTurbinesClick={handleVerticalAxisWindTurbinesToggle}
+              onMicroHydroPowerSystemClick={handleMicroHydroPowerSystemToggle}
+              onPicoHydroPowerClick={handlePicoHydroPowerToggle}
+              onVerticalFarmingClick={handleVerticalFarmingToggle}
             />
           </Html>
         )}
 
+        {/* Render Selected House or Building */}
         {selectedHouse && React.createElement(HouseModels[selectedHouse], {
           roofType,
           showSolarPanels: activeRenewable === "solarPanels",
@@ -382,7 +385,9 @@ const Home = () => {
           showHeatPump: activeRenewable === "heatPump",
           showSmallWindTurbines: activeRenewable === "smallWindTurbines",
           showVerticalAxisWindTurbines: activeRenewable === "verticalAxisWindTurbines",
-          showMicroHydroPowerSystem: activeRenewable === "microHydroPowerSystem"
+          showMicroHydroPowerSystem: activeRenewable === "microHydroPowerSystem",
+          showPicoHydroPower: activeRenewable === "picoHydroPower",
+          showVerticalFarming: activeRenewable === "verticalFarming"
         })}
 
         {selectedBuilding && React.createElement(BuildingModels[selectedBuilding], {
@@ -392,8 +397,11 @@ const Home = () => {
           showHeatPump: activeRenewable === "heatPump",
           showSmallWindTurbines: activeRenewable === "smallWindTurbines",
           showVerticalAxisWindTurbines: activeRenewable === "verticalAxisWindTurbines",
-          showMicroHydroPowerSystem: activeRenewable === "microHydroPowerSystem"
+          showMicroHydroPowerSystem: activeRenewable === "microHydroPowerSystem",
+          showPicoHydroPower: activeRenewable === "picoHydroPower",
+          showVerticalFarming: activeRenewable === "verticalFarming"
         })}
+
       </Canvas>
 
       {/* Day / Night Mode Button */}
