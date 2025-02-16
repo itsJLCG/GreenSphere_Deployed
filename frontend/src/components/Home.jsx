@@ -57,7 +57,7 @@ const impossibleSources = {
   "Single-Family with Butterfly": ["Pico Hydropower", "Vertical Farming"],
   "Cottages": ["Pico Hydropower", "Vertical Farming"],
   "TownHouse": ["Pico Hydropower", "Vertical Farming"],
-  "Mobile Home": ["Solar Roof Tiles", "Vertical Farming"],
+  "Mobile Home": ["Solar Roof Tiles", "Vertical Farming", "Heat Pump"],
   "Apartments": ["Pico Hydropower", "Solar Roof Tiles"],
   "Office Building": ["Pico Hydropower", "Solar Roof Tiles"],
 };
@@ -148,12 +148,19 @@ const Home = () => {
     setActiveRenewable(state ? "heatPump" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? ` with ${roofType} roof` : "";
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
+
+    // Debugging Log
+    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+
+    const isImpossible = impossibleSources[fullInfrastructure]?.includes("Heat Pump") || false;
 
     setModalContent({
       name: "Heat Pump",
       type: "Geothermal Energy",
-      infrastructure: `${infrastructureName} ${roofInfo}`,
+      infrastructure: fullInfrastructure,
+      isImpossible,
     });
   };
 

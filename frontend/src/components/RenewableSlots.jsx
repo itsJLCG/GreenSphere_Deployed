@@ -85,11 +85,11 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
     "Mobile Home": [
       { type: 'Solar Energy', name: 'Solar Panels', image: '/assets/images/SolarPanel.png' },
       { type: 'Solar Energy', name: 'Solar Water Heating', image: '/assets/images/SolarWaterHeating.png' },
-      { type: 'Geothermal Energy', name: 'Heat Pump', image: '/assets/images/HeatPump.png' },
       { type: 'Wind Energy', name: 'Vertical Axis Wind Turbines', image: '/assets/images/VerticalAxisWindTurbine.png' },
       { type: 'Wind Energy', name: 'Small Wind Turbines', image: '/assets/images/SmallWindTurbine.png' },
       { type: 'HydroPower Energy', name: 'Micro Hydropower System', image: '/assets/images/MicroHydroPowerSystem.png' },
       { type: 'HydroPower Energy', name: 'Pico Hydropower', image: '/assets/images/PicoHydroPower.png' },
+      { type: 'Geothermal Energy', name: 'Heat Pump', image: '/assets/images/HeatPump.png' },
       { type: 'Solar Energy', name: 'Solar Roof Tiles', image: '/assets/images/SolarRoofTiles.png' },
       { type: 'Urban Farming', name: 'Vertical Farming', image: '/assets/images/VerticalFarming.png' },
     ],
@@ -182,7 +182,6 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
     onVerticalFarmingClick(newState);  // Notify Home.jsx
   };
 
-
   return (
     <div className="hotbar-container">
       <div className="recommendation-text">
@@ -192,6 +191,9 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
       <div className="hotbar">
         {renewableEnergySlots.map((slot, index) => {
           const isLastTwo = index >= renewableEnergySlots.length - 2;
+          const isHeatPumpUnderMobileHome  = slot.name === 'Heat Pump' && infrastructure === 'Mobile Home';
+
+
   
           return (
             <div
@@ -223,7 +225,9 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
               style={{ position: 'relative' }}
             >
               <img src={slot.image} alt={slot.name} className="slot-image" style={{ width: '100%', height: 'auto' }} />
-              {isLastTwo && (
+              
+              {/* Apply "X" for last two slots OR if it's a Heat Pump under a Mobile Home */}
+              {(isLastTwo || isHeatPumpUnderMobileHome) && (
                 <div
                   style={{
                     position: 'absolute',
@@ -245,6 +249,7 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
                   X
                 </div>
               )}
+  
               {hoveredSlot === index && (
                 <div className="tooltip">
                   <strong>{slot.type}</strong>
@@ -257,6 +262,7 @@ const RenewableSlots = ({ infrastructure, roofType, onSolarPanelClick, onSolarRo
       </div>
     </div>
   );
+  
   
 };
 

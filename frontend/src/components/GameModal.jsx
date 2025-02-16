@@ -45,6 +45,9 @@ const explanations = {
     <a href="https://www.waterpowermagazine.com/analysis/pico-practice-prospects-for-rural-hydro/" target="_blank">Learn more</a>`,
   },
   "Mobile Home": {
+    "Heat Pump": `Geothermal heat pumps are not compatible with mobile homes because they require underground loops for heat exchange, but mobile homes typically lack the necessary land space for installation. Additionally, mobile homes have limited insulation and ductwork, making geothermal systems less efficient. Lastly, the installation cost and structural requirements of geothermal heat pumps are impractical for most mobile home setups. 
+    <a href="https://mobilehomeideas.com/a-comprehensive-guide-to-mobile-home-heat-pumps/">Learn more</a>`,
+
     "Solar Roof Tiles": `Mobile homes often have limited roof space and are frequently relocated, making the installation of solar roof tiles impractical. The structural integrity of mobile home roofs may also not support the weight of solar tiles. 
     <a href="https://www.intermtnwindandsolar.com/can-you-use-solar-power-for-a-mobile-home/">Learn more</a>`,
 
