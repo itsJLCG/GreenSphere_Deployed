@@ -442,8 +442,6 @@ export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump })
   );
 };
 
-
-
 const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
   const townTexture1 = useTexture("../assets/images/townwall1.jpg");
   const townTexture2 = useTexture("../assets/images/townwall2.jpg");

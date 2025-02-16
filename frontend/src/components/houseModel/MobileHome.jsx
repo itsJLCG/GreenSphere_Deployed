@@ -1,6 +1,8 @@
 import { useTexture, useGLTF } from "@react-three/drei";
 import React, { useState, useMemo } from "react";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
+import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
+import { Html } from "@react-three/drei";
 
 export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
@@ -353,6 +355,96 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
   );
 };
 
+export const PicoHydroPowerTiles = ({ onSelect, picoHydroPower, setPicoHydroPower, showPicoHydroPower }) => {
+  const gltf = useGLTF("../assets/models/picoHydroPower.glb");
+
+  // Platform settings
+  const platformSize = 20;
+  const platformCenter = [0, -1, 0];
+
+  // House boundaries excluding base and center area
+  const walls = [
+    { position: [4, 2, 0], size: [4, 8, 6] },       // Right Wall
+    { position: [-4, 2, 0], size: [4, 8, 6] },      // Left Wall
+    { position: [0, 1.75, 0], size: [6, 7.5, 6] }   // Center Area (Base of House)
+  ];
+
+  // Grid settings
+  const gridSize = 10;
+  const cellSize = platformSize / gridSize;
+
+  // Check if position is valid (not inside any wall or center area)
+  const isValidPosition = (x, z) => {
+    return !walls.some(({ position, size }) => {
+      const xMin = position[0] - size[0] / 2;
+      const xMax = position[0] + size[0] / 2;
+      const zMin = position[2] - size[2] / 2;
+      const zMax = position[2] + size[2] / 2;
+
+      return x >= xMin && x <= xMax && z >= zMin && z <= zMax;
+    });
+  };
+
+  // Handle grid cell click
+  const handleClick = (x, z) => {
+    if (!showPicoHydroPower) return; // Prevent placement when slot is closed
+
+    onSelect?.(x, z); // Trigger parent logic if provided
+
+    setPicoHydroPower((prevTiles) => {
+      const exists = prevTiles.some(tile => tile.x === x && tile.z === z);
+      return exists
+        ? prevTiles.filter(tile => tile.x !== x || tile.z !== z) // Remove if clicked again
+        : [...prevTiles, { x, z }]; // Add if not exists
+    });
+  };
+
+  return (
+    <>
+      {/* Clickable Grid (Only active when showPicoHydroPower is true) */}
+      {showPicoHydroPower &&
+        Array.from({ length: gridSize }).map((_, row) =>
+          Array.from({ length: gridSize }).map((_, col) => {
+            const x = (col - gridSize / 2) * cellSize + cellSize / 2;
+            const z = (row - gridSize / 2) * cellSize + cellSize / 2;
+
+            if (!isValidPosition(x, z)) return null;
+
+            const isPlaced = picoHydroPower.some(tile => tile.x === x && tile.z === z);
+
+            return (
+              <mesh
+                key={`${x}-${z}`}
+                position={[x, platformCenter[1] + 0.01, z]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                onClick={() => handleClick(x, z)}
+              >
+                <planeGeometry args={[cellSize, cellSize]} />
+                <meshStandardMaterial
+                  color={isPlaced ? "green" : "black"}
+                  transparent
+                  opacity={0.5}
+                />
+              </mesh>
+            );
+          })
+        )}
+
+      {/* Always Render Placed Pico Hydro Power Systems */}
+      {picoHydroPower.map(({ x, z }, index) => (
+        <primitive
+          key={`${x}-${z}-${index}`}
+          object={gltf.scene.clone()}
+          position={[x, -1, z]} // Adjusted Y-position
+          scale={[0.1, 0.1, 0.1]} // Increased scale
+          rotation={[Math.PI / -2, 0, 0]} // Rotates 90 degrees to the left
+        />
+      ))}
+    </>
+  );
+};
+
+
 const WindowMobile = ({ position }) => {
   const WindowCottage = useTexture("../assets/images/mobilewindow.jpg"); // ✅ Fixed syntax
 
@@ -414,7 +506,7 @@ const MobileRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   );
 };
 
-const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
+const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem, showPicoHydroPower }) => {
   const wallTexture = useTexture("../assets/images/mobilewall.jpg");
   const doorTexture = useTexture("../assets/images/mobiledoor.jpg");
   const wheelTexture = useTexture("../assets/images/wheel.jpg");
@@ -424,6 +516,7 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [picoHydroPower, setPicoHydroPower] = useState([]);
 
   return (
     <group position={[0, 0, 0]}>
@@ -501,6 +594,27 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      <PicoHydroPowerTiles
+        picoHydroPower={picoHydroPower}
+        setPicoHydroPower={setPicoHydroPower}
+        showPicoHydroPower={showPicoHydroPower}
+      />
+
+      {/* For Analysis */}
+      <Html 
+  position={[0, 0, 0]} 
+  style={{ width: "10vw", maxWidth: "600px", minWidth: "300px", transform: "scale(0.8)" }}
+>
+  <TechnoEconomicAnalysis
+    solarPanels={solarPanels}
+    solarWaterHeating={solarWaterHeating}
+    smallWindTurbines={smallWindTurbines}
+    verticalAxisWindTurbines={verticalAxisWindTurbines}
+    microHydroPowerSystem={microHydroPowerSystem}
+    picoHydroPower={picoHydroPower}
+  />
+</Html>
+
     </group>
   );
 };
