@@ -4,7 +4,7 @@ import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
 import React, { useState } from "react";
 
-const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
+export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
 
   // Platform settings
@@ -87,7 +87,7 @@ const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeat
   );
 };
 
-const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem }) => {
+export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem }) => {
   const gltf = useGLTF("../assets/models/microHydropowerSystem.glb");
 
   // Platform settings
@@ -171,7 +171,7 @@ const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroH
   );
 };
 
-const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump }) => {
+export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump }) => {
   const gltf = useGLTF("../assets/models/heatPump.glb");
 
   // Platform settings
@@ -255,7 +255,7 @@ const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump }) => {
   );
 };
 
-const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines }) => {
+export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines }) => {
   const gltf = useGLTF("../assets/models/windTurbine.glb");
 
   // Platform settings
@@ -341,7 +341,7 @@ const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbi
   );
 };
 
-const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines }) => {
+export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines }) => {
   const gltf = useGLTF("../assets/models/verticalAxisWindTurbine.glb");
 
   // Platform settings
