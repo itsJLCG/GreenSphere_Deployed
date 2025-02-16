@@ -11,6 +11,7 @@ import axios from 'axios';
 import AdminHome from './components/admin/AdminHome';
 import LandingPage from './components/LandingPage';
 import OtpVerification from './components/OtpVerification';
+import Analysis from './components/Analysis'; 
 
 export const IsLoggedInContext = createContext();
 export const SetIsLoggedInContext = createContext();
@@ -61,6 +62,7 @@ function App() {
                                         <Route path="/feedback" element={isLoggedIn ? <Feedback /> : <Navigate to="/login" />} />
                                         <Route path="/adminhome" element={isLoggedIn && userRole === "admin" ? <AdminHome /> : <Navigate to="/home" />} />
                                         <Route path="/verify-otp" element={<OtpVerification />} />
+                                        <Route path="/analysis" element={<Analysis />} /> 
                                     </Routes>
                                 </BrowserRouter>
                                 <ToastContainer position="top-right" autoClose={3000} />

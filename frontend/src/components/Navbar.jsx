@@ -60,7 +60,7 @@ const Navbar = () => {
         <div>
           {isLoggedIn ? (
             <>
-              {/* ✅ Show Home & Feedback only if NOT an admin */}
+              {/* ✅ Show Home, Feedback, and Analysis only if NOT an admin */}
               {userRole !== "admin" && (
                 <>
                   <Button
@@ -86,6 +86,18 @@ const Navbar = () => {
                     variant="contained"
                   >
                     Feedback
+                  </Button>
+                  <Button
+                    style={{
+                      ...buttonStyle,
+                      backgroundColor: "#28A745", // Green color
+                      color: "#FFFFFF",
+                    }}
+                    to="/analysis"
+                    component={Link}
+                    variant="contained"
+                  >
+                    Analysis
                   </Button>
                 </>
               )}
