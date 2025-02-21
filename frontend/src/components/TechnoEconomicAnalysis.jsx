@@ -17,7 +17,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, LineChart,
 import { PieChart, Pie, Cell } from "recharts"; // For pie chart
 import exportToPDF from "./ExportToPDF";
 
-
 const PRICES = {
   solarPanels: {
     type: 'Solar Energy',
@@ -222,6 +221,99 @@ const TechnoEconomicAnalysis = ({
   const costBreakdownRef = useRef();
   const energyUsageRef = useRef();
   const totalCostRef = useRef();
+
+  const saveData = async () => {
+    try {
+        // Fetch logged-in user ID from the backend
+        const userResponse = await fetch("http://localhost:3001/user", {
+            method: "GET",
+            credentials: "include", // Required to send cookies/session data
+        });
+
+        if (!userResponse.ok) {
+            throw new Error("Failed to fetch logged-in user.");
+        }
+
+        const userData = await userResponse.json();
+        const user_id = userData.id; // Extract user ID
+
+        console.log("✅ Logged-in User ID:", user_id);
+
+        console.log("🛠 Debug: Total Product Cost:", totalProductCost);
+        console.log("🛠 Debug: Total Installation Cost:", totalInstallationCost);
+        console.log("🛠 Debug: Total Maintenance Cost:", totalMaintenanceCost);
+        console.log("🛠 Debug: Carbon Payback Period:", carbonPaybackPeriod);
+        console.log("🛠 Debug: Total Carbon Emissions:", totalCarbonEmissions);
+        console.log("🛠 Debug: Energy Usage Data:", energyUsageByType);
+
+        // Prepare data
+        const costAnalysisData = {
+            user_id,
+            TotalProductCost: parseFloat(totalProductCost),
+            TotalInstallationCost: parseFloat(totalInstallationCost),
+            TotalMaintenanceCost: parseFloat(totalMaintenanceCost),
+        };
+
+        const carbonAnalysisData = {
+            user_id,
+            CarbonPaybackPeriod: parseFloat(carbonPaybackPeriod),
+            TotalCarbonEmission: parseFloat(totalCarbonEmissions),
+        };
+
+        // Filter out zero-emission energy sources
+        const energyUsageData = Object.entries(energyUsageByType)
+            .filter(([type, emissions]) => emissions > 0)
+            .map(([type, emissions]) => ({
+                user_id,
+                Type: type,
+                Emissions: parseFloat(emissions),
+            }));
+
+        console.log("📩 Sending Cost Analysis:", costAnalysisData);
+        console.log("📩 Sending Carbon Analysis:", carbonAnalysisData);
+        console.log("📩 Sending Filtered Energy Usage:", energyUsageData);
+
+        // Send requests
+        const costResponse = await fetch("http://localhost:3001/api/cost-analysis", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(costAnalysisData),
+        });
+
+        const carbonResponse = await fetch("http://localhost:3001/api/carbon-analysis", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(carbonAnalysisData),
+        });
+
+        const costData = await costResponse.json();  // ✅ Read once
+        const carbonData = await carbonResponse.json();  // ✅ Read once
+
+        console.log("✅ Cost Analysis Response:", costData);
+        console.log("✅ Carbon Analysis Response:", carbonData);
+
+        // Send energy usage requests in parallel
+        const energyUsageResponses = await Promise.all(
+            energyUsageData.map((entry) =>
+                fetch("http://localhost:3001/api/energy-usage", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(entry),
+                }).then((res) => res.json()) // Read response once
+            )
+        );
+
+        console.log("✅ Energy Usage Responses:", energyUsageResponses);
+
+        alert("✅ Data saved successfully!");
+
+    } catch (error) {
+        console.error("❌ Error saving data:", error);
+        alert("Failed to save data.");
+    }
+};
+
+
   return (
     <>
       {!open && (
@@ -442,10 +534,20 @@ const TechnoEconomicAnalysis = ({
 
             {/* Export Button */}
             <Box sx={{ textAlign: "center", mt: 3 }}>
-              <Button variant="contained" color="primary" onClick={() => exportToPDF(costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef)}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => exportToPDF(costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef)}
+                sx={{ mr: 2 }} // Adds right margin
+              >
                 Export to PDF
               </Button>
+
+              <Button variant="contained" color="primary" onClick={saveData}>
+                Save Data
+              </Button>
             </Box>
+
           </Container>
         </Fade>
       </Modal>

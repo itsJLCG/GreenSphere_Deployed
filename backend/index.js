@@ -10,7 +10,9 @@ const FeedbackModel = require("./model/Feedback");
 const { verifyUser } = require("./middleware/auth");
 const sendOtpEmail = require('./mailer');
 const generateOtp = require('./otp');
-
+const CostAnalysis = require("./model/CostAnalysis");
+const CarbonPaybackPeriodAnalysis = require("./model/CarbonPaybackPeriodAnalysis");
+const EnergyUsageBySource = require("./model/EnergyUsageBySource");
 
 dotenv.config();
 const app = express();
@@ -18,7 +20,9 @@ app.use(express.json());
 
 app.use(cors({
     origin: process.env.FRONTEND_URL,
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"]
 }));
 
 mongoose.connect(process.env.MONGO_URI)
@@ -104,7 +108,13 @@ app.post("/login", async (req, res) => {
 
 app.get('/user', (req, res) => {
     if (req.session.user) {
-        res.json({ user: req.session.user });
+        res.json({
+            user: req.session.user,
+            id: req.session.user.id, // Ensure user ID is returned
+            name: req.session.user.name,
+            email: req.session.user.email,
+            role: req.session.user.role,
+        });
     } else {
         res.status(401).json("Not Authenticated");
     }
@@ -236,24 +246,91 @@ app.get("/admin/feedback", async (req, res) => {
 app.put('/admin/users/:userId', async (req, res) => {
     const { userId } = req.params;  // Get user ID from the URL params
     const { role } = req.body;      // Get the new role from the request body
-  
+
     try {
-      // Check if the user exists
-      const user = await UserModel.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      // Update the user's role
-      user.role = role;
-  
-      // Save the updated user back to the database
-      await user.save();
-  
-      // Return the updated user
-      res.status(200).json({ message: "User role updated successfully", user });
+        // Check if the user exists
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Update the user's role
+        user.role = role;
+
+        // Save the updated user back to the database
+        await user.save();
+
+        // Return the updated user
+        res.status(200).json({ message: "User role updated successfully", user });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "There was an error updating the role" });
+        console.error(error);
+        res.status(500).json({ message: "There was an error updating the role" });
     }
-  });
+});
+
+/** ➤ Save Cost Analysis */
+app.post("/api/cost-analysis", async (req, res) => {
+    try {
+        console.log("📩 Received Cost Analysis Request:", req.body);
+        const { user_id, TotalProductCost, TotalInstallationCost, TotalMaintenanceCost } = req.body;
+
+        if (!user_id || !TotalProductCost || !TotalInstallationCost || !TotalMaintenanceCost) {
+            return res.status(400).json({ error: "❌ Missing required fields" });
+        }
+
+        const GrandTotal = TotalProductCost + TotalInstallationCost + TotalMaintenanceCost;
+        const newCostAnalysis = new CostAnalysis({ user_id, TotalProductCost, TotalInstallationCost, TotalMaintenanceCost, GrandTotal });
+
+        await newCostAnalysis.save();
+        console.log("✅ Cost Analysis Saved:", newCostAnalysis);
+        res.status(201).json({ message: "✅ Cost Analysis Saved", data: newCostAnalysis });
+
+    } catch (error) {
+        console.error("❌ Error saving cost analysis:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/** ➤ Save Carbon Payback Period Analysis */
+app.post("/api/carbon-analysis", async (req, res) => {
+    try {
+        console.log("📩 Received Carbon Payback Analysis Request:", req.body);
+        const { user_id, CarbonPaybackPeriod, TotalCarbonEmission } = req.body;
+
+        if (!user_id || !CarbonPaybackPeriod || !TotalCarbonEmission) {
+            return res.status(400).json({ error: "❌ Missing required fields" });
+        }
+
+        const newCarbonAnalysis = new CarbonPaybackPeriodAnalysis({ user_id, CarbonPaybackPeriod, TotalCarbonEmission });
+
+        await newCarbonAnalysis.save();
+        console.log("✅ Carbon Payback Analysis Saved:", newCarbonAnalysis);
+        res.status(201).json({ message: "✅ Carbon Payback Analysis Saved", data: newCarbonAnalysis });
+
+    } catch (error) {
+        console.error("❌ Error saving carbon analysis:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/** ➤ Save Energy Usage By Source */
+app.post("/api/energy-usage", async (req, res) => {
+    try {
+        console.log("📩 Received Energy Usage Request:", req.body);
+        const { user_id, Type, Emissions } = req.body;
+
+        if (!user_id || !Type || !Emissions) {
+            return res.status(400).json({ error: "❌ Missing required fields" });
+        }
+
+        const newEnergyUsage = new EnergyUsageBySource({ user_id, Type, Emissions });
+
+        await newEnergyUsage.save();
+        console.log("✅ Energy Usage Saved:", newEnergyUsage);
+        res.status(201).json({ message: "✅ Energy Usage Saved", data: newEnergyUsage });
+
+    } catch (error) {
+        console.error("❌ Error saving energy usage:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
