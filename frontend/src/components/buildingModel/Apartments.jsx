@@ -1,6 +1,8 @@
 import { useTexture, useGLTF } from "@react-three/drei";
 import React, { useState, useMemo } from "react";
 import SolarPanel from "../renewableModel/SolarPanel";
+import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis";
+import { Html } from "@react-three/drei";
 
 export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
@@ -545,6 +547,18 @@ const ApartmentsBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWate
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      
+      {/* For Analysis */}
+      <Html>
+        <TechnoEconomicAnalysis
+          solarPanels={solarPanels}
+          solarWaterHeating={solarWaterHeating}
+          heatPump={heatPump}
+          smallWindTurbines={smallWindTurbines}
+          verticalAxisWindTurbines={verticalAxisWindTurbines}
+          microHydroPowerSystem={microHydroPowerSystem}
+        />
+      </Html>
     </group>
   );
 };

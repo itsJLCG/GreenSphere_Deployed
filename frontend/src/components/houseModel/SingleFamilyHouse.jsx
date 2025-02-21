@@ -3,6 +3,8 @@ import { useGLTF } from "@react-three/drei";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
 import React, { useState } from "react";
+import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
+import { Html } from "@react-three/drei";
 
 export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
@@ -785,6 +787,8 @@ export const Window = ({ position }) => {
 const SingleFamilyHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
   const wallTexture = useTexture("../assets/images/wall.png");
   const doorTexture = useTexture("../assets/images/door.jpg");
+  const [solarPanels, setSolarPanels] = useState([]);
+  const [solarRoofTiles, setSolarRoofTiles] = useState([]);
   const [solarWaterHeating, setSolarWaterHeating] = useState([]);
   const [heatPump, setHeatPump] = useState([]);
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
@@ -855,6 +859,18 @@ const SingleFamilyHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, show
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      {/* For Analysis */}
+      <Html>
+        <TechnoEconomicAnalysis
+          solarPanels={solarPanels}
+          solarRoofTiles={solarRoofTiles}
+          solarWaterHeating={solarWaterHeating}
+          heatPump={heatPump}
+          smallWindTurbines={smallWindTurbines}
+          verticalAxisWindTurbines={verticalAxisWindTurbines}
+          microHydroPowerSystem={microHydroPowerSystem}
+        />
+      </Html>
     </group>
   );
 };

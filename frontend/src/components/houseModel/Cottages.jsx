@@ -1,6 +1,8 @@
 import { useTexture } from "@react-three/drei";
 import React, { useState, useMemo } from "react";
 import { Roofs, SolarWaterHeatingTiles, MicroHydroPowerSystemTiles, HeatPumpTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles } from "./SingleFamilyHouse.jsx";
+import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
+import { Html } from "@react-three/drei";
 
 const WindowCottage = ({ position }) => {
   const WindowCottage = useTexture("../assets/images/windowcottage.jpg"); // ✅ Fixed syntax
@@ -18,6 +20,8 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
   const doorTexture = useTexture("../assets/images/cottagedoor.jpg");
   const [solarWaterHeating, setSolarWaterHeating] = useState([]);
   const [heatPump, setHeatPump] = useState([]);
+  const [solarPanels, setSolarPanels] = useState([]);
+  const [solarRoofTiles, setSolarRoofTiles] = useState([]);
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
@@ -68,6 +72,18 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      {/* For Analysis */}
+      <Html>
+        <TechnoEconomicAnalysis
+          solarPanels={solarPanels}
+          solarRoofTiles={solarRoofTiles}
+          solarWaterHeating={solarWaterHeating}
+          heatPump={heatPump}
+          smallWindTurbines={smallWindTurbines}
+          verticalAxisWindTurbines={verticalAxisWindTurbines}
+          microHydroPowerSystem={microHydroPowerSystem}
+        />
+      </Html>
     </group>
   );
 };

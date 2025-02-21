@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext} from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stats, useTexture, useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -11,6 +11,7 @@ import SingleFamilyHouse from "./houseModel/SingleFamilyHouse.jsx";
 import { Roofs } from "./houseModel/SingleFamilyHouse.jsx";
 import RenewableSlots from "./RenewableSlots.jsx";
 import GameModal from "./GameModal.jsx";
+import { HomeContext } from "./HomeContext.jsx";
 
 const Platform = () => {
   const texture = useTexture("../assets/images/grass.webp");
@@ -63,29 +64,54 @@ const impossibleSources = {
 };
 
 const Home = () => {
-  const [showHouseOptions, setShowHouseOptions] = useState(false);
-  const [showBuildingOptions, setShowBuildingOptions] = useState(false);
-  const [selectedHouse, setSelectedHouse] = useState(null);
-  const [selectedBuilding, setSelectedBuilding] = useState(null);
-  const [roofType, setRoofType] = useState(null);
-  const [bgColor, setBgColor] = useState("linear-gradient(black, lightblue)");
-  const [isOuterSpace, setIsOuterSpace] = useState(false);
-  const [isForest, setIsForest] = useState(false);
-  const [isAncient, setIsAncient] = useState(false);
-  const [isUnderwater, setIsUnderwater] = useState(false);
-  const [isCyberpunk, setIsCyberpunk] = useState(false);
-  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
-  const [showSolarPanels, setShowSolarPanels] = useState(false);
-  const [showSolarRoofTiles, setShowSolarRoofTiles] = useState(false);
-  const [showSolarWaterHeating, setShowSolarWaterHeating] = useState(false);
-  const [showHeatPump, setShowHeatPump] = useState(false);
-  const [showSmallWindTurbines, setShowSmallWindTurbines] = useState(false);
-  const [showVerticalAxisWindTurbines, setShowVerticalAxisWindTurbines] = useState(false);
-  const [showMicroHydroPowerSystem, setShowMicroHydroPowerSystem] = useState(false);
-  const [showPicoHydroPower, setShowPicoHydroPower] = useState(false);
-  const [showVerticalFarming, setShowVerticalFarming] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({ name: "", type: "", infrastructure: "" });
+  const {
+  showHouseOptions,
+  setShowHouseOptions,
+  showBuildingOptions,
+  setShowBuildingOptions,
+  selectedHouse,
+  setSelectedHouse,
+  selectedBuilding,
+  setSelectedBuilding,
+  roofType,
+  setRoofType,
+  bgColor,
+  setBgColor,
+  isOuterSpace,
+  setIsOuterSpace,
+  isForest,
+  setIsForest,
+  isAncient,
+  setIsAncient,
+  isUnderwater,
+  setIsUnderwater,
+  isCyberpunk,
+  setIsCyberpunk,
+  isThemeMenuOpen,
+  setIsThemeMenuOpen,
+  showSolarPanels,
+  setShowSolarPanels,
+  showSolarRoofTiles,
+  setShowSolarRoofTiles,
+  showSolarWaterHeating,
+  setShowSolarWaterHeating,
+  showHeatPump,
+  setShowHeatPump,
+  showSmallWindTurbines,
+  setShowSmallWindTurbines,
+  showVerticalAxisWindTurbines,
+  setShowVerticalAxisWindTurbines,
+  showMicroHydroPowerSystem,
+  setShowMicroHydroPowerSystem,
+  showPicoHydroPower,
+  setShowPicoHydroPower,
+  showVerticalFarming,
+  setShowVerticalFarming,
+  isModalOpen,
+  setIsModalOpen,
+  modalContent,
+  setModalContent,
+} = useContext(HomeContext);
 
   // MODAL TOGGLE
   const handleSolarPanelToggle = (state) => {
@@ -366,7 +392,10 @@ const Home = () => {
         <OrbitControls />
         <Platform />
         {(selectedHouse || selectedBuilding) && (
-          <Html position={[0, -3, 0]}>
+          <Html
+          position={[0, -3, 0]}
+          zIndexRange={[0, 100]} // Lower z-index range to avoid blocking the modal
+          >
             <RenewableSlots
               infrastructure={selectedHouse || selectedBuilding}
               roofType={roofType}

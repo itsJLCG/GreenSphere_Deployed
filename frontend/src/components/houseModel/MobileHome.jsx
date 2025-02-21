@@ -506,13 +506,12 @@ const MobileRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   );
 };
 
-const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem, showPicoHydroPower }) => {
+const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem, showPicoHydroPower }) => {
   const wallTexture = useTexture("../assets/images/mobilewall.jpg");
   const doorTexture = useTexture("../assets/images/mobiledoor.jpg");
   const wheelTexture = useTexture("../assets/images/wheel.jpg");
   const [solarPanels, setSolarPanels] = useState([]);
   const [solarWaterHeating, setSolarWaterHeating] = useState([]);
-  const [heatPump, setHeatPump] = useState([]);
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
@@ -601,19 +600,16 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
       />
 
       {/* For Analysis */}
-      <Html 
-  position={[0, 0, 0]} 
-  style={{ width: "10vw", maxWidth: "600px", minWidth: "300px", transform: "scale(0.8)" }}
->
-  <TechnoEconomicAnalysis
-    solarPanels={solarPanels}
-    solarWaterHeating={solarWaterHeating}
-    smallWindTurbines={smallWindTurbines}
-    verticalAxisWindTurbines={verticalAxisWindTurbines}
-    microHydroPowerSystem={microHydroPowerSystem}
-    picoHydroPower={picoHydroPower}
-  />
-</Html>
+      <Html>
+        <TechnoEconomicAnalysis
+          solarPanels={solarPanels}
+          solarWaterHeating={solarWaterHeating}
+          smallWindTurbines={smallWindTurbines}
+          verticalAxisWindTurbines={verticalAxisWindTurbines}
+          microHydroPowerSystem={microHydroPowerSystem}
+          picoHydroPower={picoHydroPower}
+        />
+      </Html>
 
     </group>
   );

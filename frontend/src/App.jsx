@@ -12,6 +12,7 @@ import AdminHome from './components/admin/AdminHome';
 import LandingPage from './components/LandingPage';
 import OtpVerification from './components/OtpVerification';
 import Analysis from './components/Analysis'; 
+import { HomeProvider } from './components/HomeContext';
 
 export const IsLoggedInContext = createContext();
 export const SetIsLoggedInContext = createContext();
@@ -46,6 +47,7 @@ function App() {
     }, [isLoggedIn]); // ✅ Re-run when `isLoggedIn` changes
 
     return (
+        <HomeProvider>
         <IsLoggedInContext.Provider value={isLoggedIn}>
             <SetIsLoggedInContext.Provider value={setIsLoggedIn}>
                 <UserRoleContext.Provider value={userRole}>
@@ -72,6 +74,7 @@ function App() {
                 </UserRoleContext.Provider>
             </SetIsLoggedInContext.Provider>
         </IsLoggedInContext.Provider>
+        </HomeProvider>
     );
 }
 

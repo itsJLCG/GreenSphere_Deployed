@@ -2,6 +2,8 @@ import { useTexture } from "@react-three/drei";
 import React, { useState, useMemo } from "react";
 import SolarPanel from "../renewableModel/SolarPanel";
 import { MicroHydroPowerSystemTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles, HeatPumpTiles, SolarWaterHeatingTiles } from "./Apartments";
+import { Html } from "@react-three/drei";
+import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis";
 
 const OfficeRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   const gridWidth = 6; // 6 columns
@@ -107,6 +109,17 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      {/* For Analysis */}
+      <Html>
+        <TechnoEconomicAnalysis
+          solarPanels={solarPanels}
+          solarWaterHeating={solarWaterHeating}
+          heatPump={heatPump}
+          smallWindTurbines={smallWindTurbines}
+          verticalAxisWindTurbines={verticalAxisWindTurbines}
+          microHydroPowerSystem={microHydroPowerSystem}
+        />
+      </Html>
     </group>
   );
 };
