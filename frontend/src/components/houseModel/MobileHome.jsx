@@ -1,8 +1,10 @@
-import { useTexture, useGLTF } from "@react-three/drei";
-import React, { useState, useMemo } from "react";
+import { useTexture, useGLTF, useAnimations } from "@react-three/drei";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
 import { Html } from "@react-three/drei";
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 
 export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
@@ -181,8 +183,31 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
   );
 };
 
+
 export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines }) => {
-  const gltf = useGLTF("../assets/models/windTurbine.glb");
+  const { scene, animations } = useGLTF("../assets/models/wind_turbine(2).glb");
+  const { actions } = useAnimations(animations, scene);
+
+  // Ref to store mixers for each turbine
+  const mixers = useRef([]);
+
+  useEffect(() => {
+    console.log("Animations loaded:", animations); // Log animations
+    console.log("Actions:", actions); // Log actions
+
+    if (actions && actions["turbineSpin"]) {
+      console.log("Playing animation: turbineSpin");
+      actions["turbineSpin"].setLoop(THREE.LoopRepeat); // Loop the animation
+      actions["turbineSpin"].play();
+    } else {
+      console.error("Animation 'turbineSpin' not found or scene not loaded");
+    }
+  }, [actions]);
+
+  // Update all mixers on every frame
+  useFrame((state, delta) => {
+    mixers.current.forEach((mixer) => mixer.update(delta));
+  });
 
   // Platform settings
   const platformSize = 20;
@@ -198,7 +223,6 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
 
   // Check if position is valid (Excluding house area and first two rows)
   const isValidPosition = (x, z, row) => {
-    // Remove first two rows from recommendation
     if (row < 3) return false;
 
     const houseXMin = houseCenter[0] - houseSize / 2;
@@ -225,7 +249,7 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
 
   return (
     <>
-      {/* Clickable Grid (Only active when showSmallWindTurbines is true) */}
+      {/* Clickable Grid */}
       {showSmallWindTurbines &&
         Array.from({ length: gridSize }).map((_, row) =>
           Array.from({ length: gridSize }).map((_, col) => {
@@ -254,15 +278,31 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
           })
         )}
 
-      {/* Always Render Placed SmallWindTurbines */}
-      {smallWindTurbines.map(({ x, z }, index) => (
-        <primitive
-          key={`${x}-${z}-${index}`}
-          object={gltf.scene.clone()}
-          position={[x, -1, z]}
-          scale={[0.6, 0.6, 0.6]}
-        />
-      ))}
+      {/* Render Animated SmallWindTurbines */}
+      {smallWindTurbines.map(({ x, z }, index) => {
+        const turbine = scene.clone();
+        const mixer = new THREE.AnimationMixer(turbine);
+
+        // Reapply animations to the cloned scene
+        animations.forEach((clip) => {
+          const action = mixer.clipAction(clip);
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        });
+
+        // Store the mixer in the ref
+        mixers.current[index] = mixer;
+
+        return (
+          <primitive
+            key={`${x}-${z}-${index}`}
+            object={turbine}
+            position={[x, -1, z]}
+            scale={[55, 55, 55]}
+            rotation={[0, - Math.PI / 2, 0]} // Rotate 90 degrees (π/2 radians) to the left
+          />
+        );
+      })}
     </>
   );
 };

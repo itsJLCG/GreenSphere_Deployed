@@ -26,7 +26,7 @@ const Navbar = () => {
       position="static"
       sx={{
         background: "rgba(5, 0, 46, 0.9)", // Slightly transparent to match the gradient
-        padding: "0.5rem 1rem",
+
         boxShadow: "none",
       }}
     >
@@ -138,3 +138,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

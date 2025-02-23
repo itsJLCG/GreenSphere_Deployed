@@ -38,6 +38,6 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
-const UserModel = mongoose.model("users", UserSchema);
+//palitan yung "users" ng "User"
+module.exports = mongoose.model("User", UserSchema);
 
-module.exports = UserModel;

@@ -12,7 +12,9 @@ const sendOtpEmail = require('./mailer');
 const generateOtp = require('./otp');
 const CostAnalysis = require("./model/CostAnalysis");
 const CarbonPaybackPeriodAnalysis = require("./model/CarbonPaybackPeriodAnalysis");
-const EnergyUsageBySource = require("./model/EnergyUsageBySource");
+
+//JM - Lagyan lang ng 'Model' yung EnergyUsageBySource
+const EnergyUsageBySourceModel = require('./model/EnergyUsageBySource');
 
 dotenv.config();
 const app = express();
@@ -323,7 +325,7 @@ app.post("/api/energy-usage", async (req, res) => {
             return res.status(400).json({ error: "❌ Missing required fields" });
         }
 
-        const newEnergyUsage = new EnergyUsageBySource({ user_id, Type, Emissions });
+        const newEnergyUsage = new EnergyUsageBySourceModel({ user_id, Type, Emissions });
 
         await newEnergyUsage.save();
         console.log("✅ Energy Usage Saved:", newEnergyUsage);
@@ -334,3 +336,51 @@ app.post("/api/energy-usage", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+/** JM - Top Renewable sources */
+app.get("/admin/renewable-energy", async (req, res) => {
+    try {
+        const energyData = await EnergyUsageBySourceModel.aggregate([
+            {
+                $group: {
+                    _id: "$Type", // Group by the Type of energy source
+                    totalUsed: { $sum: "$Emissions" } // Sum the emissions for each type
+                }
+            }
+        ]);
+
+        // Format the data for the frontend
+        const formattedData = energyData.map(item => ({
+            source: item._id, // The type of energy source
+            totalUsed: item.totalUsed // The total emissions for that source
+        }));
+
+        res.status(200).json(formattedData);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/** JM - Cost Analysis */
+app.get("/admin/cost-analysis", async (req, res) => {
+    try {
+        const costData = await CostAnalysis.find().populate('user_id', 'email'); // Populate email only
+        res.status(200).json(costData);
+    } catch (error) {
+        console.error("Error fetching cost analysis data:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/** JM - Carbon Payback */
+app.get("/admin/carbon-payback", async (req, res) => {
+    try {
+        const carbonData = await CarbonPaybackPeriodAnalysis.find().populate('user_id', 'email'); // Populate email only
+        res.status(200).json(carbonData);
+    } catch (error) {
+        console.error("Error fetching carbon payback data:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
