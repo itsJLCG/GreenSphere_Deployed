@@ -419,64 +419,14 @@ const LandingPage = () => {
 
 
 
-        {/* Testimonials Section */}
-        <div className="testimonials-section">
-          {/* Open Modal Button */}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="view-testimonials-btn"
-            onClick={() => setModalOpen(true)}
-          >
-            View Testimonials
-          </motion.button>
+
 
           {/* Modal */}
           {modalOpen && (
             <div className="modal-overlay">
               <div className="modal-content">
-                {/* Close Button */}
-                <button className="close-btn" onClick={() => setModalOpen(false)}>
-                  ×
-                </button>
+   
 
-                {/* Filter by Rating */}
-                <h2 className="filter-header">Filter by Rating</h2>
-                <div className="filter-buttons">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      className={`filter-btn ${filterRating === star ? "active" : ""}`}
-                      onClick={() => setFilterRating(star)}
-                    >
-                      {star} ★
-                    </button>
-                  ))}
-                </div>
-
-                {/* Testimonials Container */}
-                <div className="testimonials-container">
-                  {loading ? (
-                    <p className="loading-message">Loading...</p>
-                  ) : error ? (
-                    <p className="error-message">{error}</p>
-                  ) : (
-                    filteredTestimonials.map((testimonial, index) => (
-                      <motion.div
-                        key={index}
-                        whileHover={{ scale: 1.05 }}
-                        className="testimonial-card"
-                      >
-                        <Avatar
-                          src={testimonial.avatar || "/assets/default-avatar.png"}
-                          className="avatar"
-                        />
-                        <p className="testimonial-comment">"{testimonial.comment}"</p>
-                        <Rating value={testimonial.rating} readOnly precision={0.5} />
-                        <p className="testimonial-name">- {testimonial.name}</p>
-                      </motion.div>
-                    ))
-                  )}
-                </div>
 
                 {/* Button to Show Chart */}
                 <div style={{ textAlign: "center", marginTop: "20px" }}>
@@ -524,7 +474,6 @@ const LandingPage = () => {
               </div>
             </div>
           )}
-        </div>
 
         {/* Styles */}
         <style>

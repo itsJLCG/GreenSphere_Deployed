@@ -90,9 +90,30 @@ export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWa
     </>
   );
 };
-
 export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem }) => {
-  const gltf = useGLTF("../assets/models/microHydropowerSystem.glb");
+  const { scene, animations } = useGLTF("../assets/models/microHydropowerSystem.glb");
+  const { actions } = useAnimations(animations, scene);
+  
+  // Ref to store mixers for each turbine
+  const mixers = useRef([]);
+
+  useEffect(() => {
+    console.log("Animations loaded:", animations);
+    console.log("Actions:", actions);
+
+    if (actions && actions["Peddles.009Action"]) {
+      console.log("Playing animation: Peddles.009Action");
+      actions["Peddles.009Action"].setLoop(THREE.LoopRepeat);
+      actions["Peddles.009Action"].play();
+    } else {
+      console.error("Animation 'Peddles.009Action' not found or scene not loaded");
+    }
+  }, [actions]);
+
+  // Update all mixers on every frame
+  useFrame((_, delta) => {
+    mixers.current.forEach((mixer) => mixer.update(delta));
+  });
 
   // Platform settings
   const platformSize = 20;
@@ -161,19 +182,35 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
           })
         )}
 
-      {/* Always Render Placed MicroHydroPowerSystem */}
-      {microHydroPowerSystem.map(({ x, z }, index) => (
-        <primitive
-          key={`${x}-${z}-${index}`}
-          object={gltf.scene.clone()}
-          position={[x, -1, z]} // Adjusted Y-position
-          scale={[0.7, 0.7, 0.7]} // Increased scale
-          rotation={[0, Math.PI / 2, 0]} // Rotates 90 degrees to the left
-        />
-      ))}
+      {/* Render Animated MicroHydroPowerSystem */}
+      {microHydroPowerSystem.map(({ x, z }, index) => {
+        const turbine = scene.clone();
+        const mixer = new THREE.AnimationMixer(turbine);
+
+        // Reapply animations to the cloned scene
+        animations.forEach((clip) => {
+          const action = mixer.clipAction(clip);
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        });
+
+        // Store the mixer in the ref
+        mixers.current[index] = mixer;
+
+        return (
+          <primitive
+            key={`${x}-${z}-${index}`}
+            object={turbine}
+            position={[x, -1, z]} // Adjusted Y-position
+            scale={[0.7, 0.7, 0.7]} // Increased scale
+            rotation={[0, Math.PI / 2, 0]} // Rotates 90 degrees to the left
+          />
+        );
+      })}
     </>
   );
 };
+
 
 export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump }) => {
   const gltf = useGLTF("../assets/models/heatPump.glb");
@@ -376,60 +413,61 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
 };
 
 export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines }) => {
-  const gltf = useGLTF("../assets/models/verticalAxisWindTurbine.glb");
+  const { scene, animations } = useGLTF("../assets/models/verticalAxisWindTurbineAnimated.glb");
+  const { actions } = useAnimations(animations, scene);
+  const mixers = useRef([]);
 
-  // Platform settings
+  useEffect(() => {
+    console.log("Animations loaded:", animations);
+    console.log("Actions:", actions);
+
+    if (actions && actions["Object_6.001Action"]) {
+      console.log("Playing animation: Object_6.001Action");
+      actions["Object_6.001Action"].setLoop(THREE.LoopRepeat);
+      actions["Object_6.001Action"].play();
+    } else {
+      console.error("Animation 'Object_6.001Action' not found or scene not loaded");
+    }
+  }, [actions]);
+
+  useFrame((_, delta) => {
+    mixers.current.forEach((mixer) => mixer.update(delta));
+  });
+
   const platformSize = 20;
   const platformCenter = [0, -1, 0];
-
-  // House boundaries (Increased size to 14)
   const houseSize = 14;
   const houseCenter = [0, 2, 0];
-
-  // Grid settings
   const gridSize = 10;
   const cellSize = platformSize / gridSize;
 
-  // Check if position is valid (Excluding house area and first two rows)
   const isValidPosition = (x, z, row) => {
-    // Remove first two rows from recommendation
     if (row < 3) return false;
-
     const houseXMin = houseCenter[0] - houseSize / 2;
     const houseXMax = houseCenter[0] + houseSize / 2;
     const houseZMin = houseCenter[2] - houseSize / 2;
     const houseZMax = houseCenter[2] + houseSize / 2;
-
     return !(x >= houseXMin && x <= houseXMax && z >= houseZMin && z <= houseZMax);
   };
 
-  // Handle grid cell click
   const handleClick = (x, z) => {
     if (!showVerticalAxisWindTurbines) return;
-
     onSelect?.(x, z);
-
     setVerticalAxisWindTurbines((prevTiles) => {
       const exists = prevTiles.some(tile => tile.x === x && tile.z === z);
-      return exists
-        ? prevTiles.filter(tile => tile.x !== x || tile.z !== z)
-        : [...prevTiles, { x, z }];
+      return exists ? prevTiles.filter(tile => tile.x !== x || tile.z !== z) : [...prevTiles, { x, z }];
     });
   };
 
   return (
     <>
-      {/* Clickable Grid (Only active when showVerticalAxisWindTurbines is true) */}
       {showVerticalAxisWindTurbines &&
         Array.from({ length: gridSize }).map((_, row) =>
           Array.from({ length: gridSize }).map((_, col) => {
             const x = (col - gridSize / 2) * cellSize + cellSize / 2;
             const z = (row - gridSize / 2) * cellSize + cellSize / 2;
-
             if (!isValidPosition(x, z, row)) return null;
-
             const isPlaced = verticalAxisWindTurbines.some(tile => tile.x === x && tile.z === z);
-
             return (
               <mesh
                 key={`${x}-${z}`}
@@ -438,27 +476,31 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
                 onClick={() => handleClick(x, z)}
               >
                 <planeGeometry args={[cellSize, cellSize]} />
-                <meshStandardMaterial
-                  color={isPlaced ? "green" : "violet"}
-                  transparent
-                  opacity={0.5}
-                />
+                <meshStandardMaterial color={isPlaced ? "green" : "violet"} transparent opacity={0.5} />
               </mesh>
             );
           })
         )}
 
-      {/* Always Render Placed VerticalAxisWindTurbines */}
-      {verticalAxisWindTurbines.map(({ x, z }, index) => (
-        <primitive
-          key={`${x}-${z}-${index}`}
-          object={gltf.scene.clone()}
-          position={[x, 4.7, z]}
-          scale={[3, 3, 4]}
-          rotation={[Math.PI / 2, 0, 0]} // Rotate the model upright
-        />
-      ))}
+      {verticalAxisWindTurbines.map(({ x, z }, index) => {
+        const turbine = scene.clone();
+        const mixer = new THREE.AnimationMixer(turbine);
+        animations.forEach((clip) => {
+          const action = mixer.clipAction(clip);
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        });
+        mixers.current[index] = mixer;
 
+        return (
+          <primitive
+            key={`${x}-${z}-${index}`}
+            object={turbine}
+            position={[x, 8, z]}
+            scale={[0.6,0.7,0.7]}
+          />
+        );
+      })}
     </>
   );
 };
