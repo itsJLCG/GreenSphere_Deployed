@@ -224,94 +224,94 @@ const TechnoEconomicAnalysis = ({
 
   const saveData = async () => {
     try {
-        // Fetch logged-in user ID from the backend
-        const userResponse = await fetch("http://localhost:3001/user", {
-            method: "GET",
-            credentials: "include", // Required to send cookies/session data
-        });
+      // Fetch logged-in user ID from the backend
+      const userResponse = await fetch("http://localhost:3001/user", {
+        method: "GET",
+        credentials: "include", // Required to send cookies/session data
+      });
 
-        if (!userResponse.ok) {
-            throw new Error("Failed to fetch logged-in user.");
-        }
+      if (!userResponse.ok) {
+        throw new Error("Failed to fetch logged-in user.");
+      }
 
-        const userData = await userResponse.json();
-        const user_id = userData.id; // Extract user ID
+      const userData = await userResponse.json();
+      const user_id = userData.id; // Extract user ID
 
-        console.log("✅ Logged-in User ID:", user_id);
+      console.log("✅ Logged-in User ID:", user_id);
 
-        console.log("🛠 Debug: Total Product Cost:", totalProductCost);
-        console.log("🛠 Debug: Total Installation Cost:", totalInstallationCost);
-        console.log("🛠 Debug: Total Maintenance Cost:", totalMaintenanceCost);
-        console.log("🛠 Debug: Carbon Payback Period:", carbonPaybackPeriod);
-        console.log("🛠 Debug: Total Carbon Emissions:", totalCarbonEmissions);
-        console.log("🛠 Debug: Energy Usage Data:", energyUsageByType);
+      console.log("🛠 Debug: Total Product Cost:", totalProductCost);
+      console.log("🛠 Debug: Total Installation Cost:", totalInstallationCost);
+      console.log("🛠 Debug: Total Maintenance Cost:", totalMaintenanceCost);
+      console.log("🛠 Debug: Carbon Payback Period:", carbonPaybackPeriod);
+      console.log("🛠 Debug: Total Carbon Emissions:", totalCarbonEmissions);
+      console.log("🛠 Debug: Energy Usage Data:", energyUsageByType);
 
-        // Prepare data
-        const costAnalysisData = {
-            user_id,
-            TotalProductCost: parseFloat(totalProductCost),
-            TotalInstallationCost: parseFloat(totalInstallationCost),
-            TotalMaintenanceCost: parseFloat(totalMaintenanceCost),
-        };
+      // Prepare data
+      const costAnalysisData = {
+        user_id,
+        TotalProductCost: parseFloat(totalProductCost),
+        TotalInstallationCost: parseFloat(totalInstallationCost),
+        TotalMaintenanceCost: parseFloat(totalMaintenanceCost),
+      };
 
-        const carbonAnalysisData = {
-            user_id,
-            CarbonPaybackPeriod: parseFloat(carbonPaybackPeriod),
-            TotalCarbonEmission: parseFloat(totalCarbonEmissions),
-        };
+      const carbonAnalysisData = {
+        user_id,
+        CarbonPaybackPeriod: parseFloat(carbonPaybackPeriod),
+        TotalCarbonEmission: parseFloat(totalCarbonEmissions),
+      };
 
-        // Filter out zero-emission energy sources
-        const energyUsageData = Object.entries(energyUsageByType)
-            .filter(([type, emissions]) => emissions > 0)
-            .map(([type, emissions]) => ({
-                user_id,
-                Type: type,
-                Emissions: parseFloat(emissions),
-            }));
+      // Filter out zero-emission energy sources
+      const energyUsageData = Object.entries(energyUsageByType)
+        .filter(([type, emissions]) => emissions > 0)
+        .map(([type, emissions]) => ({
+          user_id,
+          Type: type,
+          Emissions: parseFloat(emissions),
+        }));
 
-        console.log("📩 Sending Cost Analysis:", costAnalysisData);
-        console.log("📩 Sending Carbon Analysis:", carbonAnalysisData);
-        console.log("📩 Sending Filtered Energy Usage:", energyUsageData);
+      console.log("📩 Sending Cost Analysis:", costAnalysisData);
+      console.log("📩 Sending Carbon Analysis:", carbonAnalysisData);
+      console.log("📩 Sending Filtered Energy Usage:", energyUsageData);
 
-        // Send requests
-        const costResponse = await fetch("http://localhost:3001/api/cost-analysis", {
+      // Send requests
+      const costResponse = await fetch("http://localhost:3001/api/cost-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(costAnalysisData),
+      });
+
+      const carbonResponse = await fetch("http://localhost:3001/api/carbon-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(carbonAnalysisData),
+      });
+
+      const costData = await costResponse.json();  // ✅ Read once
+      const carbonData = await carbonResponse.json();  // ✅ Read once
+
+      console.log("✅ Cost Analysis Response:", costData);
+      console.log("✅ Carbon Analysis Response:", carbonData);
+
+      // Send energy usage requests in parallel
+      const energyUsageResponses = await Promise.all(
+        energyUsageData.map((entry) =>
+          fetch("http://localhost:3001/api/energy-usage", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(costAnalysisData),
-        });
+            body: JSON.stringify(entry),
+          }).then((res) => res.json()) // Read response once
+        )
+      );
 
-        const carbonResponse = await fetch("http://localhost:3001/api/carbon-analysis", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(carbonAnalysisData),
-        });
+      console.log("✅ Energy Usage Responses:", energyUsageResponses);
 
-        const costData = await costResponse.json();  // ✅ Read once
-        const carbonData = await carbonResponse.json();  // ✅ Read once
-
-        console.log("✅ Cost Analysis Response:", costData);
-        console.log("✅ Carbon Analysis Response:", carbonData);
-
-        // Send energy usage requests in parallel
-        const energyUsageResponses = await Promise.all(
-            energyUsageData.map((entry) =>
-                fetch("http://localhost:3001/api/energy-usage", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(entry),
-                }).then((res) => res.json()) // Read response once
-            )
-        );
-
-        console.log("✅ Energy Usage Responses:", energyUsageResponses);
-
-        alert("✅ Data saved successfully!");
+      alert("✅ Data saved successfully!");
 
     } catch (error) {
-        console.error("❌ Error saving data:", error);
-        alert("Failed to save data.");
+      console.error("❌ Error saving data:", error);
+      alert("Failed to save data.");
     }
-};
+  };
 
 
   return (
@@ -380,7 +380,10 @@ const TechnoEconomicAnalysis = ({
 
               {/* Cost vs. Benefit Analysis */}
               <Box sx={{ mt: 3, p: 3, backgroundColor: "#334155", borderRadius: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}
+                >
                   Cost vs. Benefit Analysis
                 </Typography>
                 <Typography variant="body1" sx={{ mt: 2 }}>
@@ -402,13 +405,18 @@ const TechnoEconomicAnalysis = ({
                           <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>{key}</td>
                           <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>₱{cost.totalCost}</td>
                           <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>₱{cost.annualSavings.toFixed(2)}</td>
-                          <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>{cost.paybackPeriod.toFixed(2)} years</td>
+                          <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>
+                            {isNaN(cost.paybackPeriod) || cost.paybackPeriod === null
+                              ? "0 year"
+                              : `${cost.paybackPeriod.toFixed(2)} years`}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </Box>
               </Box>
+
 
               {/* Bar Chart for Cost vs. Savings */}
               <Box sx={{ mt: 5, p: 3, backgroundColor: "#334155", borderRadius: 2 }}>
@@ -537,11 +545,18 @@ const TechnoEconomicAnalysis = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => exportToPDF(costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef)}
+                onClick={() => {
+                  if (!data || Object.keys(data).length === 0) {
+                    console.error("No data available for PDF export!");
+                  } else {
+                    exportToPDF(costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef, data);
+                  }
+                }}
                 sx={{ mr: 2 }} // Adds right margin
               >
                 Export to PDF
               </Button>
+
 
               <Button variant="contained" color="primary" onClick={saveData}>
                 Save Data

@@ -34,9 +34,102 @@ const addHeader = (doc) => {
   return 60; // Adjust Y offset to ensure spacing
 };
 
+const generateRecommendations = (data) => {
+  const recommendations = [];
 
-const addFooter = (doc, yOffset) => {
-  if (yOffset + 50 > 280) { // Adjust page break condition
+  if (!data || Object.keys(data).length === 0) {
+    return ["No data available to generate recommendations."];
+  }
+
+  // Extract data for analysis
+  const totalCosts = Object.values(data).reduce((sum, item) => sum + (item.totalCost || 0), 0);
+  const totalCarbonEmissions = Object.values(data).reduce((sum, item) => sum + (item.totalCarbonEmissions || 0), 0);
+  const paybackPeriods = Object.entries(data)
+    .map(([key, value]) => ({
+      source: key,
+      paybackPeriod: value.paybackPeriod || Infinity, // Default to large number if missing
+    }))
+    .filter((item) => !isNaN(item.paybackPeriod));
+
+  // Find the source with the lowest payback period
+  const bestPaybackSource = paybackPeriods.length
+    ? paybackPeriods.reduce((prev, curr) =>
+        prev.paybackPeriod < curr.paybackPeriod ? prev : curr
+      )
+    : null;
+
+  // 🔹 Best payback period
+  if (bestPaybackSource && bestPaybackSource.paybackPeriod > 0) {
+    recommendations.push(
+      `• Based on the Cost vs. Benefit Analysis, ${bestPaybackSource.source} offers the best payback period of ${bestPaybackSource.paybackPeriod.toFixed(2)} years. Investing in this source could yield faster returns.`
+    );
+  }
+
+  // 🔹 High carbon emissions
+  if (totalCarbonEmissions > 80) {
+    recommendations.push(
+      "• The total carbon emissions are high. Consider integrating Solar Water Heating or Solar Panels to reduce emissions and improve sustainability."
+    );
+  }
+
+  // 🔹 High total costs
+  if (totalCosts > 4000) {
+    recommendations.push(
+      "• The total cost of your renewable energy setup is relatively high. Consider Pico Hydro Power or Small Wind Turbines, which are cost-effective for small-scale energy needs."
+    );
+  }
+
+  // 🔹 Urban area adaptation
+  const urbanSources = ["Solar Roof Tiles", "Vertical Farming"];
+  const hasUrbanSources = Object.keys(data).some((source) => urbanSources.includes(source));
+  if (!hasUrbanSources) {
+    recommendations.push(
+      "• If you are in an urban area with limited space, consider Solar Roof Tiles or Vertical Farming systems for maximum efficiency."
+    );
+  }
+
+  // 🔹 Hybrid systems for efficiency
+  if (Object.keys(data).length === 1) {
+    recommendations.push(
+      "• Combining multiple renewable sources (e.g., Solar Panels and Wind Turbines) can enhance efficiency and provide energy stability."
+    );
+  }
+
+  // 🔹 Regular maintenance
+  recommendations.push(
+    "• Regular maintenance can extend the lifespan of your energy system and improve cost-effectiveness."
+  );
+
+  // 🔹 Energy efficiency measures
+  recommendations.push(
+    "• Consider energy-efficient appliances and smart grid technology to further reduce energy consumption and enhance sustainability."
+  );
+
+  // 🔹 Government incentives
+  recommendations.push(
+    "• Check for government incentives or subsidies available for renewable energy investments to offset installation costs."
+  );
+
+  // 🔹 Battery storage systems (New)
+  if (totalCosts > 5000 && totalCarbonEmissions > 100) {
+    recommendations.push(
+      "• Since your system has high costs and emissions, consider adding battery storage solutions to maximize renewable energy usage and minimize reliance on fossil fuels."
+    );
+  }
+
+  // 🔹 Seasonal energy variations (New)
+  if (Object.keys(data).includes("Solar Panels")) {
+    recommendations.push(
+      "• If using solar energy, consider backup options like wind or hydro power to maintain energy production during cloudy or rainy seasons."
+    );
+  }
+
+  return recommendations;
+};
+
+
+const addFooter = (doc, yOffset, data) => {
+  if (yOffset + 50 > 280) {
     doc.addPage();
     yOffset = 10;
   }
@@ -45,30 +138,30 @@ const addFooter = (doc, yOffset) => {
   doc.setLineWidth(2);
   doc.setDrawColor(0, 128, 0);
   doc.line(10, yOffset, 200, yOffset);
-  yOffset += 10; // Add space after line
+  yOffset += 10;
 
   doc.setFont("times", "normal");
   doc.setFontSize(12);
 
-  // Define text width for justification
-  const textWidth = 180; // Keep within margins
+  const textWidth = 180;
 
-  // Mission Text
-  const missionText = "Mission: To empower individuals and organizations with an interactive and immersive platform for designing, simulating, and analyzing renewable energy solutions. GreenSphere aims to inspire sustainable innovation by providing an engaging and educational experience that promotes eco-conscious decision-making for a greener future.";
-  const missionLines = doc.splitTextToSize(missionText, textWidth);
-  missionLines.forEach((line, index) => {
-    doc.text(line, 10, yOffset + index * 7, { align: "justify" }); // Justify text
+  // Generate recommendations
+  const recommendations = generateRecommendations(data);
+
+  // Recommendations Title
+  doc.setFont("helvetica", "bold");
+  doc.text("Recommendations:", 10, yOffset);
+  yOffset += 10;
+
+  // Print each recommendation
+  doc.setFont("helvetica", "normal");
+  recommendations.forEach((line) => {
+    const splitText = doc.splitTextToSize(line, textWidth);
+    doc.text(splitText, 10, yOffset);
+    yOffset += splitText.length * 7;
   });
-  yOffset += missionLines.length * 7 + 5; // Adjust yOffset based on text height
 
-  // Vision Text
-  const visionText = "Vision: To be the leading simulation platform for renewable energy solutions, fostering a world where sustainability is seamlessly integrated into infrastructure and daily life. We envision a future where every user can explore, learn, and implement clean energy strategies, shaping a resilient and environmentally responsible society.";
-  const visionLines = doc.splitTextToSize(visionText, textWidth);
-  visionLines.forEach((line, index) => {
-    doc.text(line, 10, yOffset + index * 7, { align: "justify" }); // Justify text
-  });
-
-  return yOffset + visionLines.length * 7 + 10; // Return updated yOffset
+  return yOffset + 10;
 };
 
 
@@ -281,7 +374,7 @@ const exportCostBreakdown = async (doc, ref, yOffset) => {
   return yOffset;
 };
 
-const ExportToPDF = async (costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef) => {
+const ExportToPDF = async (costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef, data) => {
   const doc = new jsPDF();
   let yOffset = addHeader(doc);
 
@@ -292,8 +385,10 @@ const ExportToPDF = async (costBenefitRef, savingsRef, carbonRef, energyUsageRef
   yOffset = await exportCostBreakdown(doc, costBreakdownRef, yOffset);
   yOffset = await exportTotalCosts(doc, totalCostRef, yOffset);
 
-  addFooter(doc, yOffset);
+  addFooter(doc, yOffset, data);
   doc.save("Techno-Economic-Analysis.pdf");
+  console.log("Data in ExportToPDF:", data);
+
 };
 
 export default ExportToPDF;

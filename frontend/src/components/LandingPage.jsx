@@ -131,7 +131,7 @@ const LandingPage = () => {
       { path: "/assets/models/microHydropowerSystem.glb", name: "Micro Hydro Power System", scale: [1, 1, 1], position: [0, -2, 0], rotation: [0, -Math.PI / 2, 0] },
       { path: "/assets/models/picoHydroPower.glb", name: "Pico Hydro Power", scale: [0.2, 0.2, 0.2], position: [0, -0.1, 0] },
       { path: "/assets/models/solarwaterheater.glb", name: "Solar Water Heater", scale: [7, 7, 7], position: [0, -0.5, 0] },
-      { path: "/assets/models/verticalAxisWindTurbine.glb", name: "Vertical Axis Wind Turbine", scale: [1.7, 1.7, 1.7], position: [0, -0.5, 0], rotation: [Math.PI / 2, 0, 0] },
+      { path: "/assets/models/verticalAxisWindTurbineAnimated.glb", name: "Vertical Axis Wind Turbine", scale: [0.3,0.3,0.3], position: [0, 0.6, 0], rotation: [Math.PI / 2, 0, 0] },
       { path: "/assets/models/windTurbine.glb", name: "Wind Turbine", scale: [0.3, 0.3, 0.3], position: [0, -3, 0] },
       { path: "/assets/models/solarPanel.glb", name: "Solar Panel", scale: [1, 1, 1], position: [0, 0, 0] },
       { path: "/assets/models/solarRoofTiles.glb", name: "Solar Roof Tiles", scale: [0.01, 0.01, 0.01], position: [0, -1, 0] },
@@ -421,59 +421,59 @@ const LandingPage = () => {
 
 
 
-          {/* Modal */}
-          {modalOpen && (
-            <div className="modal-overlay">
-              <div className="modal-content">
-   
+        {/* Modal */}
+        {modalOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content">
 
 
-                {/* Button to Show Chart */}
-                <div style={{ textAlign: "center", marginTop: "20px" }}>
-                  <button
-                    onClick={() => setShowChart(!showChart)}
+
+              {/* Button to Show Chart */}
+              <div style={{ textAlign: "center", marginTop: "20px" }}>
+                <button
+                  onClick={() => setShowChart(!showChart)}
+                  style={{
+                    padding: "10px 20px",
+                    fontSize: "16px",
+                    background: "#3498db",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {showChart ? "Hide Feedback Analysis" : "Show Feedback Analysis"}
+                </button>
+
+                {/* Show Chart if Button is Clicked */}
+                {showChart && (
+                  <div
                     style={{
-                      padding: "10px 20px",
-                      fontSize: "16px",
-                      background: "#3498db",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      marginBottom: "10px",
+                      background: "white",
+                      padding: "20px",
+                      borderRadius: "10px",
+                      width: "400px",
+                      margin: "auto",
+                      boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
                     }}
                   >
-                    {showChart ? "Hide Feedback Analysis" : "Show Feedback Analysis"}
-                  </button>
-
-                  {/* Show Chart if Button is Clicked */}
-                  {showChart && (
-                    <div
-                      style={{
-                        background: "white",
-                        padding: "20px",
-                        borderRadius: "10px",
-                        width: "400px",
-                        margin: "auto",
-                        boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-                      }}
-                    >
-                      <h3 style={{ marginBottom: "10px", color: "#333" }}>
-                        User Ratings Analysis
-                      </h3>
-                      {loading ? (
-                        <p>Loading...</p>
-                      ) : error ? (
-                        <p style={{ color: "red" }}>{error}</p>
-                      ) : (
-                        <Bar data={chartData} options={{ responsive: true }} />
-                      )}
-                    </div>
-                  )}
-                </div>
+                    <h3 style={{ marginBottom: "10px", color: "#333" }}>
+                      User Ratings Analysis
+                    </h3>
+                    {loading ? (
+                      <p>Loading...</p>
+                    ) : error ? (
+                      <p style={{ color: "red" }}>{error}</p>
+                    ) : (
+                      <Bar data={chartData} options={{ responsive: true }} />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
-          )}
+          </div>
+        )}
 
         {/* Styles */}
         <style>

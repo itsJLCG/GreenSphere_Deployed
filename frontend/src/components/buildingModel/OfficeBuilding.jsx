@@ -1,7 +1,7 @@
 import { useTexture } from "@react-three/drei";
 import React, { useState, useMemo } from "react";
 import SolarPanel from "../renewableModel/SolarPanel";
-import { MicroHydroPowerSystemTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles, HeatPumpTiles, SolarWaterHeatingTiles } from "./Apartments";
+import { MicroHydroPowerSystemTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles, HeatPumpTiles, SolarWaterHeatingTiles, VerticalFarmingTiles } from "./Apartments";
 import { Html } from "@react-three/drei";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis";
 
@@ -55,7 +55,7 @@ const OfficeRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   );
 };
 
-const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
+const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem, showVerticalFarming }) => {
   const wallTexture = useTexture("../assets/images/officewall.jpg");
   const roofTexture = useTexture("../assets/images/officeroof.jpg");
   const [solarPanels, setSolarPanels] = useState([]);
@@ -64,6 +64,7 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [verticalFarming, setVerticalFarming] = useState([]);
 
   return (
     <group position={[0, 1.5, 0]}>
@@ -109,6 +110,11 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      <VerticalFarmingTiles
+        verticalFarming={verticalFarming}
+        setVerticalFarming={setVerticalFarming}
+        showVerticalFarming={showVerticalFarming}
+      />
       {/* For Analysis */}
       <Html>
         <TechnoEconomicAnalysis
@@ -118,6 +124,7 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
           smallWindTurbines={smallWindTurbines}
           verticalAxisWindTurbines={verticalAxisWindTurbines}
           microHydroPowerSystem={microHydroPowerSystem}
+          verticalFarming={verticalFarming}
         />
       </Html>
     </group>

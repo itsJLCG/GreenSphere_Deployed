@@ -548,6 +548,93 @@ export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump })
   );
 };
 
+export const VerticalFarmingTiles = ({ onSelect, verticalFarming, setVerticalFarming, showVerticalFarming }) => {
+  const gltf = useGLTF("../assets/models/verticalFarming.glb");
+
+  // Platform settings
+  const platformSize = 20;
+  const platformCenter = [0, -2.5, 0];
+
+  // Recommended Zone (Only the first row)
+  const recommendedZones = [
+    { center: [0, 1.75, 0], size: [5, 7.5, 6] }  // Central building (First row)
+  ];
+
+  // Grid settings
+  const gridSize = 10;
+  const cellSize = platformSize / gridSize;
+
+  // Check if position is inside the recommended area
+  const isValidPosition = (x, z) => {
+    return recommendedZones.some(({ center, size }) => {
+      const xMin = center[0] - size[0] / 2;
+      const xMax = center[0] + size[0] / 2;
+      const zMin = center[2] - size[2] / 2;
+      const zMax = center[2] + size[2] / 2;
+
+      return x >= xMin && x <= xMax && z >= zMin && z <= zMax;
+    });
+  };
+
+  // Handle grid cell click
+  const handleClick = (x, z) => {
+    if (!showVerticalFarming) return;
+
+    onSelect?.(x, z);
+
+    setVerticalFarming((prevTiles) => {
+      const exists = prevTiles.some(tile => tile.x === x && tile.z === z);
+      return exists
+        ? prevTiles.filter(tile => tile.x !== x || tile.z !== z)
+        : [...prevTiles, { x, z }];
+    });
+  };
+
+  return (
+    <>
+      {/* Clickable Grid (Only active when showVerticalFarming is true) */}
+      {showVerticalFarming &&
+        Array.from({ length: gridSize }).map((_, row) =>
+          Array.from({ length: gridSize }).map((_, col) => {
+            const x = (col - gridSize / 2) * cellSize + cellSize / 2;
+            const z = (row - gridSize / 2) * cellSize + cellSize / 2;
+
+            if (!isValidPosition(x, z)) return null; // Now allows placement **inside** the first row only
+
+            const isPlaced = verticalFarming.some(tile => tile.x === x && tile.z === z);
+
+            return (
+              <mesh
+                key={`${x}-${z}`}
+                position={[x, platformCenter[1] + 0.01, z]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                onClick={() => handleClick(x, z)}
+              >
+                <planeGeometry args={[cellSize, cellSize]} />
+                <meshStandardMaterial
+                  color={isPlaced ? "yellow" : "blue"} // Highlight placed tiles
+                  transparent
+                  opacity={0.5}
+                />
+              </mesh>
+            );
+          })
+        )}
+
+      {/* Always Render Placed VerticalFarming */}
+      {verticalFarming.map(({ x, z }, index) => (
+        <primitive
+          key={`${x}-${z}-${index}`}
+          object={gltf.scene.clone()}
+          position={[x, -2.5, -1]}
+          scale={[1.5,1.5,1.5]}
+        />
+      ))}
+    </>
+  );
+};
+
+
 const ApartmentRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   const gridWidth = 6; // 6 columns
   const gridHeight = 4; // 4 rows
@@ -598,7 +685,7 @@ const ApartmentRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   );
 };
 
-const ApartmentsBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
+const ApartmentsBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem, showVerticalFarming }) => {
   const wallTexture = useTexture("../assets/images/apartmentwall.avif");
   const roofTexture = useTexture("../assets/images/apartmentroof.webp");
   const [solarPanels, setSolarPanels] = useState([]);
@@ -607,6 +694,8 @@ const ApartmentsBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWate
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [verticalFarming, setVerticalFarming] = useState([]);
+
 
   return (
     <group position={[0, 1.5, 0]}>
@@ -652,6 +741,11 @@ const ApartmentsBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWate
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+      <VerticalFarmingTiles
+        verticalFarming={verticalFarming}
+        setVerticalFarming={setVerticalFarming}
+        showVerticalFarming={showVerticalFarming}
+      />
 
       {/* For Analysis */}
       <Html>
@@ -662,6 +756,7 @@ const ApartmentsBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWate
           smallWindTurbines={smallWindTurbines}
           verticalAxisWindTurbines={verticalAxisWindTurbines}
           microHydroPowerSystem={microHydroPowerSystem}
+          verticalFarming={verticalFarming}
         />
       </Html>
     </group>
