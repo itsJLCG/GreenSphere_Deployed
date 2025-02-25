@@ -100,6 +100,19 @@ const PRICES = {
     electricityCost: 0 // Not applicable
   }
 };
+const calculateTotalCost = (source, count) => {
+  const { productCost, installation, maintenance, carbonEmissions, energyProduction, electricityCost } = PRICES[source];
+  const annualSavings = energyProduction * electricityCost * count;
+  return {
+    totalProductCost: productCost * count,
+    totalInstallationCost: installation * count,
+    totalMaintenanceCost: maintenance * count,
+    totalCarbonEmissions: carbonEmissions * count,
+    totalCost: productCost * count + installation * count + maintenance * count,
+    annualSavings: annualSavings,
+    paybackPeriod: (productCost * count + installation * count + maintenance * count) / annualSavings
+  };
+};
 
 const TechnoEconomicAnalysis = ({
   solarPanels = [],
@@ -112,25 +125,14 @@ const TechnoEconomicAnalysis = ({
   picoHydroPower = [],
   verticalFarming = [],
 }) => {
+  console.log("Received solarPanels:", solarPanels);
+  console.log("Solar Panels Length:", solarPanels.length);
+  console.log("Calculated Solar Panels Data:", calculateTotalCost("solarPanels", solarPanels.length));
   const [open, setOpen] = useState(false);
   const pdfRef = useRef();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const calculateTotalCost = (source, count) => {
-    const { productCost, installation, maintenance, carbonEmissions, energyProduction, electricityCost } = PRICES[source];
-    const annualSavings = energyProduction * electricityCost * count;
-    return {
-      totalProductCost: productCost * count,
-      totalInstallationCost: installation * count,
-      totalMaintenanceCost: maintenance * count,
-      totalCarbonEmissions: carbonEmissions * count,
-      totalCost: productCost * count + installation * count + maintenance * count,
-      annualSavings: annualSavings,
-      paybackPeriod: (productCost * count + installation * count + maintenance * count) / annualSavings
-    };
-  };
 
   const data = {
     "Solar Panels": calculateTotalCost("solarPanels", solarPanels.length),
