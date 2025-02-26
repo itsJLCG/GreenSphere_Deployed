@@ -623,6 +623,13 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
   const [picoHydroPower, setPicoHydroPower] = useState([]);
 
+  // Check if any solar panels are added
+  const hasSolarPanels = solarPanels.length > 0;
+  const hasSolarWaterHeating = solarWaterHeating.length > 0;
+  const hasSmallWindTurbines = smallWindTurbines.length > 0;
+  const hasVerticalAxisWindTurbines = verticalAxisWindTurbines.length > 0;
+  const hasMicroHydroPowerSystem = microHydroPowerSystem.length > 0;
+
   return (
     <group position={[0, 0, 0]}>
       {/* Base */}
@@ -630,17 +637,41 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
         <boxGeometry args={[10, 4, 5]} />
         <meshStandardMaterial map={wallTexture} />
       </mesh>
+      {/* Outer Black Frame - Front, Back, Left, Right */}
+      <mesh position={[0, -4, 4.1]}>
+        <boxGeometry args={[12, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[0, -4, -4.1]}>
+        <boxGeometry args={[12, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[-6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[8, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[8, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+
+      {/* Inner Water Area (Filling the entire space) */}
+      <mesh position={[0, -4, 0]}>
+        <boxGeometry args={[12, 0.25, 8]} />
+        <meshStandardMaterial color={hasMicroHydroPowerSystem ? "blue" : "grey"} />
+      </mesh>
 
       {/* Lamp on the Wall */}
       <mesh position={[-4.5, 2.9, 2.40]}>
         <boxGeometry args={[0.5, 0.5, 0.5]} />
-        <meshStandardMaterial color={showSolarPanels ? "yellow" : "black"} />
+        <meshStandardMaterial color={hasSolarPanels || hasSolarWaterHeating || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
       </mesh>
 
       <mesh position={[4.5, 2.9, 2.40]}>
         <boxGeometry args={[0.5, 0.5, 0.5]} />
-        <meshStandardMaterial color={showSolarPanels ? "yellow" : "black"} />
+        <meshStandardMaterial color={hasSolarPanels || hasSolarWaterHeating || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
       </mesh>
+
 
       {/* Door */}
       <mesh position={[0, 1.5, 2.6]}>

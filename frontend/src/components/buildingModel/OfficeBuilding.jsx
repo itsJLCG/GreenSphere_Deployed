@@ -66,6 +66,14 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
   const [verticalFarming, setVerticalFarming] = useState([]);
 
+  const hasSolarPanels = solarPanels.length > 0;
+  const hasSolarWaterHeating = solarWaterHeating.length > 0;
+  const hasHeatPump = heatPump.length > 0;
+  const hasSmallWindTurbines = smallWindTurbines.length > 0;
+  const hasVerticalAxisWindTurbines = verticalAxisWindTurbines.length > 0;
+  const hasMicroHydroPowerSystem = microHydroPowerSystem.length > 0;
+
+
   return (
     <group position={[0, 1.5, 0]}>
       {/* Floors (Stacked boxes to form a tall office building) */}
@@ -75,6 +83,62 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
           <meshStandardMaterial map={wallTexture} />
         </mesh>
       ))}
+
+      {Array.from({ length: 8 }).map((_, i) => {
+        const height = i * (18 / 7); // Spread across height (-5 to 5)
+
+        return (
+          <React.Fragment key={i}>
+            {/* Front Light Strip */}
+            <mesh position={[0, height, 4.1]}>
+              <boxGeometry args={[12, 0.2, 0.2]} /> {/* Thin Light Strip */}
+              <meshStandardMaterial color={hasSolarPanels || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+            </mesh>
+
+            {/* Back Light Strip */}
+            <mesh position={[0, height, -4.1]}>
+              <boxGeometry args={[12, 0.2, 0.2]} />
+              <meshStandardMaterial color={hasSolarPanels || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+            </mesh>
+
+            {/* Left Light Strip */}
+            <mesh position={[-6.1, height, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <boxGeometry args={[8, 0.2, 0.2]} />
+              <meshStandardMaterial color={hasSolarPanels || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+            </mesh>
+
+            {/* Right Light Strip */}
+            <mesh position={[6.1, height, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <boxGeometry args={[8, 0.2, 0.2]} />
+              <meshStandardMaterial color={hasSolarPanels || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+            </mesh>
+          </React.Fragment>
+        );
+      })}
+
+      {/* Outer Black Frame - Front, Back, Left, Right */}
+      <mesh position={[0, -4, 4.1]}>
+        <boxGeometry args={[12, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[0, -4, -4.1]}>
+        <boxGeometry args={[12, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[-6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[8, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[8, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+
+      {/* Inner Water Area (Filling the entire space) */}
+      <mesh position={[0, -4, 0]}>
+        <boxGeometry args={[12, 0.25, 8]} />
+        <meshStandardMaterial color={hasMicroHydroPowerSystem ? "blue" : "grey"} />
+      </mesh>
 
       {/* Roof */}
       <mesh position={[0, 17.75, 0]}>

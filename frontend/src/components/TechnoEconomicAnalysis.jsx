@@ -319,20 +319,46 @@ const TechnoEconomicAnalysis = ({
   return (
     <>
       {!open && (
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#213547",
-            color: "white",
-            width: "300px",
-            "&:hover": { backgroundColor: "#1a2d40" },
-            top: -320,
-            right: -450,
-          }}
-          onClick={handleOpen}
-        >
-          Open Techno-Economic Analysis
-        </Button>
+  <Box
+  sx={{
+    position: "fixed",
+    bottom: "-300px", // Adjusts vertical positioning
+    left: "-750px", // Adjusts horizontal positioning
+    backgroundColor: "#213547", // Container background
+    padding: "10px", // Small padding around the button
+    borderRadius: "16px", // Soft rounded edges
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.3)", // Subtle shadow for depth
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  <Button
+    variant="contained"
+    sx={{
+      backgroundColor: "#FF5733", // Highlighted button color
+      color: "white",
+      width: "350px",
+      padding: "14px 26px",
+      fontSize: "14px",
+      fontWeight: "bold",
+      borderRadius: "12px",
+      boxShadow: "0px 6px 12px rgba(255, 87, 51, 0.4)", // Glowing effect
+      textTransform: "uppercase",
+      letterSpacing: "1px",
+      transition: "all 0.3s ease",
+      "&:hover": {
+        backgroundColor: "#E74C3C",
+        boxShadow: "0px 8px 16px rgba(231, 76, 60, 0.5)",
+        transform: "scale(1.05)", // Slight zoom effect on hover
+      },
+    }}
+    onClick={handleOpen}
+  >
+    Open Techno-Economic Analysis
+  </Button>
+</Box>
+
       )}
 
       <Modal

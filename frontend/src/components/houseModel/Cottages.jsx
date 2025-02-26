@@ -26,12 +26,73 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
 
+  // Check if any solar panels are added
+  const hasSolarPanels = solarPanels.length > 0;
+  const hasSolarRoofTiles = solarRoofTiles.length > 0;
+  const hasSolarWaterHeating = solarWaterHeating.length > 0;
+  const hasHeatPump = heatPump.length > 0;
+  const hasSmallWindTurbines = smallWindTurbines.length > 0;
+  const hasVerticalAxisWindTurbines = verticalAxisWindTurbines.length > 0;
+  const hasMicroHydroPowerSystem = microHydroPowerSystem.length > 0;
+
   return (
     <group position={[0, 0, 0]}>
       {/* Base */}
       <mesh position={[0, 2, 0]}>
         <boxGeometry args={[6, 6, 6]} />
         <meshStandardMaterial map={wallTexture} />
+      </mesh>
+
+      {/* Lamp on the Wall */}
+      <mesh position={[-2.5, 4.5, 2.91]}>
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshStandardMaterial color={hasSolarPanels || hasSolarRoofTiles || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+      </mesh>
+
+      <mesh position={[2.5, 4.5, 2.91]}>
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshStandardMaterial color={hasSolarPanels || hasSolarRoofTiles || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+      </mesh>
+
+      {/* Lampshade - Moved Up and Enlarged */}
+      <mesh position={[0, 2.75, 0]}>
+        <cylinderGeometry args={[1, 1.2, 1, 10]} />
+        <meshStandardMaterial color={hasSolarPanels || hasSolarRoofTiles || hasSolarWaterHeating || hasHeatPump || hasSmallWindTurbines || hasVerticalAxisWindTurbines ? "yellow" : "black"} />
+      </mesh>
+
+      {/* Enlarged Lamp Stand */}
+      <mesh position={[0, 1.2, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 4, 20]} />
+        <meshStandardMaterial color="silver" />
+      </mesh>
+
+      {/* Lamp Base */}
+      <mesh position={[0, -0.9, 0]}>
+        <cylinderGeometry args={[0.6, 0.6, 0.2, 32]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      {/* Outer Black Frame - Front, Back, Left, Right */}
+      <mesh position={[0, -4, 4.1]}>
+        <boxGeometry args={[12, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[0, -4, -4.1]}>
+        <boxGeometry args={[12, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[-6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[8, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+      <mesh position={[6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[8, 0.3, 0.3]} />
+        <meshStandardMaterial color="black" />
+      </mesh>
+
+      {/* Inner Water Area (Filling the entire space) */}
+      <mesh position={[0, -4, 0]}>
+        <boxGeometry args={[12, 0.25, 8]} />
+        <meshStandardMaterial color={hasMicroHydroPowerSystem ? "blue" : "grey"} />
       </mesh>
 
       {/* Door */}
