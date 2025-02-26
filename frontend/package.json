@@ -31,6 +31,7 @@
     "react-toastify": "^11.0.3",
     "recharts": "^2.15.1",
     "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.17.2",
     "three": "^0.172.0"
   },
   "devDependencies": {

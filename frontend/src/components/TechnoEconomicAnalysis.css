@@ -103,3 +103,7 @@
   background-color: #64748b;
   border-radius: 4px;
 }
+
+.swal2-container {
+  z-index: 99999 !important; /* Ensure SweetAlert is on top */
+}

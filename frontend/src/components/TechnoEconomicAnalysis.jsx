@@ -16,6 +16,7 @@ import html2canvas from "html2canvas";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, LineChart, Line } from "recharts"; // For bar chart
 import { PieChart, Pie, Cell } from "recharts"; // For pie chart
 import exportToPDF from "./ExportToPDF";
+import Swal from "sweetalert2";
 
 const PRICES = {
   solarPanels: {
@@ -307,7 +308,22 @@ const TechnoEconomicAnalysis = ({
 
       console.log("✅ Energy Usage Responses:", energyUsageResponses);
 
-      alert("✅ Data saved successfully!");
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Data saved successfully!",
+        customClass: {
+          container: 'swal2-container', // Add a custom class for the container
+          popup: 'swal2-popup', // Add a custom class for the popup
+        },
+        didOpen: () => {
+          // Manually set the z-index of the SweetAlert modal
+          const swalContainer = document.querySelector('.swal2-container');
+          if (swalContainer) {
+            swalContainer.style.zIndex = '99999'; // Set a higher z-index than your main modal
+          }
+        }
+      });
 
     } catch (error) {
       console.error("❌ Error saving data:", error);
