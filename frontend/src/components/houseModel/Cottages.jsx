@@ -1,6 +1,6 @@
 import { useTexture } from "@react-three/drei";
 import React, { useState, useMemo } from "react";
-import { Roofs, SolarWaterHeatingTiles, MicroHydroPowerSystemTiles, HeatPumpTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles } from "./SingleFamilyHouse.jsx";
+import { Roofs, SolarWaterHeatingTiles, MicroHydroPowerSystemTiles, HeatPumpTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles, GableRoofGrid, GableRoofGridTiles } from "./SingleFamilyHouse.jsx";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
 import { Html } from "@react-three/drei";
 
@@ -44,8 +44,20 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
       <WindowCottage position={[-2.5, 3, 3.01]} />
       <WindowCottage position={[2.5, 3, 3.01]} />
 
-      {/* Automatically applying the Gable roof with custom texture */}
+      {/* Gable Roof */}
       <Roofs.Gable texturePath="../assets/images/cottageroof.jpg" />
+
+      {/* Gable Roof Grid for Solar Panels */}
+      <GableRoofGrid
+        solarPanels={solarPanels}
+        setSolarPanels={setSolarPanels}
+        showSolarPanels={showSolarPanels}
+      />
+      <GableRoofGridTiles
+        solarRoofTiles={solarRoofTiles}
+        setSolarRoofTiles={setSolarRoofTiles}
+        showSolarRoofTiles={showSolarRoofTiles}
+      />
 
       <SolarWaterHeatingTiles
         solarWaterHeating={solarWaterHeating}
@@ -72,6 +84,7 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
       />
+
       {/* For Analysis */}
       <Html>
         <TechnoEconomicAnalysis
@@ -87,5 +100,6 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
     </group>
   );
 };
+
 
 export default CottagesHouse;

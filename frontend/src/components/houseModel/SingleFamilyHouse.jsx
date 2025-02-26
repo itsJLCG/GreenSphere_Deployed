@@ -602,21 +602,21 @@ const FlatRoofGridTiles = ({ onSelect, solarRoofTiles, setSolarRoofTiles, showSo
   );
 };
 
-const GableRoofGrid = ({ solarPanels, setSolarPanels, showSolarPanels }) => {
+export const GableRoofGrid = ({ solarPanels = [], setSolarPanels, showSolarPanels }) => {
   const cellSize = 2;
-    const positions = [
-      [0, 7, 1.9],   // Front panel
-      [0, 7, -1.9],  // Back panel
-      [-1.8, 7, 0],  // Left panel
-      [1.8, 7, 0]    // Right panel
-    ];
-  
-    const rotations = [
-      [-Math.PI / 4, 0, 0],    // Front (flat against roof face)
-      [Math.PI / 4, Math.PI, 0], // Back (flat against roof face)
-      [Math.PI / 2, -2.3, 0], // Left (flat against side of the roof)
-      [Math.PI / 2, 2.3, 0]  // Right (flat against side of the roof)
-    ];
+  const positions = [
+    [0, 7, 1.9],   // Front panel
+    [0, 7, -1.9],  // Back panel
+    [-1.8, 7, 0],  // Left panel
+    [1.8, 7, 0]    // Right panel
+  ];
+
+  const rotations = [
+    [-Math.PI / 4, 0, 0],    // Front (flat against roof face)
+    [Math.PI / 4, Math.PI, 0], // Back (flat against roof face)
+    [Math.PI / 2, -2.3, 0], // Left (flat against side of the roof)
+    [Math.PI / 2, 2.3, 0]  // Right (flat against side of the roof)
+  ];
 
   const handleClick = (index) => {
     if (solarPanels.includes(index)) {
@@ -650,6 +650,59 @@ const GableRoofGrid = ({ solarPanels, setSolarPanels, showSolarPanels }) => {
       {/* Render Solar Panels */}
       {solarPanels.map((index) => (
         <SolarPanel key={index} position={positions[index]} rotation={rotations[index]} />
+      ))}
+    </group>
+  );
+};
+
+export const GableRoofGridTiles = ({ solarRoofTiles = [], setSolarRoofTiles, showSolarRoofTiles }) => {
+  const cellSize = 2;
+  const positions = [
+    [0, 7, 1.9],   // Front panel
+    [0, 7, -1.9],  // Back panel
+    [-1.8, 7, 0],  // Left panel
+    [1.8, 7, 0]    // Right panel
+  ];
+
+  const rotations = [
+    [-Math.PI / 4, 0, 0],    // Front (flat against roof face)
+    [Math.PI / 4, Math.PI, 0], // Back (flat against roof face)
+    [Math.PI / 2, -2.3, 0], // Left (flat against side of the roof)
+    [Math.PI / 2, 2.3, 0]  // Right (flat against side of the roof)
+  ];
+
+  const handleClick = (index) => {
+    if (solarRoofTiles.includes(index)) {
+      setSolarRoofTiles(solarRoofTiles.filter(i => i !== index));
+    } else {
+      setSolarRoofTiles([...solarRoofTiles, index]);
+    }
+    console.log("Updated Solar RoofTiles:", solarRoofTiles);
+  };
+
+  return (
+    <group>
+      {showSolarRoofTiles && positions.map((pos, index) => {
+        const isSelected = solarRoofTiles.includes(index);
+        return (
+          <mesh
+            key={index}
+            position={pos}
+            rotation={rotations[index]}
+            onClick={() => handleClick(index)}
+          >
+            <planeGeometry args={[cellSize, cellSize]} />
+            <meshStandardMaterial
+              color={isSelected ? "yellow" : "green"}
+              transparent={true}
+              opacity={isSelected ? 0 : 0.5}
+            />
+          </mesh>
+        );
+      })}
+      {/* Render Solar RoofTiles */}
+      {solarRoofTiles.map((index) => (
+        <SolarRoofTiles key={index} position={positions[index]} rotation={rotations[index]} />
       ))}
     </group>
   );
@@ -818,14 +871,19 @@ export const Roofs = {
     const roofTexture = useTexture(texturePath);
     return (
       <group>
-      <mesh position={[0, 7, 0]} rotation={[0, Math.PI / 4, 0]}>
-        <coneGeometry args={[5, 4, 4]} />
-        <meshStandardMaterial map={roofTexture} />
-      </mesh>
-      <GableRoofGrid
+        <mesh position={[0, 7, 0]} rotation={[0, Math.PI / 4, 0]}>
+          <coneGeometry args={[5, 4, 4]} />
+          <meshStandardMaterial map={roofTexture} />
+        </mesh>
+        <GableRoofGrid
           solarPanels={solarPanels}
           setSolarPanels={setSolarPanels}
           showSolarPanels={showSolarPanels}
+        />
+        <GableRoofGridTiles
+          solarRoofTiles={solarRoofTiles}
+          setSolarRoofTiles={setSolarRoofTiles}
+          showSolarRoofTiles={showSolarRoofTiles}
         />
       </group>
     );

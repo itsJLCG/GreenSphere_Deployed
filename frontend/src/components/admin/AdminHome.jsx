@@ -1,13 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Avatar, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, Badge } from '@mui/material';
+import { Box, Typography, Paper, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Avatar, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, Badge, Tooltip } from '@mui/material';
 import axios from 'axios';
 import Rating from '@mui/material/Rating'; // Import Rating from MUI
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts'; // Import PieChart components
-import { Menu as MenuIcon, Dashboard as DashboardIcon, Person as PersonIcon, Feedback as FeedbackIcon, EmojiEvents as RatingIcon, SolarPower as SolarPanel, AttachMoney as CostIcon, Co2 as CarbonIcon, Notifications as NotificationsIcon, Settings as SettingsIcon, ExitToApp as LogoutIcon, Warning as AlarmSmoke, MonetizationOn as HandCoins, WindPower, Water, LocalFlorist } from '@mui/icons-material';
+import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts'; // Import PieChart components
+import { Menu as MenuIcon, Dashboard as DashboardIcon, Person as PersonIcon, Feedback as FeedbackIcon, EmojiEvents as RatingIcon, SolarPower as SolarPanel, AttachMoney as CostIcon, Co2 as CarbonIcon, Notifications as NotificationsIcon, Settings as SettingsIcon, ExitToApp as LogoutIcon, Warning as AlarmSmoke, MonetizationOn as HandCoins, WindPower, Water, LocalFlorist, Search } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { Divider } from '@mui/material';
 import Logout from '../Logout'; // Import the Logout component
 import greensphereLogo from '../../assets/images/greenspherelogo.png'; // Import the logo
+import {  
+  Doughnut 
+} from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip as ChartTooltip,
+  Legend as ChartLegend,
+  Filler
+} from 'chart.js';
+import { Bar as ChartBar, Line as ChartLine, Pie as ChartPie, Doughnut as ChartDoughnut } from 'react-chartjs-2';
+import { 
+  SpaceDashboard, 
+  Groups, 
+  StarRate, 
+  Comment, 
+  EnergySavingsLeaf, 
+  PriceCheck, 
+  Co2,
+  Logout as LogoutIconNew
+} from '@mui/icons-material';
+
+// Register Chart.js components properly
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  ChartTooltip,
+  ChartLegend,
+  Filler
+);
 
 const drawerWidth = 240;
 
@@ -226,13 +267,13 @@ const AdminHome = () => {
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, section: 'dashboard' },
-    { text: 'Users', icon: <PersonIcon />, section: 'users' },
-    { text: 'Feedback Ratings', icon: <RatingIcon />, section: 'feedbackRatings' },
-    { text: 'Feedbacks', icon: <FeedbackIcon />, section: 'feedbacks' },
-    { text: 'Top Renewable Sources', icon: <SolarPanel />, section: 'renewableSources' },
-    { text: 'Cost Analysis', icon: <CostIcon />, section: 'costAnalysis' },
-    { text: 'Carbon Payback Analysis', icon: <CarbonIcon />, section: 'carbonPayback' },
+    { text: 'Dashboard', icon: <SpaceDashboard sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'dashboard' },
+    { text: 'Users', icon: <Groups sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'users' },
+    { text: 'Feedback Ratings', icon: <StarRate sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'feedbackRatings' },
+    { text: 'Feedbacks', icon: <Comment sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'feedbacks' },
+    { text: 'Top Renewable Sources', icon: <EnergySavingsLeaf sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'renewableSources' },
+    { text: 'Cost Analysis', icon: <PriceCheck sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'costAnalysis' },
+    { text: 'Carbon Payback Analysis', icon: <Co2 sx={{ color: '#7b8b57', fontSize: 24, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.1)' } }} />, section: 'carbonPayback' },
   ];
 
   const drawer = (
@@ -256,16 +297,38 @@ const AdminHome = () => {
             key={item.text}
             onClick={() => setActiveSection(item.section)}
             sx={{
-              backgroundColor: activeSection === item.section ? '#7b8b57' : 'transparent', // Active state color
+              backgroundColor: activeSection === item.section ? '#515c3a' : 'transparent',
               '&:hover': {
-                backgroundColor: '#7b8b57', // Hover color
-                cursor: 'pointer', // Change cursor to pointer on hover
+                backgroundColor: '#515c3a',
+                cursor: 'pointer',
               },
-              color: '#EAEAEA'
+              color: '#EAEAEA',
+              transition: 'all 0.3s ease',
+              borderRadius: '0 20px 20px 0',
+              marginRight: '10px',
+              marginBottom: '4px',
+              padding: '10px 16px',
             }}
           >
-            <ListItemIcon sx={{ color: '#EAEAEA' }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} sx={{ color: '#EAEAEA' }} />
+            <ListItemIcon 
+              sx={{ 
+                color: activeSection === item.section ? '#FFFFFF' : 'inherit',
+                minWidth: '40px',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText 
+              primary={item.text} 
+              sx={{ 
+                color: '#EAEAEA',
+                '& .MuiTypography-root': {
+                  fontWeight: activeSection === item.section ? 'bold' : 'normal',
+                }
+              }} 
+            />
           </ListItem>
         ))}
       </List>
@@ -276,31 +339,325 @@ const AdminHome = () => {
     </Box>
   );
 
+  // Enhanced Dashboard Graphs
+
+  // UserGraph Component
+  const UserGraph = ({ users }) => {
+    const adminCount = users.filter(user => user.role === 'admin').length;
+    const userCount = users.filter(user => user.role === 'user').length;
+    
+    const data = {
+      labels: ['Admin', 'User'],
+      datasets: [
+        {
+          label: 'User Count',
+          data: [adminCount, userCount],
+          backgroundColor: ['#8884d8', '#82ca9d'],
+          borderColor: ['#8884d8', '#82ca9d'],
+          borderWidth: 1,
+        },
+      ],
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          titleColor: '#333',
+          bodyColor: '#666',
+          borderColor: '#ddd',
+          borderWidth: 1,
+          cornerRadius: 8,
+          boxPadding: 6,
+          displayColors: true,
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    };
+    
+    return (
+      <div style={{ height: 250 }}>
+        <ChartBar data={data} options={options} />
+      </div>
+    );
+  };
+
+  // FeedbackGraph Component
+  const FeedbackGraph = ({ feedbacks }) => {
+    // Group feedbacks by month
+    const monthlyFeedbacks = {};
+    feedbacks.forEach(feedback => {
+      const month = new Date(feedback.createdAt).toLocaleString('default', { month: 'short' });
+      monthlyFeedbacks[month] = (monthlyFeedbacks[month] || 0) + 1;
+    });
+    
+    const data = {
+      labels: Object.keys(monthlyFeedbacks),
+      datasets: [
+        {
+          label: 'Feedback Count',
+          data: Object.values(monthlyFeedbacks),
+          backgroundColor: '#ff6384',
+          borderColor: '#ff6384',
+          borderWidth: 1,
+        },
+      ],
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          titleColor: '#333',
+          bodyColor: '#666',
+          borderColor: '#ddd',
+          borderWidth: 1,
+          cornerRadius: 8,
+          boxPadding: 6,
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    };
+    
+    return (
+      <div style={{ height: 250 }}>
+        <ChartBar data={data} options={options} />
+      </div>
+    );
+  };
+
+  // Replace the RatingGraph component with this new RecentFeedbackGraph component
+  const RecentFeedbackGraph = ({ feedbacks }) => {
+    // Get the 10 most recent feedbacks
+    const recentFeedbacks = [...feedbacks]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 10)
+      .reverse(); // Reverse to show chronological order
+    
+    const data = {
+      labels: recentFeedbacks.map(feedback => {
+        const date = new Date(feedback.createdAt);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }),
+      datasets: [
+        {
+          label: 'Recent Ratings',
+          data: recentFeedbacks.map(feedback => feedback.rating),
+          backgroundColor: '#4caf50',
+          borderColor: '#4caf50',
+          borderWidth: 2,
+          pointBackgroundColor: recentFeedbacks.map(feedback => {
+            // Color points based on rating
+            if (feedback.rating <= 2) return '#ff5252'; // Red for low ratings
+            if (feedback.rating <= 3) return '#ffb74d'; // Orange for medium ratings
+            return '#66bb6a'; // Green for high ratings
+          }),
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          fill: false,
+          tension: 0.1
+        }
+      ],
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          titleColor: '#333',
+          bodyColor: '#666',
+          borderColor: '#ddd',
+          borderWidth: 1,
+          cornerRadius: 8,
+          boxPadding: 6,
+          callbacks: {
+            title: function(context) {
+              const index = context[0].dataIndex;
+              const feedback = recentFeedbacks[index];
+              const date = new Date(feedback.createdAt);
+              return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+            },
+            label: function(context) {
+              const index = context.dataIndex;
+              const feedback = recentFeedbacks[index];
+              return [
+                `Rating: ${feedback.rating} stars`,
+                `Comment: ${feedback.comment ? (feedback.comment.length > 30 ? feedback.comment.substring(0, 30) + '...' : feedback.comment) : 'No comment'}`
+              ];
+            }
+          }
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+      scales: {
+        y: {
+          min: 0,
+          max: 5,
+          ticks: {
+            stepSize: 1,
+            callback: function(value) {
+              return value + (value === 1 ? ' Star' : ' Stars');
+            }
+          },
+          grid: {
+            color: '#f0f0f0'
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      }
+    };
+    
+    return (
+      <div style={{ height: 250 }}>
+        <ChartLine data={data} options={options} />
+      </div>
+    );
+  };
+
+  // ActiveUserGraph Component
+  const ActiveUserGraph = ({ users }) => {
+    const activeUsers = users.filter(user => user.role === 'user').length;
+    const totalUsers = users.length;
+    const percentage = (activeUsers / totalUsers * 100).toFixed(1);
+    
+    const data = {
+      labels: ['Active Users', 'Total Users'],
+      datasets: [
+        {
+          label: 'User Count',
+          data: [activeUsers, totalUsers],
+          backgroundColor: ['#42a5f5', '#ff0072'],
+          borderColor: ['#42a5f5', '#ff0072'],
+          borderWidth: 1,
+        },
+      ],
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          titleColor: '#333',
+          bodyColor: '#666',
+          borderColor: '#ddd',
+          borderWidth: 1,
+          cornerRadius: 8,
+          boxPadding: 6,
+          callbacks: {
+            label: function(context) {
+              const value = context.raw;
+              const datasetLabel = context.dataset.label || '';
+              const label = context.label || '';
+              const calculatedPercentage = label === 'Active Users' ? percentage : '100';
+              return `${datasetLabel}: ${value} (${calculatedPercentage}%)`;
+            }
+          }
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    };
+    
+    return (
+      <div style={{ height: 250 }}>
+        <ChartBar data={data} options={options} />
+      </div>
+    );
+  };
+
+  // Enhanced Dashboard Overview Cards and Graphs
   const DashboardOverview = ({ users, feedbacks }) => (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={10} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-          <Typography color="textSecondary" gutterBottom>Total Users</Typography>
+        <Paper elevation={3} sx={{ 
+          padding: "2rem", 
+          borderRadius: "12px", 
+          backgroundColor: "#fff",
+          boxShadow: 3,
+          position: "relative"
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <PersonIcon sx={{ color: '#5c6bc0', mr: 1, fontSize: 28 }} />
+            <Typography color="textSecondary" gutterBottom>Total Users</Typography>
+          </Box>
           <Typography variant="h4">{users.length}</Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={10} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-          <Typography color="textSecondary" gutterBottom>Total Feedbacks</Typography>
+        <Paper elevation={3} sx={{ 
+          padding: "2rem", 
+          borderRadius: "12px", 
+          backgroundColor: "#fff",
+          boxShadow: 3,
+          position: "relative"
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <FeedbackIcon sx={{ color: '#66bb6a', mr: 1, fontSize: 28 }} />
+            <Typography color="textSecondary" gutterBottom>Total Feedbacks</Typography>
+          </Box>
           <Typography variant="h4">{feedbacks.length}</Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={10} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-          <Typography color="textSecondary" gutterBottom>Average Rating</Typography>
+        <Paper elevation={3} sx={{ 
+          padding: "2rem", 
+          borderRadius: "12px", 
+          backgroundColor: "#fff",
+          boxShadow: 3,
+          position: "relative"
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <RatingIcon sx={{ color: '#ffca28', mr: 1, fontSize: 28 }} />
+            <Typography color="textSecondary" gutterBottom>Average Rating</Typography>
+          </Box>
           <Typography variant="h4">
             {(feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / feedbacks.length || 0).toFixed(1)}
           </Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={10} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-          <Typography color="textSecondary" gutterBottom>Active Users</Typography>
+        <Paper elevation={3} sx={{ 
+          padding: "2rem", 
+          borderRadius: "12px", 
+          backgroundColor: "#fff",
+          boxShadow: 3,
+          position: "relative"
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <PersonIcon sx={{ color: '#42a5f5', mr: 1, fontSize: 28 }} />
+            <Typography color="textSecondary" gutterBottom>Active Users</Typography>
+          </Box>
           <Typography variant="h4">
             {users.filter(user => user.role === 'user').length}
           </Typography>
@@ -311,26 +668,50 @@ const AdminHome = () => {
       <Grid item xs={12}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={10} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-              <Typography variant="h6" gutterBottom>Total Users Graph</Typography>
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              position: "relative"
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "#333" }}>Total Users Graph</Typography>
               <UserGraph users={users} />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={10} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-              <Typography variant="h6" gutterBottom>Total Feedbacks Graph</Typography>
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              position: "relative"
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "#333" }}>Total Feedbacks Graph</Typography>
               <FeedbackGraph feedbacks={feedbacks} />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={10} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-              <Typography variant="h6" gutterBottom>Average Rating Graph</Typography>
-              <RatingGraph feedbacks={feedbacks} />
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              position: "relative"
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "#333" }}>Recent Feedback Trends</Typography>
+              <RecentFeedbackGraph feedbacks={feedbacks} />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={10} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-              <Typography variant="h6" gutterBottom>Active Users Graph</Typography>
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              position: "relative"
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "#333" }}>Active Users Graph</Typography>
               <ActiveUserGraph users={users} />
             </Paper>
           </Grid>
@@ -339,86 +720,6 @@ const AdminHome = () => {
     </Grid>
   );
 
-  // Graph Components
-  const UserGraph = ({ users }) => {
-    const data = [
-      { name: 'Total Users', value: users.length },
-      { name: 'Active Users', value: users.filter(user => user.role === 'user').length },
-    ];
-
-    return (
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-    );
-  };
-
-  const FeedbackGraph = ({ feedbacks }) => {
-    const data = [
-      { name: 'Total Feedbacks', value: feedbacks.length },
-      { name: 'Average Rating', value: (feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / feedbacks.length || 0).toFixed(1) },
-    ];
-
-    return (
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value" fill="#82ca9d" />
-        </BarChart>
-      </ResponsiveContainer>
-    );
-  };
-
-  const RatingGraph = ({ feedbacks }) => {
-    const data = [
-      { name: 'Average Rating', value: (feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / feedbacks.length || 0).toFixed(1) },
-    ];
-
-    return (
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value" fill="#ffc658" />
-        </BarChart>
-      </ResponsiveContainer>
-    );
-  };
-
-  const ActiveUserGraph = ({ users }) => {
-    const data = [
-      { name: 'Active Users', value: users.filter(user => user.role === 'user').length },
-    ];
-
-    return (
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value" fill="#ff7300" />
-        </BarChart>
-      </ResponsiveContainer>
-    );
-  };
-
-
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar
@@ -426,22 +727,85 @@ const AdminHome = () => {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: '#10042c'
+          backgroundColor: '#10042c',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Welcome, {adminName || 'Admin'}!
-          </Typography>
+        <Toolbar sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          minHeight: '90px', // Increased from 70px to 90px for more height
+          py: 2, // Add vertical padding
+          px: { xs: 2, sm: 3 } // Horizontal padding
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography 
+                variant="h5" // Increased from h6 to h5
+                noWrap 
+                component="div"
+                sx={{ 
+                  fontWeight: 700, // Increased from 600 to 700
+                  fontSize: '1.4rem', // Increased from 1.2rem
+                  letterSpacing: '0.5px',
+                  mb: 0.5 // Add margin bottom for spacing
+                }}
+              >
+                Welcome, {adminName || 'Admin'}!
+              </Typography>
+              <Typography 
+                variant="subtitle1" // Increased from subtitle2
+                sx={{ 
+                  opacity: 0.8,
+                  display: { xs: 'none', sm: 'block' },
+                  fontSize: '0.95rem' // Slightly larger font
+                }}
+              >
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </Typography>
+            </Box>
+          </Box>
+          
+          {/* Right side - avatar with improved styling */}
+          <Box>
+            <Tooltip title="Account">
+              <IconButton 
+                edge="end" 
+                color="inherit"
+                aria-label="account of current user"
+                aria-haspopup="true"
+                sx={{
+                  padding: '10px', // Increased from 8px
+                  border: '2px solid rgba(123, 139, 87, 0.5)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(123, 139, 87, 0.2)',
+                    borderColor: '#7b8b57'
+                  }
+                }}
+              >
+                <Avatar sx={{ 
+                  width: 45, // Increased from 38
+                  height: 45, // Increased from 38
+                  bgcolor: '#7b8b57',
+                  fontWeight: 'bold',
+                  fontSize: '1.4rem' // Increased from 1.2rem
+                }}>
+                  {adminName ? adminName[0] : 'A'}
+                </Avatar>
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -481,19 +845,34 @@ const AdminHome = () => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: 8,
+          mt: 11, // Increased from 8 to accommodate taller AppBar
           backgroundColor: '#f5f5f5',
           minHeight: '100vh'
         }}
       >
         {activeSection === 'dashboard' && <DashboardOverview users={users} feedbacks={feedbacks} />}
         {activeSection === 'users' && (
-          <Box sx={{ marginBottom: "2rem", marginTop: "2rem", maxHeight: "500px", overflow: "auto" }}>
-            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff", height: "100%" }}>
+          <Box sx={{ marginBottom: "2rem", marginTop: "2rem" }}>
+            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
               <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                 Users:
               </Typography>
-              <TableContainer component={Paper} sx={{ maxHeight: "400px", overflow: "auto", marginBottom: "2rem" }}>
+              <TableContainer sx={{ 
+                maxHeight: "500px", 
+                overflow: "auto", 
+                borderRadius: "8px",
+                boxShadow: 2,
+                '& .MuiTableCell-head': {
+                  backgroundColor: '#f5f5f5',
+                  fontWeight: 'bold',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1
+                },
+                '& .MuiTableRow-root:hover': {
+                  backgroundColor: '#f9f9f9'
+                }
+              }}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
@@ -526,76 +905,196 @@ const AdminHome = () => {
               </TableContainer>
             </Paper>
           </Box>
-
         )}
 
         {activeSection === 'feedbackRatings' && (
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
+            <Grid item xs={12} md={12}>
+              <Paper elevation={3} sx={{ 
+                padding: "2rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff",
+                boxShadow: 3,
+                position: "relative"
+              }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                   Feedback Ratings Distribution:
                 </Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={feedbackChartData}
-                      dataKey="value"
-                      nameKey="rating"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      fill="#8884d8"
-                      label
-                    >
-                      {feedbackChartData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={
-                            entry.rating === "1 Star" ? "#ff4d4d" : // Red for 1 Star
-                              entry.rating === "2 Star" ? "#ffcc00" : // Yellow for 2 Star
-                                entry.rating === "3 Star" ? "#ffb84d" : // Orange for 3 Star
-                                  entry.rating === "4 Star" ? "#33cc33" : // Green for 4 Star
-                                    "#3399ff" // Blue for 5 Star (default if no other match)
+                <Box sx={{ 
+                  position: "relative",
+                  zIndex: 2,
+                  height: 350 
+                }}>
+                  <ChartDoughnut 
+                    data={{
+                      labels: feedbackChartData.map(item => item.rating),
+                      datasets: [
+                        {
+                          data: feedbackChartData.map(item => item.value),
+                          backgroundColor: [
+                            "#ff5252", // Red for 1 Star
+                            "#ffb74d", // Orange for 2 Star
+                            "#ffeb3b", // Yellow for 3 Star
+                            "#66bb6a", // Green for 4 Star
+                            "#42a5f5"  // Blue for 5 Star
+                          ],
+                          borderColor: "#ffffff",
+                          borderWidth: 2,
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      cutout: '60%',
+                      plugins: {
+                        tooltip: {
+                          enabled: true,
+                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          titleColor: '#333',
+                          bodyColor: '#666',
+                          borderColor: '#ddd',
+                          borderWidth: 1,
+                          cornerRadius: 8,
+                          boxPadding: 6,
+                          callbacks: {
+                            label: function(context) {
+                              const value = context.raw;
+                              const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                              const percentage = ((value / total) * 100).toFixed(0);
+                              return `${context.label}: ${value} feedbacks (${percentage}%)`;
+                            }
                           }
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend align="center" verticalAlign="top" layout="horizontal" />
-                  </PieChart>
-                </ResponsiveContainer>
+                        },
+                        legend: {
+                          position: 'bottom',
+                          labels: {
+                            padding: 20,
+                            font: {
+                              size: 12
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </Box>
               </Paper>
             </Grid>
 
-            {/* Feedback Sentiment Bar Chart Section */}
-            <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
+            {/* Enhanced Feedback Sentiment Bar Chart Section */}
+            <Grid item xs={12} md={12}>
+              <Paper elevation={3} sx={{ 
+                padding: "2rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff",
+                marginTop: "2rem",
+                boxShadow: 3,
+                position: "relative"
+              }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                   Feedback Sentiment Distribution:
                 </Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={sentimentData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="sentiment" />
-                    <YAxis />
-                    <Bar dataKey="value" fill="#8884d8" />
-                    <Tooltip />
-                  </BarChart>
-                </ResponsiveContainer>
+                <Box sx={{ 
+                  position: "relative",
+                  zIndex: 2,
+                  height: 350 
+                }}>
+                  <ChartBar
+                    data={{
+                      labels: sentimentData.map(item => item.sentiment),
+                      datasets: [
+                        {
+                          label: 'Sentiment Count',
+                          data: sentimentData.map(item => item.value),
+                          backgroundColor: [
+                            "#ef5350", // Negative
+                            "#ff9800", // Slightly Negative
+                            "#ffee58", // Neutral
+                            "#81c784", // Slightly Positive
+                            "#4fc3f7"  // Positive
+                          ],
+                          borderColor: [
+                            "#ef5350",
+                            "#ff9800",
+                            "#ffee58",
+                            "#81c784",
+                            "#4fc3f7"
+                          ],
+                          borderWidth: 1
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        tooltip: {
+                          enabled: true,
+                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          titleColor: '#333',
+                          bodyColor: '#666',
+                          borderColor: '#ddd',
+                          borderWidth: 1,
+                          cornerRadius: 8,
+                          boxPadding: 6,
+                          callbacks: {
+                            label: function(context) {
+                              return `${context.dataset.label}: ${context.raw} feedbacks`;
+                            }
+                          }
+                        },
+                        legend: {
+                          position: 'bottom'
+                        }
+                      },
+                      scales: {
+                        x: {
+                          grid: {
+                            display: false
+                          }
+                        },
+                        y: {
+                          beginAtZero: true,
+                          grid: {
+                            color: '#f0f0f0'
+                          },
+                          ticks: {
+                            precision: 0
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </Box>
               </Paper>
             </Grid>
           </Grid>
         )}
 
         {activeSection === 'feedbacks' && (
-          <Box sx={{ maxHeight: "600px", overflow: "auto", marginBottom: "2rem" }}>
-            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff", height: "100%" }}>
+          <Box sx={{ marginBottom: "2rem" }}>
+            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
               <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                 Feedbacks:
               </Typography>
 
-              <TableContainer component={Paper} sx={{ maxHeight: "500px", overflow: "auto" }}>
+              <TableContainer sx={{ 
+                maxHeight: "500px", 
+                overflow: "auto", 
+                borderRadius: "8px",
+                boxShadow: 2,
+                '& .MuiTableCell-head': {
+                  backgroundColor: '#f5f5f5',
+                  fontWeight: 'bold',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1
+                },
+                '& .MuiTableRow-root:hover': {
+                  backgroundColor: '#f9f9f9'
+                }
+              }}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
@@ -626,59 +1125,168 @@ const AdminHome = () => {
         {activeSection === 'renewableSources' && (
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
+              <Paper elevation={3} sx={{ 
+                padding: "2rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff",
+                boxShadow: 3,
+                position: "relative"
+              }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                   Total Used Renewable Energy:
                 </Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={renewableData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="source" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="totalUsed" stroke="#8884d8" />
-                  </LineChart>
-                </ResponsiveContainer>
+                <Box sx={{ 
+                  position: "relative", 
+                  zIndex: 2,
+                  height: 350 
+                }}>
+                  <ChartLine
+                    data={{
+                      labels: renewableData.map(item => item.source),
+                      datasets: [
+                        {
+                          label: 'Energy Consumption',
+                          data: renewableData.map(item => item.totalUsed),
+                          backgroundColor: 'rgba(38, 166, 154, 0.2)',
+                          borderColor: '#26a69a',
+                          borderWidth: 3,
+                          pointBackgroundColor: '#fff',
+                          pointBorderColor: '#26a69a',
+                          pointBorderWidth: 2,
+                          pointRadius: 6,
+                          pointHoverRadius: 8,
+                          fill: true,
+                          tension: 0.1
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        tooltip: {
+                          enabled: true,
+                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          titleColor: '#333',
+                          bodyColor: '#666',
+                          borderColor: '#ddd',
+                          borderWidth: 1,
+                          cornerRadius: 8,
+                          boxPadding: 6,
+                          callbacks: {
+                            label: function(context) {
+                              return `Energy Used: ${context.raw} kWh`;
+                            }
+                          }
+                        },
+                        legend: {
+                          position: 'bottom'
+                        }
+                      },
+                      scales: {
+                        x: {
+                          grid: {
+                            color: '#f0f0f0'
+                          }
+                        },
+                        y: {
+                          beginAtZero: true,
+                          grid: {
+                            color: '#f0f0f0'
+                          },
+                          ticks: {
+                            callback: function(value) {
+                              return `${value} kWh`;
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </Box>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff", marginTop: "1rem" }}>
+              <Paper elevation={3} sx={{ 
+                padding: "1.5rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff", 
+                marginTop: "1rem",
+                boxShadow: 3,
+                position: "relative",
+                height: "100px",
+              }}>
                 <ListItem>
                   <ListItemIcon>
-                    <WindPower /> {/* Icon for Wind Energy */}
+                    <WindPower sx={{ color: '#42a5f5', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText primary="Wind Energy" secondary={`${renewableData.find(item => item.source === 'Wind Energy')?.totalUsed || 0} kWh`} />
+                  <ListItemText 
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Wind Energy</Typography>} 
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Wind Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  />
                 </ListItem>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff", marginTop: "1rem" }}>
+              <Paper elevation={3} sx={{ 
+                padding: "1.5rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff", 
+                marginTop: "1rem",
+                boxShadow: 3,
+                position: "relative",
+                height: "100px",
+              }}>
                 <ListItem>
                   <ListItemIcon>
-                    <Water /> {/* Icon for HydroPower Energy */}
+                    <Water sx={{ color: '#29b6f6', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText primary="HydroPower Energy" secondary={`${renewableData.find(item => item.source === 'HydroPower Energy')?.totalUsed || 0} kWh`} />
+                  <ListItemText 
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>HydroPower Energy</Typography>} 
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'HydroPower Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  />
                 </ListItem>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff", marginTop: "1rem" }}>
+              <Paper elevation={3} sx={{ 
+                padding: "1.5rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff", 
+                marginTop: "1rem",
+                boxShadow: 3,
+                position: "relative",
+                height: "100px",
+              }}>
                 <ListItem>
                   <ListItemIcon>
-                    <SolarPanel /> {/* Icon for Solar Energy */}
+                    <SolarPanel sx={{ color: '#ffa726', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText primary="Solar Energy" secondary={`${renewableData.find(item => item.source === 'Solar Energy')?.totalUsed || 0} kWh`} />
+                  <ListItemText 
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Solar Energy</Typography>} 
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Solar Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  />
                 </ListItem>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ padding: "1rem", borderRadius: "12px", backgroundColor: "#fff", marginTop: "1rem" }}>
+              <Paper elevation={3} sx={{ 
+                padding: "1.5rem", 
+                borderRadius: "12px", 
+                backgroundColor: "#fff", 
+                marginTop: "1rem",
+                boxShadow: 3,
+                position: "relative",
+                height: "100px",
+              }}>
                 <ListItem>
                   <ListItemIcon>
-                    <LocalFlorist /> {/* Icon for Geothermal Energy */}
+                    <LocalFlorist sx={{ color: '#66bb6a', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText primary="Geothermal Energy" secondary={`${renewableData.find(item => item.source === 'Geothermal Energy')?.totalUsed || 0} kWh`} />
+                  <ListItemText 
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Geothermal Energy</Typography>} 
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Geothermal Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  />
                 </ListItem>
               </Paper>
             </Grid>
@@ -687,11 +1295,34 @@ const AdminHome = () => {
 
         {activeSection === 'costAnalysis' && (
           <Box>
-            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
+            {/* First Container: Cost Analysis Table */}
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              marginBottom: "2rem",
+              position: "relative"
+            }}>
               <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                 Cost Analysis:
               </Typography>
-              <TableContainer component={Paper} sx={{ maxHeight: "400px", overflow: "auto" }}>
+              <TableContainer sx={{ 
+                maxHeight: "400px", 
+                overflow: "auto",
+                boxShadow: 2,
+                borderRadius: "8px",
+                '& .MuiTableCell-head': {
+                  backgroundColor: '#f5f5f5',
+                  fontWeight: 'bold',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1
+                },
+                '& .MuiTableRow-root:hover': {
+                  backgroundColor: '#f9f9f9'
+                }
+              }}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
@@ -706,44 +1337,138 @@ const AdminHome = () => {
                     {costAnalysisData.map((data) => (
                       <TableRow key={data._id}>
                         <TableCell>{data.user_id.email}</TableCell>
-                        <TableCell>{data.TotalProductCost}</TableCell>
-                        <TableCell>{data.TotalInstallationCost}</TableCell>
-                        <TableCell>{data.TotalMaintenanceCost}</TableCell>
-                        <TableCell>{data.GrandTotal}</TableCell>
+                        <TableCell>₱{data.TotalProductCost.toLocaleString()}</TableCell>
+                        <TableCell>₱{data.TotalInstallationCost.toLocaleString()}</TableCell>
+                        <TableCell>₱{data.TotalMaintenanceCost.toLocaleString()}</TableCell>
+                        <TableCell>₱{data.GrandTotal.toLocaleString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+            </Paper>
 
-
-              {/* Bar Graph for Overall Totals */}
-              <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333", marginTop: "2rem" }}>
+            {/* Second Container: Overall Cost Breakdown */}
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              position: "relative"
+            }}>
+              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                 Overall Cost Breakdown:
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={calculateOverallTotals(costAnalysisData)}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="TotalProductCost" fill="#8884d8" />
-                  <Bar dataKey="TotalInstallationCost" fill="#82ca9d" />
-                  <Bar dataKey="TotalMaintenanceCost" fill="#ffc658" />
-                </BarChart>
-              </ResponsiveContainer>
+              <Box sx={{ 
+                position: "relative", 
+                zIndex: 2,
+                height: 350 
+              }}>
+                <ChartBar
+                  data={{
+                    labels: calculateOverallTotals(costAnalysisData).map(item => item.name),
+                    datasets: [
+                      {
+                        label: 'Product Cost',
+                        data: calculateOverallTotals(costAnalysisData).map(item => item.TotalProductCost),
+                        backgroundColor: '#8884d8',
+                        borderColor: '#8884d8',
+                        borderWidth: 1
+                      },
+                      {
+                        label: 'Installation Cost',
+                        data: calculateOverallTotals(costAnalysisData).map(item => item.TotalInstallationCost),
+                        backgroundColor: '#82ca9d',
+                        borderColor: '#82ca9d',
+                        borderWidth: 1
+                      },
+                      {
+                        label: 'Maintenance Cost',
+                        data: calculateOverallTotals(costAnalysisData).map(item => item.TotalMaintenanceCost),
+                        backgroundColor: '#ffc658',
+                        borderColor: '#ffc658',
+                        borderWidth: 1
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#333',
+                        bodyColor: '#666',
+                        borderColor: '#ddd',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        boxPadding: 6,
+                        callbacks: {
+                          label: function(context) {
+                            return `${context.dataset.label}: ₱${context.raw.toLocaleString()}`;
+                          }
+                        }
+                      },
+                      legend: {
+                        position: 'bottom'
+                      }
+                    },
+                    scales: {
+                      x: {
+                        grid: {
+                          display: false
+                        }
+                      },
+                      y: {
+                        beginAtZero: true,
+                        grid: {
+                          color: '#f0f0f0'
+                        },
+                        ticks: {
+                          callback: function(value) {
+                            return `₱${value.toLocaleString()}`;
+                          }
+                        }
+                      }
+                    }
+                  }}
+                />
+              </Box>
             </Paper>
           </Box>
         )}
 
         {activeSection === 'carbonPayback' && (
           <Box>
-            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
+            {/* First Container: Carbon Payback Table */}
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              marginBottom: "2rem",
+              position: "relative"
+            }}>
               <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
                 Carbon Payback Period Analysis:
               </Typography>
-              <TableContainer component={Paper} sx={{ maxHeight: "400px", overflow: "auto" }}>
+              <TableContainer sx={{ 
+                maxHeight: "400px", 
+                overflow: "auto",
+                boxShadow: 2,
+                borderRadius: "8px",
+                '& .MuiTableCell-head': {
+                  backgroundColor: '#f5f5f5',
+                  fontWeight: 'bold',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1
+                },
+                '& .MuiTableRow-root:hover': {
+                  backgroundColor: '#f9f9f9'
+                }
+              }}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
@@ -763,29 +1488,97 @@ const AdminHome = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+            </Paper>
 
-
-              {/* Icons and Totals Section */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-around', marginTop: '2rem' }}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <HandCoins size={48} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '0.5rem' }}>
-                    Total Carbon Payback Period
-                  </Typography>
-                  <Typography variant="body1">
-                    {calculateOverallCarbonData(carbonPaybackData)[0].value}
-                  </Typography>
-                </Box>
-                <Box sx={{ textAlign: 'center' }}>
-                  <AlarmSmoke size={48} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '0.5rem' }}>
-                    Total Carbon Emission
-                  </Typography>
-                  <Typography variant="body1">
-                    {calculateOverallCarbonData(carbonPaybackData)[1].value}
-                  </Typography>
-                </Box>
-              </Box>
+            {/* Second Container: Carbon Metrics Cards */}
+            <Paper elevation={3} sx={{ 
+              padding: "2rem", 
+              borderRadius: "12px", 
+              backgroundColor: "#fff",
+              boxShadow: 3,
+              position: "relative"
+            }}>
+              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1.5rem" }}>
+                Carbon Metrics Overview:
+              </Typography>
+              <Grid container spacing={3} sx={{ pb: 2 }}>
+                <Grid item xs={12} sm={6}>
+                  <Paper elevation={3} sx={{ 
+                    padding: "2rem",
+                    borderRadius: "12px", 
+                    backgroundColor: "#fff",
+                    height: "50%",
+                    minHeight: "250px",
+                    boxShadow: 3,
+                    position: "relative"
+                  }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      flexDirection: 'column',
+                      height: '100%' // Ensure content fills the paper
+                    }}>
+                      <Avatar sx={{ 
+                        bgcolor: '#e3f2fd', 
+                        width: 80, 
+                        height: 80, 
+                        mb: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}>
+                        <HandCoins sx={{ fontSize: 40, color: '#2196f3' }} />
+                      </Avatar>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333', textAlign: 'center' }}>
+                        Total Carbon Payback Period
+                      </Typography>
+                      <Typography variant="h4" sx={{ mt: 1, color: '#2196f3', fontWeight: 'medium', textAlign: 'center' }}>
+                        {calculateOverallCarbonData(carbonPaybackData)[0].value}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 1, color: '#757575', textAlign: 'center' }}>
+                        Years to offset carbon footprint
+                      </Typography>
+                    </Box>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Paper elevation={3} sx={{ 
+                    padding: "2rem",
+                    borderRadius: "12px", 
+                    backgroundColor: "#fff",
+                    height: "50%",
+                    minHeight: "250px",
+                    boxShadow: 3,
+                    position: "relative"
+                  }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      flexDirection: 'column',
+                      height: '100%' // Ensure content fills the paper
+                    }}>
+                      <Avatar sx={{ 
+                        bgcolor: '#fbe9e7', 
+                        width: 80, 
+                        height: 80, 
+                        mb: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}>
+                        <AlarmSmoke sx={{ fontSize: 40, color: '#ff5722' }} />
+                      </Avatar>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333', textAlign: 'center' }}>
+                        Total Carbon Emission
+                      </Typography>
+                      <Typography variant="h4" sx={{ mt: 1, color: '#ff5722', fontWeight: 'medium', textAlign: 'center' }}>
+                        {calculateOverallCarbonData(carbonPaybackData)[1].value}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 1, color: '#757575', textAlign: 'center' }}>
+                        Metric tons of CO₂ equivalent
+                      </Typography>
+                    </Box>
+                  </Paper>
+                </Grid>
+              </Grid>
             </Paper>
           </Box>
         )}
@@ -831,3 +1624,4 @@ const AdminHome = () => {
 };
 
 export default AdminHome;
+
