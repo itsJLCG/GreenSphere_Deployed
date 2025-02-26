@@ -6,6 +6,8 @@ import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+import SolarPanel from "../renewableModel/SolarPanel.jsx";
+import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
 
 export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
@@ -316,7 +318,7 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
             object={turbine}
             position={[x, -2, z]}
             scale={[55, 55, 55]}
-            rotation={[0, - Math.PI / 2, 0]} 
+            rotation={[0, - Math.PI / 2, 0]}
           />
         );
       })}
@@ -411,11 +413,11 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
           action.play();
         });
         mixers.current[index] = mixer;
-        return           <primitive
-        key={`${x}-${z}-${index}`}
-        object={turbine}
-        position={[x, 7, z]}
-        scale={[0.6,0.7,0.7]} />;
+        return <primitive
+          key={`${x}-${z}-${index}`}
+          object={turbine}
+          position={[x, 7, z]}
+          scale={[0.6, 0.7, 0.7]} />;
       })}
     </>
   );
@@ -510,6 +512,120 @@ export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump })
   );
 };
 
+export const GableRoofGridTown = ({ solarPanels = [], setSolarPanels, showSolarPanels }) => {
+  const cellSize = 2;
+  const roofPositions = [
+    [0, 7, 0],    // Center roof
+    [5, 8, 0],    // Right roof
+    [-5, 8, 0]    // Left roof
+  ];
+
+  const positions = [
+    [0, 7, 1.9], [0, 7, -1.9], [-1.8, 7, 0], [1.8, 7, 0], // Center roof
+    [5, 8, 1.9], [5, 8, -1.9], [3.2, 8, 0], [6.8, 8, 0],  // Right roof
+    [-5, 8, 1.9], [-5, 8, -1.9], [-6.8, 8, 0], [-3.2, 8, 0] // Left roof
+  ];
+
+  const rotations = [
+    [-Math.PI / 4, 0, 0], [Math.PI / 4, Math.PI, 0], [Math.PI / 2, -2.3, 0], [Math.PI / 2, 2.3, 0],
+    [-Math.PI / 4, 0, 0], [Math.PI / 4, Math.PI, 0], [Math.PI / 2, -2.3, 0], [Math.PI / 2, 2.3, 0],
+    [-Math.PI / 4, 0, 0], [Math.PI / 4, Math.PI, 0], [Math.PI / 2, -2.3, 0], [Math.PI / 2, 2.3, 0]
+  ];
+
+  const handleClick = (index) => {
+    if (solarPanels.includes(index)) {
+      setSolarPanels(solarPanels.filter(i => i !== index));
+    } else {
+      setSolarPanels([...solarPanels, index]);
+    }
+    console.log("Updated Solar Panels:", solarPanels);
+  };
+
+  return (
+    <group>
+      {showSolarPanels && positions.map((pos, index) => {
+        const isSelected = solarPanels.includes(index);
+        return (
+          <mesh
+            key={index}
+            position={pos}
+            rotation={rotations[index]}
+            onClick={() => handleClick(index)}
+          >
+            <planeGeometry args={[cellSize, cellSize]} />
+            <meshStandardMaterial
+              color={isSelected ? "yellow" : "green"}
+              transparent={true}
+              opacity={isSelected ? 0 : 0.5}
+            />
+          </mesh>
+        );
+      })}
+      {/* Render Solar Panels */}
+      {solarPanels.map((index) => (
+        <SolarPanel key={index} position={positions[index]} rotation={rotations[index]} />
+      ))}
+    </group>
+  );
+};
+
+export const GableRoofGridTilesTown = ({ solarRoofTiles = [], setSolarRoofTiles, showSolarRoofTiles }) => {
+  const cellSize = 2;
+  const roofPositions = [
+    [0, 7, 0],    // Center roof
+    [5, 8, 0],    // Right roof
+    [-5, 8, 0]    // Left roof
+  ];
+
+  const positions = [
+    [0, 7, 1.9], [0, 7, -1.9], [-1.8, 7, 0], [1.8, 7, 0], // Center roof
+    [5, 8, 1.9], [5, 8, -1.9], [3.2, 8, 0], [6.8, 8, 0],  // Right roof
+    [-5, 8, 1.9], [-5, 8, -1.9], [-6.8, 8, 0], [-3.2, 8, 0] // Left roof
+  ];
+
+  const rotations = [
+    [-Math.PI / 4, 0, 0], [Math.PI / 4, Math.PI, 0], [Math.PI / 2, -2.3, 0], [Math.PI / 2, 2.3, 0],
+    [-Math.PI / 4, 0, 0], [Math.PI / 4, Math.PI, 0], [Math.PI / 2, -2.3, 0], [Math.PI / 2, 2.3, 0],
+    [-Math.PI / 4, 0, 0], [Math.PI / 4, Math.PI, 0], [Math.PI / 2, -2.3, 0], [Math.PI / 2, 2.3, 0]
+  ];
+
+  const handleClick = (index) => {
+    if (solarRoofTiles.includes(index)) {
+      setSolarRoofTiles(solarRoofTiles.filter(i => i !== index));
+    } else {
+      setSolarRoofTiles([...solarRoofTiles, index]);
+    }
+    console.log("Updated Solar RoofTiles:", solarRoofTiles);
+  };
+
+  return (
+    <group>
+      {showSolarRoofTiles && positions.map((pos, index) => {
+        const isSelected = solarRoofTiles.includes(index);
+        return (
+          <mesh
+            key={index}
+            position={pos}
+            rotation={rotations[index]}
+            onClick={() => handleClick(index)}
+          >
+            <planeGeometry args={[cellSize, cellSize]} />
+            <meshStandardMaterial
+              color={isSelected ? "yellow" : "green"}
+              transparent={true}
+              opacity={isSelected ? 0 : 0.5}
+            />
+          </mesh>
+        );
+      })}
+      {/* Render Solar Panels */}
+      {solarRoofTiles.map((index) => (
+        <SolarRoofTiles key={index} position={positions[index]} rotation={rotations[index]} />
+      ))}
+    </group>
+  );
+};
+
 const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
   const townTexture1 = useTexture("../assets/images/townwall1.jpg");
   const townTexture2 = useTexture("../assets/images/townwall2.jpg");
@@ -520,6 +636,8 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [solarPanels, setSolarPanels] = useState([]);
+  const [solarRoofTiles, setSolarRoofTiles] = useState([]);
 
   return (
     <group position={[0, 1, 0]}>
@@ -575,6 +693,16 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
         <meshStandardMaterial map={roofTexture} />
       </mesh>
 
+      <GableRoofGridTown
+        solarPanels={solarPanels}
+        setSolarPanels={setSolarPanels}
+        showSolarPanels={showSolarPanels}
+      />
+      <GableRoofGridTilesTown
+        solarRoofTiles={solarRoofTiles}
+        setSolarRoofTiles={setSolarRoofTiles}
+        showSolarRoofTiles={showSolarRoofTiles}
+      />
       <SolarWaterHeatingTiles
         solarWaterHeating={solarWaterHeating}
         setSolarWaterHeating={setSolarWaterHeating}
@@ -584,7 +712,7 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
         heatPump={heatPump}
         setHeatPump={setHeatPump}
         showHeatPump={showHeatPump}
-      /> 
+      />
       <SmallWindTurbinesTiles
         smallWindTurbines={smallWindTurbines}
         setSmallWindTurbines={setSmallWindTurbines}
@@ -607,6 +735,8 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
           smallWindTurbines={smallWindTurbines}
           verticalAxisWindTurbines={verticalAxisWindTurbines}
           microHydroPowerSystem={microHydroPowerSystem}
+          solarPanels={solarPanels}
+          solarRoofTiles={solarRoofTiles}
         />
       </Html>
     </group>
