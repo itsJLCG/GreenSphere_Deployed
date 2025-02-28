@@ -49,7 +49,7 @@ const ResourceEffects = () => {
     <div className="container">
       <div className="header">
         <h2 className="title">Resource Effects Analysis</h2>
-        <button 
+        <button
           className="mode-toggle"
           onClick={() => {
             setComparisonMode(!comparisonMode);
@@ -63,8 +63,8 @@ const ResourceEffects = () => {
       <div className="main-content">
         <div className="grid">
           {technologies.map(([name, details], index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`card ${activeIndex === index ? "active" : ""} 
                         ${selectedItems.includes(index) ? "selected" : ""}`}
               onClick={() => handleCardClick(index)}
@@ -80,27 +80,11 @@ const ResourceEffects = () => {
                     <span className="value">{details.energyOutput}</span>
                   </div>
                   <div className="progress-bar">
-                    <div 
-                      className="progress" 
-                      style={{ 
-                        width: `${details.energyOutput.includes('kWh') ? 
-                          parseInt(details.energyOutput) / 50 : 50}%` 
-                      }}
-                    ></div>
-                  </div>
-                </div>
-                
-                <div className="metric-bar">
-                  <div className="metric-header">
-                    <label>Cost Efficiency</label>
-                    <span className="value">{details.costEfficiency}</span>
-                  </div>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress" 
-                      style={{ 
-                        width: `${details.costEfficiency === "High" ? 90 : 
-                               details.costEfficiency === "Moderate" ? 60 : 30}%` 
+                    <div
+                      className="progress"
+                      style={{
+                        width: `${details.energyOutput.includes('kWh') ?
+                          parseInt(details.energyOutput) / 50 : 50}%`
                       }}
                     ></div>
                   </div>
@@ -108,17 +92,92 @@ const ResourceEffects = () => {
 
                 <div className="metric-bar">
                   <div className="metric-header">
+                    <label>Cost Efficiency</label>
+                    <span className="value">{details.costEfficiency}</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress"
+                      style={{
+                        width: `${details.costEfficiency === "High" ? 90 :
+                          details.costEfficiency === "Moderate" ? 60 : 30}%`
+                      }}
+                    ></div>
+                  </div>
+                </div>
+                <div className="metric-bar">
+                  <div className="metric-header">
                     <label>Environmental Impact</label>
                     <span className="value">{details.environmentalImpact}</span>
                   </div>
                   <div className="progress-bar">
-                    <div 
-                      className="progress" 
-                      style={{ 
-                        width: `${details.environmentalImpact === "Low" ? 90 : 
-                               details.environmentalImpact === "Moderate" ? 60 : 30}%` 
+                    <div
+                      className="progress"
+                      style={{
+                        width: `${details.environmentalImpact === "Low" ? 90 :
+                          details.environmentalImpact === "Moderate" ? 60 : 30}%`
                       }}
                     ></div>
+                  </div>
+                </div>
+                <div className="metric-bar">
+                  <div className="metric-header">
+                    <label>Product Cost</label>
+                    <span className="value">₱{details.productCost.toLocaleString()}</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress"
+                      style={{ width: `${Math.min(details.productCost / 300000 * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="metric-bar">
+                  <div className="metric-header">
+                    <label>Installation Cost</label>
+                    <span className="value">₱{details.installation.toLocaleString()}</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress"
+                      style={{ width: `${Math.min(details.installation / 300000 * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="metric-bar">
+                  <div className="metric-header">
+                    <label>Maintenance Cost</label>
+                    <span className="value">₱{details.maintenance.toLocaleString()}</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress"
+                      style={{ width: `${Math.min(details.maintenance / 50000 * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="metric-bar">
+                  <div className="metric-header">
+                    <label>Carbon Emissions</label>
+                    <span className="value">{details.carbonEmissions} kg CO₂</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress"
+                      style={{ width: `${Math.min(details.carbonEmissions / 50 * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="metric-bar">
+                  <div className="metric-header">
+                    <label>Electricity Cost</label>
+                    <span className="value">
+                      {details.electricityCost !== "N/A" ? `₱${details.electricityCost}/kWh` : "N/A"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -136,87 +195,88 @@ const ResourceEffects = () => {
               <h3 className="modal-title">Technology Comparison</h3>
               <p className="modal-subtitle">Analyzing efficiency and performance metrics</p>
             </div>
-            
+
             <div className="comparison-container">
               <div className="tech-column">
                 <div className="tech-header">
-                  <img src={technologies[selectedItems[0]][1].image} alt={technologies[selectedItems[0]][0]} className="tech-image" />
+                  <img
+                    src={technologies[selectedItems[0]][1].image}
+                    alt={technologies[selectedItems[0]][0]}
+                    className="tech-image"
+                  />
                   <h4>{technologies[selectedItems[0]][0]}</h4>
                 </div>
                 <div className="metrics">
-                  <div className="metric">
-                    <label>Energy Output</label>
-                    <div className="bar-container">
-                      <div className="bar" style={{ 
-                        width: `${technologies[selectedItems[0]][1].energyOutput.includes('kWh') ? 
-                          parseInt(technologies[selectedItems[0]][1].energyOutput) / 50 : 50}%` 
-                      }}></div>
-                      <span>{technologies[selectedItems[0]][1].energyOutput}</span>
+                  {[
+                    { label: "Energy Output", key: "energyOutput", divisor: 50, isText: true },
+                    { label: "Cost Efficiency", key: "costEfficiency", options: { High: 90, Moderate: 60, Low: 30 } },
+                    { label: "Environmental Impact", key: "environmentalImpact", options: { Low: 90, Moderate: 60, High: 30 } },
+                    { label: "Product Cost", key: "productCost", prefix: "₱", divisor: 300000 },
+                    { label: "Installation Cost", key: "installation", prefix: "₱", divisor: 300000 },
+                    { label: "Maintenance Cost", key: "maintenance", prefix: "₱", divisor: 50000 },
+                    { label: "Carbon Emissions", key: "carbonEmissions", suffix: " kg CO₂", divisor: 50 },
+                    { label: "Electricity Cost", key: "electricityCost", prefix: "₱", suffix: "/kWh", isText: true }
+                  ].map(({ label, key, divisor, prefix = "", suffix = "", options, isText }) => (
+                    <div key={key} className="metric">
+                      <label>{label}</label>
+                      <div className="bar-container">
+                        {options ? (
+                          <div className="bar" style={{ width: `${options[technologies[selectedItems[0]][1][key]] || 30}%` }}></div>
+                        ) : divisor ? (
+                          <div className="bar" style={{ width: `${Math.min((parseInt(technologies[selectedItems[0]][1][key]) || 0) / divisor * 100, 100)}%` }}></div>
+                        ) : null}
+                        <span>
+                          {prefix}
+                          {isText ? technologies[selectedItems[0]][1][key] : technologies[selectedItems[0]][1][key].toLocaleString()}
+                          {suffix}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="metric">
-                    <label>Cost Efficiency</label>
-                    <div className="bar-container">
-                      <div className="bar" style={{ 
-                        width: `${technologies[selectedItems[0]][1].costEfficiency === "High" ? 90 : 
-                               technologies[selectedItems[0]][1].costEfficiency === "Moderate" ? 60 : 30}%` 
-                      }}></div>
-                      <span>{technologies[selectedItems[0]][1].costEfficiency}</span>
-                    </div>
-                  </div>
-                  <div className="metric">
-                    <label>Environmental Impact</label>
-                    <div className="bar-container">
-                      <div className="bar" style={{ 
-                        width: `${technologies[selectedItems[0]][1].environmentalImpact === "Low" ? 90 : 
-                               technologies[selectedItems[0]][1].environmentalImpact === "Moderate" ? 60 : 30}%` 
-                      }}></div>
-                      <span>{technologies[selectedItems[0]][1].environmentalImpact}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
+              {/* VS Divider Placed Between the Two Columns */}
               <div className="vs-divider">
                 <span className="vs-circle">VS</span>
               </div>
 
               <div className="tech-column">
                 <div className="tech-header">
-                  <img src={technologies[selectedItems[1]][1].image} alt={technologies[selectedItems[1]][0]} className="tech-image" />
+                  <img
+                    src={technologies[selectedItems[1]][1].image}
+                    alt={technologies[selectedItems[1]][0]}
+                    className="tech-image"
+                  />
                   <h4>{technologies[selectedItems[1]][0]}</h4>
                 </div>
                 <div className="metrics">
-                  <div className="metric">
-                    <label>Energy Output</label>
-                    <div className="bar-container">
-                      <div className="bar" style={{ 
-                        width: `${technologies[selectedItems[1]][1].energyOutput.includes('kWh') ? 
-                          parseInt(technologies[selectedItems[1]][1].energyOutput) / 50 : 50}%` 
-                      }}></div>
-                      <span>{technologies[selectedItems[1]][1].energyOutput}</span>
+                  {[
+                    { label: "Energy Output", key: "energyOutput", divisor: 50, isText: true },
+                    { label: "Cost Efficiency", key: "costEfficiency", options: { High: 90, Moderate: 60, Low: 30 } },
+                    { label: "Environmental Impact", key: "environmentalImpact", options: { Low: 90, Moderate: 60, High: 30 } },
+                    { label: "Product Cost", key: "productCost", prefix: "₱", divisor: 300000 },
+                    { label: "Installation Cost", key: "installation", prefix: "₱", divisor: 300000 },
+                    { label: "Maintenance Cost", key: "maintenance", prefix: "₱", divisor: 50000 },
+                    { label: "Carbon Emissions", key: "carbonEmissions", suffix: " kg CO₂", divisor: 50 },
+                    { label: "Electricity Cost", key: "electricityCost", prefix: "₱", suffix: "/kWh", isText: true }
+                  ].map(({ label, key, divisor, prefix = "", suffix = "", options, isText }) => (
+                    <div key={key} className="metric">
+                      <label>{label}</label>
+                      <div className="bar-container">
+                        {options ? (
+                          <div className="bar" style={{ width: `${options[technologies[selectedItems[1]][1][key]] || 30}%` }}></div>
+                        ) : divisor ? (
+                          <div className="bar" style={{ width: `${Math.min((parseInt(technologies[selectedItems[1]][1][key]) || 0) / divisor * 100, 100)}%` }}></div>
+                        ) : null}
+                        <span>
+                          {prefix}
+                          {isText ? technologies[selectedItems[1]][1][key] : technologies[selectedItems[1]][1][key].toLocaleString()}
+                          {suffix}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="metric">
-                    <label>Cost Efficiency</label>
-                    <div className="bar-container">
-                      <div className="bar" style={{ 
-                        width: `${technologies[selectedItems[1]][1].costEfficiency === "High" ? 90 : 
-                               technologies[selectedItems[1]][1].costEfficiency === "Moderate" ? 60 : 30}%` 
-                      }}></div>
-                      <span>{technologies[selectedItems[1]][1].costEfficiency}</span>
-                    </div>
-                  </div>
-                  <div className="metric">
-                    <label>Environmental Impact</label>
-                    <div className="bar-container">
-                      <div className="bar" style={{ 
-                        width: `${technologies[selectedItems[1]][1].environmentalImpact === "Low" ? 90 : 
-                               technologies[selectedItems[1]][1].environmentalImpact === "Moderate" ? 60 : 30}%` 
-                      }}></div>
-                      <span>{technologies[selectedItems[1]][1].environmentalImpact}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -266,24 +326,6 @@ const ResourceEffects = () => {
           margin-top: -0.25rem; /* Added negative top margin */
         }
 
-        .card {
-          padding: 0.75rem;  /* reduced from 1rem */
-          background: linear-gradient(165deg, rgba(45, 55, 72, 0.95), rgba(26, 32, 44, 0.98));
-          border-radius: 0.75rem;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          border: 1px solid rgba(76, 175, 80, 0.15);
-          position: relative;
-          overflow: hidden;
-          backdrop-filter: blur(12px);
-          margin-bottom: -0.25rem; /* Added negative bottom margin */
-        }
-
         .card:hover {
           transform: translateY(-6px) scale(1.02);
           box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
@@ -319,29 +361,72 @@ const ResourceEffects = () => {
           transition: color 0.3s ease;
         }
 
-        .details {
-          max-height: 0;
-          opacity: 0;
-          overflow: hidden;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          width: 100%;
-          transform: translateY(5px); /* reduced from 10px */
-          background: linear-gradient(180deg, 
-            rgba(76, 175, 80, 0.1) 0%,
-            rgba(26, 32, 44, 0) 100%
-          );
-          border-radius: 0.5rem;
-          padding: 0.35rem; /* reduced from 0.5rem */
-          margin-top: 0.15rem; /* reduced from 0.25rem */
+       .card {
+          padding: 0.75rem;
+          background: linear-gradient(165deg, rgba(45, 55, 72, 0.95), rgba(26, 32, 44, 0.98));
+          border-radius: 0.75rem;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: pointer;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 1px solid rgba(76, 175, 80, 0.15);
+          position: relative; /* Needed for z-index stacking */
+          overflow: visible; /* Allows child elements to expand outside */
+          z-index: 1; /* Default, will increase when active */
         }
 
-        .card.active .details {
-          max-height: 120px; /* reduced from 150px */
-          opacity: 1;
-          padding-top: 0.25rem; /* reduced from 0.5rem */
-          border-top: 1px solid rgba(76, 175, 80, 0.2);
-          transform: translateY(0);
-        }
+.details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+  transform: translateY(5px);
+  background: rgba(45, 55, 72, 0.98);
+  border-radius: 0.5rem;
+  padding: 0;
+  position: absolute;
+  top: 0; /* Cover the card */
+  left: 0;
+  z-index: -1;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  transition: max-height 0.4s ease, opacity 0.4s ease, z-index 0s 0.4s;
+
+  /* Grid Layout */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.card.active {
+  z-index: 10;
+}
+
+.card.active .details {
+  max-height: 250px; /* Adjust based on content */
+  opacity: 1;
+  padding: 1rem;
+  z-index: 10;
+  max-width: 500px; /* Limit width of expanded details */
+  overflow-x: auto; /* Enable horizontal scroll */
+  overflow-y: auto;
+  white-space: nowrap; /* Prevent wrapping */
+  transition: max-height 0.4s ease, opacity 0.4s ease, z-index 0s;
+}
+
+/* Responsive Fixes */
+@media (max-width: 900px) {
+  .details {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    max-width: 100%; /* Allow it to shrink */
+  }
+}
+
+
 
         .card p {
           margin: 0.25rem 0; /* reduced from 0.4rem */

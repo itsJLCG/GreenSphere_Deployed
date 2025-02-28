@@ -1,35 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import axios from 'axios';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CarbonFootprint = () => {
-  const [selectedEnergy, setSelectedEnergy] = useState('solar');
+  const [carbonData, setCarbonData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [aggregatedData, setAggregatedData] = useState({
+    averageCarbonPaybackPeriod: 0,
+    totalCarbonEmission: 0,
+  });
 
-  const energyData = {
-    solar: {
-      co2Reduction: 1.2,
-      treesEquivalent: 50,
-      fossilComparison: 2.5,
-      icon: "🌞",
-      bgGradient: "linear-gradient(135deg, #FFB75E, #ED8F03)"
-    },
-    wind: {
-      co2Reduction: 2.5,
-      treesEquivalent: 100,
-      fossilComparison: 3.8,
-      icon: "🌪️",
-      bgGradient: "linear-gradient(135deg, #48c6ef, #6f86d6)"
-    },
-    hydro: {
-      co2Reduction: 1.8,
-      treesEquivalent: 75,
-      fossilComparison: 3.0,
-      icon: "💧",
-      bgGradient: "linear-gradient(135deg, #0093E9, #80D0C7)"
-    }
-  };
+  useEffect(() => {
+    const fetchCarbonData = async () => {
+      try {
+        // Fetch data from your API
+        const response = await axios.get('http://localhost:3001/admin/carbon-payback');
+        setCarbonData(response.data);
+
+        // Calculate aggregated data
+        const totalPayback = response.data.reduce((sum, user) => sum + user.CarbonPaybackPeriod, 0);
+        const totalEmission = response.data.reduce((sum, user) => sum + user.TotalCarbonEmission, 0);
+
+        setAggregatedData({
+          averageCarbonPaybackPeriod: totalPayback / response.data.length,
+          totalCarbonEmission: totalEmission,
+        });
+      } catch (error) {
+        console.error("Error fetching carbon data:", error);
+        setError("Failed to fetch carbon data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarbonData();
+  }, []);
 
   const getChartData = (value, maxValue) => ({
     datasets: [{
@@ -57,74 +66,55 @@ const CarbonFootprint = () => {
     }
   };
 
+  if (loading) {
+    return <div className="container">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="container">{error}</div>;
+  }
+
+  if (!carbonData.length) {
+    return <div className="container">No data available.</div>;
+  }
+
   return (
     <div className="container">
       <h2 className="title">Carbon Footprint Analysis</h2>
-      
-      <div className="energy-selector">
-        {Object.keys(energyData).map(energy => (
-          <button
-            key={energy}
-            className={`energy-btn ${selectedEnergy === energy ? 'active' : ''}`}
-            onClick={() => setSelectedEnergy(energy)}
-            style={{
-              background: selectedEnergy === energy ? energyData[energy].bgGradient : 'transparent'
-            }}
-          >
-            <span className="icon">{energyData[energy].icon}</span>
-            <span className="text">{energy.charAt(0).toUpperCase() + energy.slice(1)}</span>
-          </button>
-        ))}
-      </div>
 
       <div className="stats-grid">
-        <div className="stat-card" style={{ background: energyData[selectedEnergy].bgGradient }}>
+        <div className="stat-card" style={{ background: "linear-gradient(135deg, #FFB75E, #ED8F03)" }}>
           <div className="stat-content">
-            <h3>CO₂ Reduction</h3>
+            <h3>Average Carbon Payback Period</h3>
             <div className="chart-container">
-              <Doughnut data={getChartData(energyData[selectedEnergy].co2Reduction, 3)} options={chartOptions} />
+              <Doughnut data={getChartData(aggregatedData.averageCarbonPaybackPeriod, 1)} options={chartOptions} />
               <div className="stat-overlay">
-                <p className="stat-value">{energyData[selectedEnergy].co2Reduction}</p>
-                <p className="stat-label">tons per year</p>
+                <p className="stat-value">{aggregatedData.averageCarbonPaybackPeriod.toFixed(2)}</p>
+                <p className="stat-label">years</p>
               </div>
             </div>
           </div>
         </div>
-        
-        <div className="stat-card" style={{ background: energyData[selectedEnergy].bgGradient }}>
+
+        <div className="stat-card" style={{ background: "linear-gradient(135deg, #48c6ef, #6f86d6)" }}>
           <div className="stat-content">
-            <h3>Trees Equivalent</h3>
+            <h3>Total Carbon Emission</h3>
             <div className="chart-container">
-              <Doughnut data={getChartData(energyData[selectedEnergy].treesEquivalent, 150)} options={chartOptions} />
+              <Doughnut data={getChartData(aggregatedData.totalCarbonEmission, 1000)} options={chartOptions} />
               <div className="stat-overlay">
-                <p className="stat-value">{energyData[selectedEnergy].treesEquivalent}</p>
-                <p className="stat-label">trees annually</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="stat-card" style={{ background: energyData[selectedEnergy].bgGradient }}>
-          <div className="stat-content">
-            <h3>Fossil Fuel Impact</h3>
-            <div className="chart-container">
-              <Doughnut data={getChartData(energyData[selectedEnergy].fossilComparison, 5)} options={chartOptions} />
-              <div className="stat-overlay">
-                <p className="stat-value">{energyData[selectedEnergy].fossilComparison}</p>
-                <p className="stat-label">tons CO₂ offset</p>
+                <p className="stat-value">{aggregatedData.totalCarbonEmission.toFixed(2)}</p>
+                <p className="stat-label">tons</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="info-section" style={{ borderColor: selectedEnergy === 'solar' ? '#ED8F03' : selectedEnergy === 'wind' ? '#6f86d6' : '#80D0C7' }}>
+      <div className="info-section" style={{ borderColor: "#80D0C7" }}>
         <h3>Impact Analysis</h3>
         <p>
-          Switching to {selectedEnergy} power can significantly reduce your carbon footprint.
-          The annual CO₂ reduction of {energyData[selectedEnergy].co2Reduction} tons is equivalent
-          to planting {energyData[selectedEnergy].treesEquivalent} trees, offsetting
-          {energyData[selectedEnergy].fossilComparison} tons of CO₂ from fossil fuels.
+          On average, the carbon payback period is {aggregatedData.averageCarbonPaybackPeriod.toFixed(2)} years, and the total carbon emission across all users is {aggregatedData.totalCarbonEmission.toFixed(2)} tons.
+          This analysis helps understand the overall environmental impact and the collective effort required to offset the carbon footprint.
         </p>
       </div>
 
@@ -152,50 +142,9 @@ const CarbonFootprint = () => {
           -webkit-text-fill-color: transparent;
         }
 
-        .energy-selector {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .energy-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.5rem 1rem;
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          background: transparent;
-          color: white;  // Changed from black to white
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          font-size: 1rem;
-          font-weight: 600;
-        }
-
-        .energy-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .energy-btn.active {
-          transform: scale(1.05);
-          border-color: transparent;
-        }
-
-        .icon {
-          font-size: 1.5rem;
-          color: white;  // Added to ensure icons are also white
-        }
-
-        .text {
-          color: white;  // Added to ensure text is white
-        }
-
         .stats-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
           margin-bottom: 1.5rem;
         }
@@ -224,8 +173,9 @@ const CarbonFootprint = () => {
           font-size: 1rem;
           font-weight: 600;
           margin-bottom: 0.5rem;
-          color: white;  // Changed from black to white
+          color: white;
         }
+
         .stat-value {
           font-size: 3rem;
           font-weight: bold;
@@ -286,11 +236,6 @@ const CarbonFootprint = () => {
 
           .stats-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-
-          .energy-selector {
-            flex-direction: column;
             gap: 1rem;
           }
 

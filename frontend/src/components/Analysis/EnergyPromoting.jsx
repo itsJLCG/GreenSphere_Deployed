@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -24,156 +24,107 @@ ChartJS.register(
 );
 
 const EnergyPromoting = () => {
-  const [selectedEnergy, setSelectedEnergy] = useState('solar');
+  const [energyData, setEnergyData] = useState([]);
+  const [selectedEnergy, setSelectedEnergy] = useState("Wind Energy");
 
-  const energyOptions = {
-    solar: {
-      title: 'Solar Energy',
-      icon: '☀️',
-      initialCost: 20000,
-      yearlyReturn: 2500,
-      efficiency: 85,
-      environmentalImpact: 95,
-      bestFor: ['Residential', 'Commercial', 'Agricultural'],
-      color: '#FFB75E'
-    },
-    wind: {
-      title: 'Wind Energy',
-      icon: '🌪️',
-      initialCost: 15000,
-      yearlyReturn: 2000,
-      efficiency: 80,
-      environmentalImpact: 90,
-      bestFor: ['Rural', 'Coastal', 'Industrial'],
-      color: '#48c6ef'
-    },
-    hydro: {
-      title: 'Hydro Energy',
-      icon: '💧',
-      initialCost: 25000,
-      yearlyReturn: 3000,
-      efficiency: 90,
-      environmentalImpact: 85,
-      bestFor: ['River proximity', 'Industrial', 'Community'],
-      color: '#0093E9'
-    }
+  useEffect(() => {
+    fetch('http://localhost:3001/admin/renewable-energy')
+      .then(response => response.json())
+      .then(data => setEnergyData(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+  const handleEnergySelect = (source) => {
+    setSelectedEnergy(source);
   };
 
-  const ROIData = {
-    labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6', 'Year 7', 'Year 8'],
-    datasets: [{
-      label: 'Return on Investment',
-      data: Array.from({ length: 8 }, (_, i) => 
-        -energyOptions[selectedEnergy].initialCost + 
-        (energyOptions[selectedEnergy].yearlyReturn * (i + 1))
-      ),
-      borderColor: energyOptions[selectedEnergy].color,
-      backgroundColor: `${energyOptions[selectedEnergy].color}33`,
-      fill: true,
-    }]
+  const selectedData = energyData.find(data => data.source === selectedEnergy);
+
+  const chartData = {
+    labels: energyData.map(data => data.source),
+    datasets: [
+      {
+        label: 'Total Used',
+        data: energyData.map(data => data.totalUsed),
+        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        borderColor: '#4CAF50',
+        borderWidth: 2,
+      },
+    ],
   };
 
-  const efficiencyData = {
-    labels: ['Efficiency Rating', 'Environmental Impact'],
-    datasets: [{
-      data: [
-        energyOptions[selectedEnergy].efficiency,
-        energyOptions[selectedEnergy].environmentalImpact
-      ],
-      backgroundColor: [
-        energyOptions[selectedEnergy].color,
-        `${energyOptions[selectedEnergy].color}99`
-      ],
-    }]
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Renewable Energy Usage',
+      },
+    },
   };
 
   return (
     <div className="container">
-      <h2 className="title">Promoting Renewable Energy Adoption</h2>
-      
+      <h1 className="title">Renewable Energy Analysis</h1>
       <div className="energy-selector">
-        {Object.keys(energyOptions).map(energy => (
+        {energyData.map((data) => (
           <button
-            key={energy}
-            className={`energy-btn ${selectedEnergy === energy ? 'active' : ''}`}
-            onClick={() => setSelectedEnergy(energy)}
+            key={data.source}
+            className={`energy-btn ${selectedEnergy === data.source ? 'active' : ''}`}
+            onClick={() => handleEnergySelect(data.source)}
           >
-            <span>{energyOptions[energy].icon}</span>
-            <span>{energyOptions[energy].title}</span>
+            {data.source}
           </button>
         ))}
       </div>
-
       <div className="analysis-grid">
         <div className="chart-card">
-          <h3>Return on Investment Analysis</h3>
-          <Line 
-            data={ROIData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { display: false },
-                tooltip: { enabled: true }
-              },
-              scales: {
-                y: {
-                  ticks: { color: 'white' },
-                  grid: { color: 'rgba(255,255,255,0.1)' }
-                },
-                x: {
-                  ticks: { color: 'white' },
-                  grid: { color: 'rgba(255,255,255,0.1)' }
-                }
-              }
-            }}
-          />
+          <h3>Energy Usage Overview</h3>
+          <Bar data={chartData} options={options} />
         </div>
-
         <div className="chart-card">
-          <h3>Efficiency Metrics</h3>
-          <Bar 
-            data={efficiencyData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { display: false },
-                tooltip: { enabled: true }
-              },
-              scales: {
-                y: {
-                  max: 100,
-                  ticks: { color: 'white' },
-                  grid: { color: 'rgba(255,255,255,0.1)' }
-                },
-                x: {
-                  ticks: { color: 'white' },
-                  grid: { color: 'rgba(255,255,255,0.1)' }
-                }
-              }
-            }}
-          />
+          <h3>Selected Energy Details</h3>
+          {selectedData && (
+            <div className="energy-details">
+              <div className="energy-info">
+                <div className="energy-tag">
+                  <span>Source</span>
+                  <span className="energy-value">{selectedData.source}</span>
+                </div>
+                <div className="energy-tag">
+                  <span>Total Used</span>
+                  <span className="energy-value">{selectedData.totalUsed} units</span>
+                </div>
+              </div>
+              <div className="energy-progress">
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${(selectedData.totalUsed / 3000) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="progress-label">
+                  {((selectedData.totalUsed / 3000) * 100).toFixed(2)}% of total capacity
+                </span>
+              </div>
+            </div>
+          )}
         </div>
-
         <div className="info-card">
-          <h3>Best Applications</h3>
-          <div className="tag-container">
-            {energyOptions[selectedEnergy].bestFor.map((use, index) => (
-              <span key={index} className="tag">{use}</span>
-            ))}
-          </div>
+          <h3>Total Per Renewable Source Analysis</h3>
           <div className="cost-benefit">
-            <div className="cost-item">
-              <span>Initial Investment</span>
-              <span>${energyOptions[selectedEnergy].initialCost}</span>
-            </div>
-            <div className="cost-item">
-              <span>Yearly Return</span>
-              <span>${energyOptions[selectedEnergy].yearlyReturn}</span>
-            </div>
+            {energyData.map((data) => (
+              <div key={data.source} className="cost-item">
+                <span>{data.source}</span>
+                <span>{data.totalUsed}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-
       <style jsx>{`
         .container {
           max-width: 1200px;
@@ -401,7 +352,70 @@ const EnergyPromoting = () => {
             flex-direction: column;
             gap: 1rem;
           }
-        }
+        }.energy-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.energy-info {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.energy-tag {
+  background: rgba(76, 175, 80, 0.15);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+}
+
+.energy-tag span {
+  display: block;
+}
+
+.energy-tag span:first-child {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.energy-tag .energy-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+.energy-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4CAF50;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: right;
+}
       `}</style>
     </div>
   );
