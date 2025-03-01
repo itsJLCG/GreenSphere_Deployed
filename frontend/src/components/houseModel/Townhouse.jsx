@@ -9,6 +9,7 @@ import { useFrame } from "@react-three/fiber";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
 
+// Shared state for occupied cells
 const useOccupiedCells = () => {
   const [occupiedCells, setOccupiedCells] = useState([]);
 
@@ -29,7 +30,7 @@ const useOccupiedCells = () => {
   return { isCellOccupied, occupyCell, releaseCell };
 };
 
-export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
+export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating, occupiedCells }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
 
   // Platform settings
@@ -63,14 +64,26 @@ export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWa
   const handleClick = (x, z) => {
     if (!showSolarWaterHeating) return; // Prevent placement when slot is closed
 
-    onSelect?.(x, z); // Trigger parent logic if provided
+    // Check if the cell is occupied by any renewable source
+    if (occupiedCells.isCellOccupied(x, z)) {
+      const isSolarWaterHeater = solarWaterHeating.some(tile => tile.x === x && tile.z === z);
+      if (isSolarWaterHeater) {
+        // Remove the solar water heater
+        setSolarWaterHeating((prevTiles) => {
+          console.log("Removing solar water heater at:", x, z);
+          occupiedCells.releaseCell(x, z);
+          return prevTiles.filter(tile => tile.x !== x || tile.z !== z);
+        });
+      } else {
+        console.log("Cell is occupied by another renewable source, cannot place here.");
+      }
+      return; // Exit function to prevent placement
+    }
 
-    setSolarWaterHeating((prevTiles) => {
-      const exists = prevTiles.some(tile => tile.x === x && tile.z === z);
-      return exists
-        ? prevTiles.filter(tile => tile.x !== x || tile.z !== z) // Remove if clicked again
-        : [...prevTiles, { x, z }]; // Add if not exists
-    });
+    // If the cell is not occupied, place the solar water heater
+    console.log("Placing solar water heater at:", x, z);
+    occupiedCells.occupyCell(x, z);
+    setSolarWaterHeating((prevTiles) => [...prevTiles, { x, z }]);
   };
 
   return (
@@ -117,21 +130,16 @@ export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWa
   );
 };
 
-export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem }) => {
+
+export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/microHydropowerSystem.glb");
   const { actions } = useAnimations(animations, scene);
   const mixers = useRef([]);
 
   useEffect(() => {
-    console.log("Animations loaded:", animations);
-    console.log("Actions:", actions);
-
     if (actions && actions["Peddles.009Action"]) {
-      console.log("Playing animation: Peddles.009Action");
       actions["Peddles.009Action"].setLoop(THREE.LoopRepeat);
       actions["Peddles.009Action"].play();
-    } else {
-      console.error("Animation 'Peddles.009Action' not found or scene not loaded");
     }
   }, [actions]);
 
@@ -165,14 +173,26 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
   const handleClick = (x, z) => {
     if (!showMicroHydroPowerSystem) return;
 
-    onSelect?.(x, z);
+    // Check if the cell is occupied
+    if (occupiedCells.isCellOccupied(x, z)) {
+      const isMicroHydroPowerSystem = microHydroPowerSystem.some(tile => tile.x === x && tile.z === z);
+      if (isMicroHydroPowerSystem) {
+        // Remove the micro-hydro power system
+        setMicroHydroPowerSystem(prevTiles => {
+          occupiedCells.releaseCell(x, z);
+          return prevTiles.filter(tile => tile.x !== x || tile.z !== z);
+        });
+      } else {
+        console.log("Cell occupied by another renewable source.");
+      }
+      return;
+    }
 
-    setMicroHydroPowerSystem((prevTiles) => {
-      const exists = prevTiles.some(tile => tile.x === x && tile.z === z);
-      return exists
-        ? prevTiles.filter(tile => tile.x !== x || tile.z !== z)
-        : [...prevTiles, { x, z }];
-    });
+    // Place the micro-hydro power system
+    occupiedCells.occupyCell(x, z);
+    setMicroHydroPowerSystem(prevTiles => [...prevTiles, { x, z }]);
+
+    onSelect?.(x, z);
   };
 
   return (
@@ -221,9 +241,9 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
           <primitive
             key={`${x}-${z}-${index}`}
             object={turbine}
-            position={[x, -2, z]} // Adjusted Y-position
-            scale={[0.7, 0.7, 0.7]} // Increased scale
-            rotation={[0, Math.PI / 2, 0]} // Rotates 90 degrees to the left
+            position={[x, -2, z]}
+            scale={[0.7, 0.7, 0.7]}
+            rotation={[0, Math.PI / 2, 0]}
           />
         );
       })}
@@ -231,8 +251,7 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
   );
 };
 
-
-export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines }) => {
+export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/wind_turbine(2).glb");
   const { actions } = useAnimations(animations, scene);
 
@@ -252,7 +271,7 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
     }
   }, [actions]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     mixers.current.forEach((mixer) => mixer.update(delta));
   });
 
@@ -280,14 +299,28 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
   const handleClick = (x, z) => {
     if (!showSmallWindTurbines) return;
 
-    onSelect?.(x, z);
+    // Check if cell is occupied
+    if (occupiedCells.isCellOccupied(x, z)) {
+      const isSmallWindTurbine = smallWindTurbines.some(tile => tile.x === x && tile.z === z);
+      if (isSmallWindTurbine) {
+        // Remove the small wind turbine and release the cell
+        setSmallWindTurbines(prevTiles => {
+          occupiedCells.releaseCell(x, z);
+          return prevTiles.filter(tile => tile.x !== x || tile.z !== z);
+        });
+      } else {
+        console.log("Cell is occupied by another renewable source, cannot place here.");
+      }
+      return;
+    }
 
-    setSmallWindTurbines((prevTiles) => {
-      const exists = prevTiles.some(tile => tile.x === x && tile.z === z);
-      return exists
-        ? prevTiles.filter(tile => tile.x !== x || tile.z !== z)
-        : [...prevTiles, { x, z }];
-    });
+    // Place turbine if not occupied
+    console.log("Placing small wind turbine at:", x, z);
+    occupiedCells.occupyCell(x, z);
+    setSmallWindTurbines(prevTiles => [...prevTiles, { x, z }]);
+
+    // Trigger parent logic if provided
+    onSelect?.(x, z);
   };
 
   return (
@@ -347,23 +380,16 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
 };
 
 
-export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines }) => {
+
+export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/verticalAxisWindTurbineAnimated.glb");
   const { actions } = useAnimations(animations, scene);
-
-  // Ref to store mixers for each turbine
   const mixers = useRef([]);
 
   useEffect(() => {
-    console.log("Animations loaded:", animations);
-    console.log("Actions:", actions);
-
     if (actions && actions["Object_6.001Action"]) {
-      console.log("Playing animation: Object_6.001Action");
       actions["Object_6.001Action"].setLoop(THREE.LoopRepeat);
       actions["Object_6.001Action"].play();
-    } else {
-      console.error("Animation 'Object_6.001Action' not found or scene not loaded");
     }
   }, [actions]);
 
@@ -371,15 +397,10 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
     mixers.current.forEach((mixer) => mixer.update(delta));
   });
 
-  // Platform settings
   const platformSize = 20;
   const platformCenter = [0, -2, 0];
-
-  // House boundaries (Increased size to 14)
   const houseSize = 14;
   const houseCenter = [0, 2, 0];
-
-  // Grid settings
   const gridSize = 10;
   const cellSize = platformSize / gridSize;
 
@@ -394,11 +415,21 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
 
   const handleClick = (x, z) => {
     if (!showVerticalAxisWindTurbines) return;
+
+    if (occupiedCells.isCellOccupied(x, z)) {
+      const isVerticalAxisWindTurbine = verticalAxisWindTurbines.some(tile => tile.x === x && tile.z === z);
+      if (isVerticalAxisWindTurbine) {
+        setVerticalAxisWindTurbines(prevTiles => {
+          occupiedCells.releaseCell(x, z);
+          return prevTiles.filter(tile => tile.x !== x || tile.z !== z);
+        });
+      }
+      return;
+    }
+
+    occupiedCells.occupyCell(x, z);
+    setVerticalAxisWindTurbines(prevTiles => [...prevTiles, { x, z }]);
     onSelect?.(x, z);
-    setVerticalAxisWindTurbines((prevTiles) => {
-      const exists = prevTiles.some((tile) => tile.x === x && tile.z === z);
-      return exists ? prevTiles.filter((tile) => tile.x !== x || tile.z !== z) : [...prevTiles, { x, z }];
-    });
   };
 
   return (
@@ -409,7 +440,7 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
             const x = (col - gridSize / 2) * cellSize + cellSize / 2;
             const z = (row - gridSize / 2) * cellSize + cellSize / 2;
             if (!isValidPosition(x, z, row)) return null;
-            const isPlaced = verticalAxisWindTurbines.some((tile) => tile.x === x && tile.z === z);
+            const isPlaced = verticalAxisWindTurbines.some(tile => tile.x === x && tile.z === z);
             return (
               <mesh
                 key={`${x}-${z}`}
@@ -427,21 +458,18 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
       {verticalAxisWindTurbines.map(({ x, z }, index) => {
         const turbine = scene.clone();
         const mixer = new THREE.AnimationMixer(turbine);
-        animations.forEach((clip) => {
+        animations.forEach(clip => {
           const action = mixer.clipAction(clip);
           action.setLoop(THREE.LoopRepeat);
           action.play();
         });
         mixers.current[index] = mixer;
-        return <primitive
-          key={`${x}-${z}-${index}`}
-          object={turbine}
-          position={[x, 7, z]}
-          scale={[0.6, 0.7, 0.7]} />;
+        return <primitive key={`${x}-${z}-${index}`} object={turbine} position={[x, 7, z]} scale={[0.6, 0.7, 0.7]} />;
       })}
     </>
   );
 };
+
 
 
 export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump }) => {
