@@ -5,6 +5,27 @@ import { MicroHydroPowerSystemTiles, SmallWindTurbinesTiles, VerticalAxisWindTur
 import { Html } from "@react-three/drei";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis";
 
+// Shared state for occupied cells
+const useOccupiedCells = () => {
+  const [occupiedCells, setOccupiedCells] = useState([]);
+
+  const isCellOccupied = (x, z) => {
+    return occupiedCells.some(cell => cell.x === x && cell.z === z);
+  };
+
+  const occupyCell = (x, z) => {
+    if (!isCellOccupied(x, z)) {
+      setOccupiedCells(prev => [...prev, { x, z }]);
+    }
+  };
+
+  const releaseCell = (x, z) => {
+    setOccupiedCells(prev => prev.filter(cell => cell.x !== x || cell.z !== z));
+  };
+
+  return { isCellOccupied, occupyCell, releaseCell };
+};
+
 const OfficeRoofGrid = ({ onSelect, solarPanels, setSolarPanels }) => {
   const gridWidth = 6; // 6 columns
   const gridHeight = 4; // 4 rows
@@ -65,6 +86,9 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
   const [verticalFarming, setVerticalFarming] = useState([]);
+
+  
+  const occupiedCells = useOccupiedCells();
 
   const hasSolarPanels = solarPanels.length > 0;
   const hasSolarWaterHeating = solarWaterHeating.length > 0;
@@ -153,6 +177,7 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
         solarWaterHeating={solarWaterHeating}
         setSolarWaterHeating={setSolarWaterHeating}
         showSolarWaterHeating={showSolarWaterHeating}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <HeatPumpTiles
         heatPump={heatPump}
@@ -163,16 +188,19 @@ const OfficeBuilding = ({ showSolarPanels, showSolarRoofTiles, showSolarWaterHea
         smallWindTurbines={smallWindTurbines}
         setSmallWindTurbines={setSmallWindTurbines}
         showSmallWindTurbines={showSmallWindTurbines}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <VerticalAxisWindTurbinesTiles
         verticalAxisWindTurbines={verticalAxisWindTurbines}
         setVerticalAxisWindTurbines={setVerticalAxisWindTurbines}
         showVerticalAxisWindTurbines={showVerticalAxisWindTurbines}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <MicroHydroPowerSystemTiles
         microHydroPowerSystem={microHydroPowerSystem}
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <VerticalFarmingTiles
         verticalFarming={verticalFarming}
