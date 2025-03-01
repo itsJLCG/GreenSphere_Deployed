@@ -71,26 +71,26 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
         <cylinderGeometry args={[0.6, 0.6, 0.2, 32]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      {/* Outer Black Frame - Front, Back, Left, Right */}
-      <mesh position={[0, -4, 4.1]}>
+{/* Outer Black Frame - Front, Back, Left, Right */}
+<mesh position={[0, -6, 4.1]}>
         <boxGeometry args={[12, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <mesh position={[0, -4, -4.1]}>
+      <mesh position={[0, -6, -4.1]}>
         <boxGeometry args={[12, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <mesh position={[-6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh position={[-6.1, -6, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[8, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <mesh position={[6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh position={[6.1, -6, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[8, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
 
       {/* Inner Water Area (Filling the entire space) */}
-      <mesh position={[0, -4, 0]}>
+      <mesh position={[0, -6, 0]}>
         <boxGeometry args={[12, 0.25, 8]} />
         <meshStandardMaterial color={hasMicroHydroPowerSystem ? "blue" : "grey"} />
       </mesh>

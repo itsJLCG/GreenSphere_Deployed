@@ -9,6 +9,26 @@ import { useFrame } from "@react-three/fiber";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
 
+const useOccupiedCells = () => {
+  const [occupiedCells, setOccupiedCells] = useState([]);
+
+  const isCellOccupied = (x, z) => {
+    return occupiedCells.some(cell => cell.x === x && cell.z === z);
+  };
+
+  const occupyCell = (x, z) => {
+    if (!isCellOccupied(x, z)) {
+      setOccupiedCells(prev => [...prev, { x, z }]);
+    }
+  };
+
+  const releaseCell = (x, z) => {
+    setOccupiedCells(prev => prev.filter(cell => cell.x !== x || cell.z !== z));
+  };
+
+  return { isCellOccupied, occupyCell, releaseCell };
+};
+
 export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
 
@@ -639,6 +659,9 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
   const [solarPanels, setSolarPanels] = useState([]);
   const [solarRoofTiles, setSolarRoofTiles] = useState([]);
 
+  
+  const occupiedCells = useOccupiedCells();
+
   const hasSolarPanels = solarPanels.length > 0;
   const hasSolarRoofTiles = solarRoofTiles.length > 0;
   const hasSolarWaterHeating = solarWaterHeating.length > 0;
@@ -692,25 +715,25 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
         <meshStandardMaterial color="black" />
       </mesh>
       {/* Outer Black Frame - Front, Back, Left, Right */}
-      <mesh position={[0, -4, 4.1]}>
+      <mesh position={[0, -6, 4.1]}>
         <boxGeometry args={[12, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <mesh position={[0, -4, -4.1]}>
+      <mesh position={[0, -6, -4.1]}>
         <boxGeometry args={[12, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <mesh position={[-6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh position={[-6.1, -6, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[8, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <mesh position={[6.1, -4, 0]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh position={[6.1, -6, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[8, 0.3, 0.3]} />
         <meshStandardMaterial color="black" />
       </mesh>
 
       {/* Inner Water Area (Filling the entire space) */}
-      <mesh position={[0, -4, 0]}>
+      <mesh position={[0, -6, 0]}>
         <boxGeometry args={[12, 0.25, 8]} />
         <meshStandardMaterial color={hasMicroHydroPowerSystem ? "blue" : "grey"} />
       </mesh>
@@ -757,36 +780,43 @@ const TownHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWat
         solarPanels={solarPanels}
         setSolarPanels={setSolarPanels}
         showSolarPanels={showSolarPanels}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <GableRoofGridTilesTown
         solarRoofTiles={solarRoofTiles}
         setSolarRoofTiles={setSolarRoofTiles}
         showSolarRoofTiles={showSolarRoofTiles}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <SolarWaterHeatingTiles
         solarWaterHeating={solarWaterHeating}
         setSolarWaterHeating={setSolarWaterHeating}
         showSolarWaterHeating={showSolarWaterHeating}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <HeatPumpTiles
         heatPump={heatPump}
         setHeatPump={setHeatPump}
         showHeatPump={showHeatPump}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <SmallWindTurbinesTiles
         smallWindTurbines={smallWindTurbines}
         setSmallWindTurbines={setSmallWindTurbines}
         showSmallWindTurbines={showSmallWindTurbines}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <VerticalAxisWindTurbinesTiles
         verticalAxisWindTurbines={verticalAxisWindTurbines}
         setVerticalAxisWindTurbines={setVerticalAxisWindTurbines}
         showVerticalAxisWindTurbines={showVerticalAxisWindTurbines}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <MicroHydroPowerSystemTiles
         microHydroPowerSystem={microHydroPowerSystem}
         setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
+        occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <Html>
         <TechnoEconomicAnalysis
