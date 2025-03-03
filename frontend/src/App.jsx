@@ -11,7 +11,7 @@ import axios from 'axios';
 import AdminHome from './components/admin/AdminHome';
 import LandingPage from './components/LandingPage';
 import OtpVerification from './components/OtpVerification';
-import Analysis from './components/Analysis'; 
+import Analysis from './components/Analysis';
 import { HomeProvider } from './components/HomeContext';
 
 export const IsLoggedInContext = createContext();
@@ -48,32 +48,33 @@ function App() {
 
     return (
         <HomeProvider>
-        <IsLoggedInContext.Provider value={isLoggedIn}>
-            <SetIsLoggedInContext.Provider value={setIsLoggedIn}>
-                <UserRoleContext.Provider value={userRole}>
-                    <SetUserRoleContext.Provider value={setUserRole}>
-                        <UserNameContext.Provider value={userName}>
-                            <SetUserNameContext.Provider value={setUserName}>
-                                <BrowserRouter>
-                                    <Navbar />
-                                    <Routes>
-                                        <Route path="/" element={isLoggedIn ? <Navigate to={userRole === 'admin' ? "/adminhome" : "/home"} /> : <LandingPage />} />
-                                        <Route path="/signup" element={isLoggedIn ? <Navigate to={userRole === 'admin' ? "/adminhome" : "/home"} /> : <Signup />} />
-                                        <Route path="/login" element={isLoggedIn ? <Navigate to={userRole === 'admin' ? "/adminhome" : "/home"} /> : <Login />} />
-                                        <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-                                        <Route path="/feedback" element={isLoggedIn ? <Feedback /> : <Navigate to="/login" />} />
-                                        <Route path="/adminhome" element={isLoggedIn && userRole === "admin" ? <AdminHome /> : <Navigate to="/home" />} />
-                                        <Route path="/verify-otp" element={<OtpVerification />} />
-                                        <Route path="/analysis" element={<Analysis />} /> 
-                                    </Routes>
-                                </BrowserRouter>
-                                <ToastContainer position="top-right" autoClose={3000} />
-                            </SetUserNameContext.Provider>
-                        </UserNameContext.Provider>
-                    </SetUserRoleContext.Provider>
-                </UserRoleContext.Provider>
-            </SetIsLoggedInContext.Provider>
-        </IsLoggedInContext.Provider>
+            <IsLoggedInContext.Provider value={isLoggedIn}>
+                <SetIsLoggedInContext.Provider value={setIsLoggedIn}>
+                    <UserRoleContext.Provider value={userRole}>
+                        <SetUserRoleContext.Provider value={setUserRole}>
+                            <UserNameContext.Provider value={userName}>
+                                <SetUserNameContext.Provider value={setUserName}>
+                                    <BrowserRouter>
+                                        <Navbar />
+                                        <Routes>
+                                            <Route path="/" element={<LandingPage />} />  {/* ✅ Allow everyone to visit `/` */}
+                                            <Route path="/landingpage" element={<LandingPage />} />
+                                            <Route path="/signup" element={isLoggedIn ? <Navigate to={userRole === 'admin' ? "/adminhome" : "/home"} /> : <Signup />} />
+                                            <Route path="/login" element={isLoggedIn ? <Navigate to={userRole === 'admin' ? "/adminhome" : "/home"} /> : <Login />} />
+                                            <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+                                            <Route path="/feedback" element={isLoggedIn ? <Feedback /> : <Navigate to="/login" />} />
+                                            <Route path="/adminhome" element={isLoggedIn && userRole === "admin" ? <AdminHome /> : <Navigate to="/home" />} />
+                                            <Route path="/verify-otp" element={<OtpVerification />} />
+                                            <Route path="/analysis" element={<Analysis />} />
+                                        </Routes>
+                                    </BrowserRouter>
+                                    <ToastContainer position="top-right" autoClose={3000} />
+                                </SetUserNameContext.Provider>
+                            </UserNameContext.Provider>
+                        </SetUserRoleContext.Provider>
+                    </UserRoleContext.Provider>
+                </SetIsLoggedInContext.Provider>
+            </IsLoggedInContext.Provider>
         </HomeProvider>
     );
 }

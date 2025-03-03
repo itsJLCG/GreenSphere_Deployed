@@ -71,3 +71,7 @@ button:focus-visible {
   }
 }
 
+
+button:hover .tooltip {
+  opacity: 1;
+}

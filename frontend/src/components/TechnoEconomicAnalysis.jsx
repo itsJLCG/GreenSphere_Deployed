@@ -17,11 +17,12 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, LineChart,
 import { PieChart, Pie, Cell } from "recharts"; // For pie chart
 import exportToPDF from "./ExportToPDF";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const PRICES = {
   solarPanels: {
     type: 'Solar Energy',
-    productCost: 10000,
+    productCost: 30000,
     installation: 40000,
     maintenance: 15000,
     carbonEmissions: 40,
@@ -30,7 +31,7 @@ const PRICES = {
   },
   solarWaterHeating: {
     type: 'Solar Energy',
-    productCost: 30000,
+    productCost: 380000,
     installation: 20000,
     maintenance: 5000,
     carbonEmissions: 0,
@@ -39,7 +40,7 @@ const PRICES = {
   },
   smallWindTurbines: {
     type: 'Wind Energy',
-    productCost: 100000,
+    productCost: 111000,
     installation: 50000,
     maintenance: 10000,
     carbonEmissions: 10,
@@ -48,7 +49,7 @@ const PRICES = {
   },
   verticalAxisWindTurbines: {
     type: 'Wind Energy',
-    productCost: 120000,
+    productCost: 110000,
     installation: 60000,
     maintenance: 12000,
     carbonEmissions: 10,
@@ -66,7 +67,7 @@ const PRICES = {
   },
   picoHydroPower: {
     type: 'HydroPower Energy',
-    productCost: 80000,
+    productCost: 300000,
     installation: 40000,
     maintenance: 5000,
     carbonEmissions: 0,
@@ -93,7 +94,7 @@ const PRICES = {
   },
   verticalFarming: {
     type: 'Urban Farming',
-    productCost: 300000,
+    productCost: 500000,
     installation: 200000,
     maintenance: 20000,
     carbonEmissions: 1,
@@ -335,45 +336,45 @@ const TechnoEconomicAnalysis = ({
   return (
     <>
       {!open && (
-  <Box
-  sx={{
-    position: "fixed",
-    bottom: "-300px", // Adjusts vertical positioning
-    left: "-750px", // Adjusts horizontal positioning
-    backgroundColor: "#213547", // Container background
-    padding: "10px", // Small padding around the button
-    borderRadius: "16px", // Soft rounded edges
-    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.3)", // Subtle shadow for depth
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  }}
->
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: "#FF5733", // Highlighted button color
-      color: "white",
-      width: "350px",
-      padding: "14px 26px",
-      fontSize: "14px",
-      fontWeight: "bold",
-      borderRadius: "12px",
-      boxShadow: "0px 6px 12px rgba(255, 87, 51, 0.4)", // Glowing effect
-      textTransform: "uppercase",
-      letterSpacing: "1px",
-      transition: "all 0.3s ease",
-      "&:hover": {
-        backgroundColor: "#E74C3C",
-        boxShadow: "0px 8px 16px rgba(231, 76, 60, 0.5)",
-        transform: "scale(1.05)", // Slight zoom effect on hover
-      },
-    }}
-    onClick={handleOpen}
-  >
-    Open Techno-Economic Analysis
-  </Button>
-</Box>
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: "-300px", // Adjusts vertical positioning
+            left: "-750px", // Adjusts horizontal positioning
+            backgroundColor: "#213547", // Container background
+            padding: "10px", // Small padding around the button
+            borderRadius: "16px", // Soft rounded edges
+            boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.3)", // Subtle shadow for depth
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#FF5733", // Highlighted button color
+              color: "white",
+              width: "350px",
+              padding: "14px 26px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              borderRadius: "12px",
+              boxShadow: "0px 6px 12px rgba(255, 87, 51, 0.4)", // Glowing effect
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                backgroundColor: "#E74C3C",
+                boxShadow: "0px 8px 16px rgba(231, 76, 60, 0.5)",
+                transform: "scale(1.05)", // Slight zoom effect on hover
+              },
+            }}
+            onClick={handleOpen}
+          >
+            Open Techno-Economic Analysis
+          </Button>
+        </Box>
 
       )}
 
@@ -589,11 +590,39 @@ const TechnoEconomicAnalysis = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => {
+                onClick={async () => {
                   if (!data || Object.keys(data).length === 0) {
                     console.error("No data available for PDF export!");
+                    return; // Exit early if no data is available
+                  }
+
+                  // Fetch user data
+                  const fetchUserData = async () => {
+                    try {
+                      const response = await axios.get('http://localhost:3001/user', { withCredentials: true });
+                      return response.data.user; // Assuming the user data is returned in the `user` field
+                    } catch (error) {
+                      console.error("Error fetching user data:", error);
+                      return null;
+                    }
+                  };
+
+                  const userData = await fetchUserData();
+
+                  if (userData) {
+                    // Call ExportToPDF with user data
+                    exportToPDF(
+                      costBenefitRef,
+                      savingsRef,
+                      carbonRef,
+                      energyUsageRef,
+                      totalCostRef,
+                      costBreakdownRef,
+                      data,
+                      userData
+                    );
                   } else {
-                    exportToPDF(costBenefitRef, savingsRef, carbonRef, energyUsageRef, totalCostRef, costBreakdownRef, data);
+                    console.error("User data not available. Cannot export PDF.");
                   }
                 }}
                 sx={{ mr: 2 }} // Adds right margin

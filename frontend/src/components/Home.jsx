@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext} from "react";
+import React, { useState, useMemo, useContext } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stats, useTexture, useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -12,6 +12,7 @@ import { Roofs } from "./houseModel/SingleFamilyHouse.jsx";
 import RenewableSlots from "./RenewableSlots.jsx";
 import GameModal from "./GameModal.jsx";
 import { HomeContext } from "./HomeContext.jsx";
+import { MagnifyingGlass } from 'react-loader-spinner';
 
 const Platform = () => {
   const texture = useTexture("../assets/images/grass.webp");
@@ -48,9 +49,6 @@ const BuildingModels = {
   "Office Building": OfficeBuilding,
 };
 
-// Home.jsx
-
-// Define the impossible sources at the top
 const impossibleSources = {
   "Single-Family with Gable": ["Pico Hydropower", "Vertical Farming"],
   "Single-Family with Flat": ["Pico Hydropower", "Vertical Farming"],
@@ -65,59 +63,60 @@ const impossibleSources = {
 
 const Home = () => {
   const {
-  showHouseOptions,
-  setShowHouseOptions,
-  showBuildingOptions,
-  setShowBuildingOptions,
-  selectedHouse,
-  setSelectedHouse,
-  selectedBuilding,
-  setSelectedBuilding,
-  roofType,
-  setRoofType,
-  bgColor,
-  setBgColor,
-  isOuterSpace,
-  setIsOuterSpace,
-  isForest,
-  setIsForest,
-  isAncient,
-  setIsAncient,
-  isUnderwater,
-  setIsUnderwater,
-  isCyberpunk,
-  setIsCyberpunk,
-  isThemeMenuOpen,
-  setIsThemeMenuOpen,
-  showSolarPanels,
-  setShowSolarPanels,
-  showSolarRoofTiles,
-  setShowSolarRoofTiles,
-  showSolarWaterHeating,
-  setShowSolarWaterHeating,
-  showHeatPump,
-  setShowHeatPump,
-  showSmallWindTurbines,
-  setShowSmallWindTurbines,
-  showVerticalAxisWindTurbines,
-  setShowVerticalAxisWindTurbines,
-  showMicroHydroPowerSystem,
-  setShowMicroHydroPowerSystem,
-  showPicoHydroPower,
-  setShowPicoHydroPower,
-  showVerticalFarming,
-  setShowVerticalFarming,
-  isModalOpen,
-  setIsModalOpen,
-  modalContent,
-  setModalContent,
-} = useContext(HomeContext);
+    showHouseOptions,
+    setShowHouseOptions,
+    showBuildingOptions,
+    setShowBuildingOptions,
+    selectedHouse,
+    setSelectedHouse,
+    selectedBuilding,
+    setSelectedBuilding,
+    roofType,
+    setRoofType,
+    bgColor,
+    setBgColor,
+    isOuterSpace,
+    setIsOuterSpace,
+    isForest,
+    setIsForest,
+    isAncient,
+    setIsAncient,
+    isUnderwater,
+    setIsUnderwater,
+    isCyberpunk,
+    setIsCyberpunk,
+    isThemeMenuOpen,
+    setIsThemeMenuOpen,
+    showSolarPanels,
+    setShowSolarPanels,
+    showSolarRoofTiles,
+    setShowSolarRoofTiles,
+    showSolarWaterHeating,
+    setShowSolarWaterHeating,
+    showHeatPump,
+    setShowHeatPump,
+    showSmallWindTurbines,
+    setShowSmallWindTurbines,
+    showVerticalAxisWindTurbines,
+    setShowVerticalAxisWindTurbines,
+    showMicroHydroPowerSystem,
+    setShowMicroHydroPowerSystem,
+    showPicoHydroPower,
+    setShowPicoHydroPower,
+    showVerticalFarming,
+    setShowVerticalFarming,
+    isModalOpen,
+    setIsModalOpen,
+    modalContent,
+    setModalContent,
+  } = useContext(HomeContext);
 
-  // MODAL TOGGLE
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSolarPanelToggle = (state) => {
+    setIsLoading(true);
     setShowSolarPanels(state);
     setIsModalOpen(true);
-
     setActiveRenewable(state ? "solarPanels" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
@@ -128,19 +127,18 @@ const Home = () => {
       type: "Solar Energy",
       infrastructure: `${infrastructureName} ${roofInfo}`,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handleSolarRoofTilesToggle = (state) => {
+    setIsLoading(true);
     setShowSolarRoofTiles(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "solarRoofTiles" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
-    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-
-    // Debugging Log
-    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : "";
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName;
 
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Solar Roof Tiles") || false;
 
@@ -150,10 +148,11 @@ const Home = () => {
       infrastructure: fullInfrastructure,
       isImpossible,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
-
   const handleSolarWaterHeatingToggle = (state) => {
+    setIsLoading(true);
     setShowSolarWaterHeating(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "solarWaterHeating" : null);
@@ -166,19 +165,18 @@ const Home = () => {
       type: "Solar Energy",
       infrastructure: `${infrastructureName} ${roofInfo}`,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handleHeatPumpToggle = (state) => {
+    setIsLoading(true);
     setShowHeatPump(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "heatPump" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
-    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-
-    // Debugging Log
-    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : "";
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName;
 
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Heat Pump") || false;
 
@@ -188,9 +186,11 @@ const Home = () => {
       infrastructure: fullInfrastructure,
       isImpossible,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handleSmallWindTurbinesToggle = (state) => {
+    setIsLoading(true);
     setShowSmallWindTurbines(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "smallWindTurbines" : null);
@@ -203,9 +203,11 @@ const Home = () => {
       type: "Wind Energy",
       infrastructure: `${infrastructureName} ${roofInfo}`,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handleVerticalAxisWindTurbinesToggle = (state) => {
+    setIsLoading(true);
     setShowVerticalAxisWindTurbines(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "verticalAxisWindTurbines" : null);
@@ -218,9 +220,11 @@ const Home = () => {
       type: "Wind Energy",
       infrastructure: `${infrastructureName} ${roofInfo}`,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handleMicroHydroPowerSystemToggle = (state) => {
+    setIsLoading(true);
     setShowMicroHydroPowerSystem(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "microHydroPowerSystem" : null);
@@ -233,19 +237,18 @@ const Home = () => {
       type: "HydroPower Energy",
       infrastructure: `${infrastructureName} ${roofInfo}`,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handlePicoHydroPowerToggle = (state) => {
+    setIsLoading(true);
     setShowPicoHydroPower(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "picoHydroPower" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
-    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-
-    // Debugging Log
-    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : "";
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName;
 
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Pico Hydropower") || false;
 
@@ -255,19 +258,18 @@ const Home = () => {
       infrastructure: fullInfrastructure,
       isImpossible,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const handleVerticalFarmingToggle = (state) => {
+    setIsLoading(true);
     setShowVerticalFarming(state);
     setIsModalOpen(true);
     setActiveRenewable(state ? "verticalFarming" : null);
 
     const infrastructureName = selectedHouse || selectedBuilding;
-    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : ""; // Remove leading space
-    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName; // Ensure proper spacing
-
-    // Debugging Log
-    console.log("Checking:", fullInfrastructure, "=>", impossibleSources[fullInfrastructure]);
+    const roofInfo = selectedHouse === "Single-Family" ? `with ${roofType}` : "";
+    const fullInfrastructure = roofInfo ? `${infrastructureName} ${roofInfo}` : infrastructureName;
 
     const isImpossible = impossibleSources[fullInfrastructure]?.includes("Vertical Farming") || false;
 
@@ -277,6 +279,7 @@ const Home = () => {
       infrastructure: fullInfrastructure,
       isImpossible,
     });
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const toggleBackgroundColor = () => {
@@ -287,12 +290,14 @@ const Home = () => {
   };
 
   const changeTheme = (theme) => {
+    setIsLoading(true);
     setIsOuterSpace(false); setIsAncient(false); setIsUnderwater(false); setIsCyberpunk(false); setIsForest(false);
     if (theme === "Outer Space") setIsOuterSpace(true);
     if (theme === "Ancient") setIsAncient(true);
     if (theme === "Underwater") setIsUnderwater(true);
     if (theme === "Cyberpunk") setIsCyberpunk(true);
     if (theme === "Forest") setIsForest(true);
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
   };
 
   const [activeRenewable, setActiveRenewable] = useState(null);
@@ -310,7 +315,7 @@ const Home = () => {
               <button
                 onClick={() => {
                   setShow(!showOptions);
-                  label === 'Houses' ? setShowBuildingOptions(false) : setShowHouseOptions(false); // Close the other menu if open
+                  label === 'Houses' ? setShowBuildingOptions(false) : setShowHouseOptions(false);
                 }}
                 style={buttonStyle}
               >
@@ -323,7 +328,7 @@ const Home = () => {
                       key={option}
                       onClick={() => {
                         setSelection(option);
-                        label === 'Houses' ? setSelectedBuilding(null) : setSelectedHouse(null); // Reset the other selection
+                        label === 'Houses' ? setSelectedBuilding(null) : setSelectedHouse(null);
                       }}
                       style={buttonStyle}
                     >
@@ -336,7 +341,6 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Roof Selection - Only show if Single-Family house is selected */}
         {selectedHouse === "Single-Family" && (
           <div style={{ marginTop: 210 }}>
             <p style={{ color: "white", marginBottom: "5px" }}>Select Roof Type:</p>
@@ -393,8 +397,8 @@ const Home = () => {
         <Platform />
         {(selectedHouse || selectedBuilding) && (
           <Html
-          position={[0, -3, 0]}
-          zIndexRange={[0, 100]} // Lower z-index range to avoid blocking the modal
+            position={[0, -3, 0]}
+            zIndexRange={[0, 100]}
           >
             <RenewableSlots
               infrastructure={selectedHouse || selectedBuilding}
@@ -412,7 +416,6 @@ const Home = () => {
           </Html>
         )}
 
-        {/* Render Selected House or Building */}
         {selectedHouse && React.createElement(HouseModels[selectedHouse], {
           roofType,
           showSolarPanels: activeRenewable === "solarPanels",
@@ -437,46 +440,91 @@ const Home = () => {
           showPicoHydroPower: activeRenewable === "picoHydroPower",
           showVerticalFarming: activeRenewable === "verticalFarming"
         })}
-
       </Canvas>
 
-      {/* Day / Night Mode Button */}
+      {isLoading && (
+        <div style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 1000,
+        }}>
+          <MagnifyingGlass color="black" height={300} width={300} />
+        </div>
+      )}
+
       <button
         onClick={toggleBackgroundColor}
-        style={floatButtonStyle}
+        style={{
+          ...floatButtonStyle,
+          position: "relative",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          left: "1400px",
+        }}
       >
-        Day / Night Mode
+        <img
+          src="assets/images/daynight.png"
+          alt="Day / Night Mode"
+          style={{
+            width: "83px",
+            height: "85px",
+            borderRadius: "50%",
+          }}
+        />
       </button>
 
-      {/* Theme Button to Toggle the Menu */}
       <button
         onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
-        style={{ ...floatButtonStyle, left: "1280px" }} // Correct way to merge styles
+        style={{
+          ...floatButtonStyle,
+          position: "relative",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          left: "1180px",
+        }}
       >
-        Theme
+        <img
+          src="assets/images/theme.png"
+          alt="Theme"
+          style={{
+            width: "80px",
+            height: "80px",
+            borderRadius: "100%",
+          }}
+        />
       </button>
 
-      {/* Theme Selection Menu */}
       {isThemeMenuOpen && (
         <div
           style={{
             position: 'absolute',
-            top: '60px',
-            left: '1280px',
-            background: "#1e1942",
+            top: '120px',
+            left: '1305px',
             padding: '10px',
-            borderRadius: '8px',
-            color: 'white',
-            fontSize: '14px',
+            border: "none",
           }}
         >
-          {['Outer Space', 'Forest', 'Ancient', 'Underwater', 'Cyberpunk'].map((theme) => (
-            <ul key={theme} style={{ listStyle: 'none', padding: 5, margin: 0 }}>
+          {[
+            { name: 'Outer Space', img: 'assets/images/outerspace.png' },
+            { name: 'Forest', img: 'assets/images/forest.png' },
+            { name: 'Ancient', img: 'assets/images/ancient.png' },
+            { name: 'Underwater', img: 'assets/images/underwater.png' },
+            { name: 'Cyberpunk', img: 'assets/images/cyberpunk.png' },
+          ].map((theme) => (
+            <ul key={theme.name} style={{ listStyle: 'none', padding: 5, margin: 0 }}>
               <li
-                onClick={() => changeTheme(theme)}
+                onClick={() => changeTheme(theme.name)}
                 style={{ cursor: 'pointer' }}
               >
-                {theme}
+                <img
+                  src={theme.img}
+                  alt={theme.name}
+                  style={{ width: '70px', height: '70px'}}
+                />
               </li>
             </ul>
           ))}

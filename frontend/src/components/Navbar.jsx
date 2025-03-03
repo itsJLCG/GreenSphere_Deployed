@@ -44,16 +44,20 @@ const Navbar = () => {
             alt="GreenSphere Logo"
             style={{ height: "40px", marginRight: "10px" }}
           />
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "1.5rem",
-              color: "#FFFFFF",
-              letterSpacing: "1px",
-            }}
-          >
-            GreenSphere
-          </Typography>
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "1.5rem",
+                color: "#FFFFFF",
+                letterSpacing: "1px",
+                cursor: "pointer",
+                "&:hover": { textDecoration: "underline" },
+              }}
+            >
+              GreenSphere
+            </Typography>
+          </Link>
         </div>
 
         {/* Buttons */}
