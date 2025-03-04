@@ -13,20 +13,31 @@ const Navbar = () => {
   const userRole = useContext(UserRoleContext); // Get user role
   const location = useLocation(); // Get current route
 
+  // Button styling with a modern, minimalistic design
   const buttonStyle = {
-    marginRight: "15px",
-    fontSize: "1rem",
-    fontWeight: "600",
-    padding: "0.4rem 1.2rem",
-    borderRadius: "0.8rem",
+    marginRight: "12px",
+    fontSize: "0.9rem",
+    fontWeight: "500",
+    padding: "0.5rem 1.2rem",
+    borderRadius: "8px",
+    textTransform: "none", // Prevent uppercase transformation
+    transition: "all 0.3s ease",
+    backgroundColor: "rgba(255, 255, 255, 0.1)", // Semi-transparent white
+    color: "#FFFFFF", // White text
+    border: "1px solid rgba(255, 255, 255, 0.3)", // Subtle border
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.2)", // Slightly brighter on hover
+      borderColor: "rgba(255, 255, 255, 0.5)", // Brighter border on hover
+      transform: "translateY(-1px)", // Slight lift effect
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow on hover
+    },
   };
 
   return (
     <AppBar
       position="static"
       sx={{
-        background: "rgba(5, 0, 46, 0.9)", // Slightly transparent to match the gradient
-
+        background: "rgba(5, 0, 46, 0.9)", // Dark blue background
         boxShadow: "none",
       }}
     >
@@ -64,42 +75,38 @@ const Navbar = () => {
         <div>
           {isLoggedIn ? (
             <>
-              {/* ✅ Show Home, Feedback, and Analysis only if NOT an admin */}
+              {/* Show Home, Feedback, and Analysis only if NOT an admin */}
               {userRole !== "admin" && (
                 <>
                   <Button
-                    style={{
-                      ...buttonStyle,
-                      backgroundColor: "#007BFF",
-                      color: "#FFFFFF",
-                    }}
+                    sx={buttonStyle}
                     to="/home"
                     component={Link}
-                    variant="contained"
+                    variant="outlined"
                   >
                     Home
                   </Button>
                   <Button
-                    style={{
-                      ...buttonStyle,
-                      backgroundColor: "#007BFF",
-                      color: "#FFFFFF",
-                    }}
+                    sx={buttonStyle}
                     to="/feedback"
                     component={Link}
-                    variant="contained"
+                    variant="outlined"
                   >
                     Feedback
                   </Button>
                   <Button
-                    style={{
+                    sx={{
                       ...buttonStyle,
-                      backgroundColor: "#28A745", // Green color
-                      color: "#FFFFFF",
+                      backgroundColor: "rgba(40, 167, 69, 0.1)", // Green with transparency
+                      borderColor: "rgba(40, 167, 69, 0.3)", // Green border
+                      "&:hover": {
+                        backgroundColor: "rgba(40, 167, 69, 0.2)", // Brighter green on hover
+                        borderColor: "rgba(40, 167, 69, 0.5)", // Brighter border on hover
+                      },
                     }}
                     to="/analysis"
                     component={Link}
-                    variant="contained"
+                    variant="outlined"
                   >
                     Analysis
                   </Button>
@@ -110,26 +117,26 @@ const Navbar = () => {
           ) : (
             <>
               <Button
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: "#3333FF",
-                  color: "#FFFFFF",
-                }}
+                sx={buttonStyle}
                 to="/login"
                 component={Link}
-                variant="contained"
+                variant="outlined"
               >
                 Login
               </Button>
               <Button
-                style={{
+                sx={{
                   ...buttonStyle,
-                  backgroundColor: "#5555FF",
-                  color: "#FFFFFF",
+                  backgroundColor: "rgba(0, 123, 255, 0.1)", // Blue with transparency
+                  borderColor: "rgba(0, 123, 255, 0.3)", // Blue border
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 123, 255, 0.2)", // Brighter blue on hover
+                    borderColor: "rgba(0, 123, 255, 0.5)", // Brighter border on hover
+                  },
                 }}
                 to="/signup"
                 component={Link}
-                variant="contained"
+                variant="outlined"
               >
                 Signup
               </Button>
@@ -142,4 +149,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

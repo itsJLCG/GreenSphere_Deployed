@@ -44,10 +44,24 @@ const HouseModels = {
   "Mobile Home": MobileHome,
 };
 
+const HouseImages = {
+  "Single-Family": "assets/images/SingleFamilyHouse.png",
+  "Cottages": "assets/images/Cottages.png",
+  "TownHouse": "assets/images/TownHouse.png",
+  "Mobile Home": "assets/images/MobileHome.png",
+};
+
 const BuildingModels = {
   "Apartments": ApartmentsBuilding,
   "Office Building": OfficeBuilding,
 };
+
+const BuildingImages = {
+  "Apartments": "assets/images/Apartment.png",
+  "Office Building": "assets/images/OfficeBuilding.png",
+};
+
+
 
 const impossibleSources = {
   "Single-Family with Gable": ["Pico Hydropower", "Vertical Farming"],
@@ -302,24 +316,59 @@ const Home = () => {
 
   const [activeRenewable, setActiveRenewable] = useState(null);
 
+  const RoofImages = {
+    Gable: "assets/images/Gable.png",
+    Flat: "assets/images/Flat.png",
+    Shed: "assets/images/Shed.png",
+    Butterfly: "assets/images/Butterfly.png",
+  };
+
+
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       {/* Control Panel */}
       <div style={{ position: "absolute", top: 20, left: 20, zIndex: 10 }}>
         <div style={{ display: "flex", gap: "10px" }}>
           {[
-            { label: 'Houses', options: HouseModels, setShow: setShowHouseOptions, showOptions: showHouseOptions, setSelection: setSelectedHouse },
-            { label: 'Buildings', options: BuildingModels, setShow: setShowBuildingOptions, showOptions: showBuildingOptions, setSelection: setSelectedBuilding }
-          ].map(({ label, options, setShow, showOptions, setSelection }) => (
+            {
+              label: "Houses",
+              image: "assets/images/Home.png",
+              options: HouseModels,
+              setShow: setShowHouseOptions,
+              showOptions: showHouseOptions,
+              setSelection: setSelectedHouse,
+            },
+            {
+              label: "Buildings",
+              image: "assets/images/Building.png",
+              options: BuildingModels,
+              setShow: setShowBuildingOptions,
+              showOptions: showBuildingOptions,
+              setSelection: setSelectedBuilding,
+            },
+          ].map(({ label, image, options, setShow, showOptions, setSelection }) => (
             <div key={label}>
               <button
                 onClick={() => {
                   setShow(!showOptions);
-                  label === 'Houses' ? setShowBuildingOptions(false) : setShowHouseOptions(false);
+                  label === "Houses" ? setShowBuildingOptions(false) : setShowHouseOptions(false);
                 }}
-                style={buttonStyle}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                }}
               >
-                {label}
+                <img
+                  src={image}
+                  alt={label}
+                  title={label} // Tooltip on hover
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "10px",
+                  }}
+                />
               </button>
               {showOptions && (
                 <div style={dropdownStyle}>
@@ -328,11 +377,23 @@ const Home = () => {
                       key={option}
                       onClick={() => {
                         setSelection(option);
-                        label === 'Houses' ? setSelectedBuilding(null) : setSelectedHouse(null);
+                        label === "Houses" ? setSelectedBuilding(null) : setSelectedHouse(null);
                       }}
-                      style={buttonStyle}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "8px",
+                      }}
+                      title={option} // Tooltip when hovering
                     >
-                      {option}
+                      <img
+                        src={label === "Houses" ? HouseImages[option] : BuildingImages[option]}
+                        alt={option}
+                        style={{ width: "70px", height: "70px", borderRadius: "5px" }}
+                      />
                     </button>
                   ))}
                 </div>
@@ -342,15 +403,25 @@ const Home = () => {
         </div>
 
         {selectedHouse === "Single-Family" && (
-          <div style={{ marginTop: 210 }}>
+          <div style={{ marginTop: 350 }}>
             <p style={{ color: "white", marginBottom: "5px" }}>Select Roof Type:</p>
             {Object.keys(Roofs).map((roof) => (
-              <button key={roof} onClick={() => setRoofType(roof)} style={buttonStyle}>
-                {roof}
+              <button
+                key={roof}
+                onClick={() => setRoofType(roof)}
+                style={{ flexDirection: "column", gap: "15px", alignItems: "flex-start", background: "transparent", border: "none", cursor: "pointer" }}
+                title={roof} // Tooltip when hovering
+              >
+                <img
+                  src={RoofImages[roof]}
+                  alt={roof}
+                  style={{ width: "70px", height: "70px", objectFit: "contain" }}
+                />
               </button>
             ))}
           </div>
         )}
+
       </div>
 
       {(isOuterSpace || isAncient || isUnderwater || isCyberpunk || isForest) && (
@@ -456,6 +527,7 @@ const Home = () => {
 
       <button
         onClick={toggleBackgroundColor}
+        title="Day / Night Mode"
         style={{
           ...floatButtonStyle,
           position: "relative",
@@ -478,6 +550,7 @@ const Home = () => {
 
       <button
         onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+        title="Theme"
         style={{
           ...floatButtonStyle,
           position: "relative",
@@ -501,34 +574,33 @@ const Home = () => {
       {isThemeMenuOpen && (
         <div
           style={{
-            position: 'absolute',
-            top: '120px',
-            left: '1305px',
-            padding: '10px',
+            position: "absolute",
+            top: "120px",
+            left: "1305px",
+            padding: "10px",
             border: "none",
           }}
         >
           {[
-            { name: 'Outer Space', img: 'assets/images/outerspace.png' },
-            { name: 'Forest', img: 'assets/images/forest.png' },
-            { name: 'Ancient', img: 'assets/images/ancient.png' },
-            { name: 'Underwater', img: 'assets/images/underwater.png' },
-            { name: 'Cyberpunk', img: 'assets/images/cyberpunk.png' },
+            { name: "Outer Space", img: "assets/images/outerspace.png" },
+            { name: "Forest", img: "assets/images/forest.png" },
+            { name: "Ancient", img: "assets/images/ancient.png" },
+            { name: "Underwater", img: "assets/images/underwater.png" },
+            { name: "Cyberpunk", img: "assets/images/cyberpunk.png" },
           ].map((theme) => (
-            <ul key={theme.name} style={{ listStyle: 'none', padding: 5, margin: 0 }}>
-              <li
-                onClick={() => changeTheme(theme.name)}
-                style={{ cursor: 'pointer' }}
-              >
+            <ul key={theme.name} style={{ listStyle: "none", padding: 5, margin: 0 }}>
+              <li onClick={() => changeTheme(theme.name)} style={{ cursor: "pointer" }}>
                 <img
                   src={theme.img}
                   alt={theme.name}
-                  style={{ width: '70px', height: '70px'}}
+                  title={theme.name} // Adds a tooltip with the theme name
+                  style={{ width: "70px", height: "70px" }}
                 />
               </li>
             </ul>
           ))}
         </div>
+
       )}
 
       <GameModal
@@ -539,9 +611,25 @@ const Home = () => {
     </div>
   );
 };
+const buttonStyle = { 
+  background: "#1e1942", 
+  color: "white", 
+  padding: "10px 15px", 
+  margin: "5px 0", 
+  border: "none", 
+  borderRadius: "5px", 
+  cursor: "pointer", 
+  display: "flex", 
+  alignItems: "center", 
+  gap: "8px", 
+  fontSize: "14px", 
+  transition: "all 0.3s ease", 
+  width: "160px",
+  left: "20px",  // Move buttons to the right (increase for more)
+  top: "50px"   // Move buttons downward (increase for more)
+};
 
-const buttonStyle = { background: "#1e1942", color: "white", padding: "10px 15px", margin: "5px 0", border: "none", borderRadius: "5px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", transition: "all 0.3s ease", width: "160px" };
-const dropdownStyle = { background: "#1e1942", color: "white", padding: "10px", position: "absolute", top: "50px", left: "0", zIndex: "9", width: "160px", borderRadius: "5px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.5)" };
+const dropdownStyle = { padding: "10px", position: "absolute", top: "100px", left: "15px", zIndex: "9", width: "160px", borderRadius: "5px" };
 const floatButtonStyle = { position: "absolute", top: "20px", left: "1370px", background: "#1e1942", color: "white", border: "none", cursor: "pointer", zIndex: 20, fontSize: "14px" };
 
 export default Home;

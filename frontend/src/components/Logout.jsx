@@ -22,11 +22,24 @@ const Logout = () => {
         }
     };
 
+    // Consistent button styling with the Navbar design
     const buttonStyle = {
-        marginRight: '20px', 
-        fontSize: '1rem', 
-        fontWeight: '700', 
-        padding: '0.3rem 1.4rem'
+        marginRight: '12px',
+        fontSize: '0.9rem',
+        fontWeight: '500',
+        padding: '0.5rem 1.2rem',
+        borderRadius: '8px',
+        textTransform: 'none', // Prevent uppercase transformation
+        transition: 'all 0.3s ease',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent white
+        color: '#FFFFFF', // White text
+        border: '1px solid rgba(255, 255, 255, 0.3)', // Subtle border
+        '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Slightly brighter on hover
+            borderColor: 'rgba(255, 255, 255, 0.5)', // Brighter border on hover
+            transform: 'translateY(-1px)', // Slight lift effect
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow on hover
+        },
     };
 
     // Check if the user is on the admin page
@@ -37,20 +50,31 @@ const Logout = () => {
             button 
             onClick={handleLogout} 
             sx={{ 
-                color: '#7b8b57', 
+                color: '#FFFFFF', // White text
+                backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
+                border: '1px solid rgba(255, 255, 255, 0.3)', // Subtle border
+                borderRadius: '8px',
+                marginRight: '12px',
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                    backgroundColor: '#7b8b57',
-                    cursor: 'pointer'
-                }
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Brighter on hover
+                    borderColor: 'rgba(255, 255, 255, 0.5)', // Brighter border on hover
+                    transform: 'translateY(-1px)', // Slight lift effect
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow on hover
+                },
             }}
         >
-            <ListItemIcon sx={{ color: '#EAEAEA' }}>
+            <ListItemIcon sx={{ color: '#FFFFFF' }}>
                 <LogoutIcon />
             </ListItemIcon>
-            <ListItemText primary="Logout" sx={{ color: '#EAEAEA' }} />
+            <ListItemText primary="Logout" sx={{ color: '#FFFFFF' }} />
         </ListItem>
     ) : (
-        <Button style={buttonStyle} color="error" variant="contained" onClick={handleLogout}>
+        <Button 
+            sx={buttonStyle} 
+            onClick={handleLogout}
+            variant="outlined"
+        >
             Logout
         </Button>
     );
