@@ -35,7 +35,8 @@
     "recharts": "^2.15.1",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.17.2",
-    "three": "^0.172.0"
+    "three": "^0.172.0",
+    "three-stdlib": "^2.35.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

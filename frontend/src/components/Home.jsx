@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Stats, useTexture, useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
 import CottagesHouse from "./houseModel/Cottages.jsx";
@@ -13,6 +13,8 @@ import RenewableSlots from "./RenewableSlots.jsx";
 import GameModal from "./GameModal.jsx";
 import { HomeContext } from "./HomeContext.jsx";
 import { MagnifyingGlass } from 'react-loader-spinner';
+import { GLTFExporter } from 'three-stdlib';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const Platform = () => {
   const texture = useTexture("../assets/images/grass.webp");
@@ -73,6 +75,147 @@ const impossibleSources = {
   "Mobile Home": ["Solar Roof Tiles", "Vertical Farming", "Heat Pump"],
   "Apartments": ["Pico Hydropower", "Solar Roof Tiles"],
   "Office Building": ["Pico Hydropower", "Solar Roof Tiles"],
+};
+
+// Add this button component inside your Home.jsx, before the Canvas component
+const ExportButton = () => {
+  const { scene } = useThree();
+
+  const handleExport = () => {
+    const exporter = new GLTFExporter();
+    const options = {
+      binary: true,
+      animations: [],
+      includeCustomExtensions: true,
+      embedImages: true
+    };
+
+    exporter.parse(
+      scene,
+      (buffer) => {
+        const blob = new Blob([buffer], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'greensphere-scene.glb';
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      (error) => {
+        console.error('An error occurred while exporting:', error);
+      },
+      options
+    );
+  };
+
+  return (
+    <Html>
+      <button
+        onClick={handleExport}
+        style={{
+          position: 'fixed',
+          top: "-250px",
+          left: "645px",
+          padding: '8px 16px',
+          backgroundColor: '#2c3e50',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '14px',
+          fontWeight: '600',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          width: '110px',
+          justifyContent: 'center'
+        }}
+        onMouseOver={(e) => e.target.style.backgroundColor = '#34495e'}
+        onMouseOut={(e) => e.target.style.backgroundColor = '#2c3e50'}
+      >
+        <span>📥</span>
+        Export Scene
+      </button>
+    </Html>
+  );
+};
+
+
+const ImportButton = () => {
+  const { scene } = useThree();
+
+  const handleImport = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const loader = new GLTFLoader();
+      const url = URL.createObjectURL(file);
+
+      loader.load(
+        url,
+        (gltf) => {
+          scene.children.forEach((child) => {
+            if (child.userData.imported) {
+              scene.remove(child);
+            }
+          });
+
+          const model = gltf.scene;
+          model.position.set(0, 0, 0);
+          model.scale.set(1, 1, 1);
+          model.userData.imported = true;
+          scene.add(model);
+
+          URL.revokeObjectURL(url);
+        },
+        undefined,
+        (error) => {
+          console.error('Error loading model:', error);
+        }
+      );
+    }
+  };
+
+  return (
+    <Html>
+      <label
+        style={{
+          position: 'fixed',
+          top: "-190px",
+          left: "645px",
+          padding: '8px 16px',
+          backgroundColor: '#2c3e50',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '14px',
+          fontWeight: '600',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          width: '77px',
+          justifyContent: 'center'
+        }}
+        onMouseOver={(e) => e.target.style.backgroundColor = '#34495e'}
+        onMouseOut={(e) => e.target.style.backgroundColor = '#2c3e50'}
+      >
+        <span>📤</span>
+        Import Model
+        <input
+          type="file"
+          accept=".glb"
+          onChange={handleImport}
+          style={{ display: 'none' }}
+        />
+      </label>
+    </Html>
+  );
 };
 
 const Home = () => {
@@ -402,20 +545,32 @@ const Home = () => {
           ))}
         </div>
 
-        {selectedHouse === "Single-Family" && (
+        {/* Update the roof type section to only show when both conditions are met */}
+        {selectedHouse === "Single-Family" && showHouseOptions && (
           <div style={{ marginTop: 350 }}>
             <p style={{ color: "white", marginBottom: "5px" }}>Select Roof Type:</p>
             {Object.keys(Roofs).map((roof) => (
               <button
                 key={roof}
                 onClick={() => setRoofType(roof)}
-                style={{ flexDirection: "column", gap: "15px", alignItems: "flex-start", background: "transparent", border: "none", cursor: "pointer" }}
-                title={roof} // Tooltip when hovering
+                style={{
+                  flexDirection: "column",
+                  gap: "15px",
+                  alignItems: "flex-start",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer"
+                }}
+                title={roof}
               >
                 <img
                   src={RoofImages[roof]}
                   alt={roof}
-                  style={{ width: "70px", height: "70px", objectFit: "contain" }}
+                  style={{
+                    width: "70px",
+                    height: "70px",
+                    objectFit: "contain"
+                  }}
                 />
               </button>
             ))}
@@ -462,6 +617,8 @@ const Home = () => {
         }}
         camera={{ position: [0, 0, 11] }}
       >
+        <ExportButton />
+        <ImportButton />
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <OrbitControls />
@@ -611,19 +768,19 @@ const Home = () => {
     </div>
   );
 };
-const buttonStyle = { 
-  background: "#1e1942", 
-  color: "white", 
-  padding: "10px 15px", 
-  margin: "5px 0", 
-  border: "none", 
-  borderRadius: "5px", 
-  cursor: "pointer", 
-  display: "flex", 
-  alignItems: "center", 
-  gap: "8px", 
-  fontSize: "14px", 
-  transition: "all 0.3s ease", 
+const buttonStyle = {
+  background: "#1e1942",
+  color: "white",
+  padding: "10px 15px",
+  margin: "5px 0",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+  fontSize: "14px",
+  transition: "all 0.3s ease",
   width: "160px",
   left: "20px",  // Move buttons to the right (increase for more)
   top: "50px"   // Move buttons downward (increase for more)
