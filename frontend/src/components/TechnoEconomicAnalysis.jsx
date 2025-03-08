@@ -332,7 +332,39 @@ const TechnoEconomicAnalysis = ({
     }
   };
 
+  const BAR_COLORS = {
+    totalCost: [
+      '#FF4D4D', // Bright red
+      '#33FFC4', // Neon turquoise
+      '#29B6F6', // Bright sky blue
+      '#76FF7A', // Bright green
+      '#FFD700', // Vivid gold
+      '#FF66B2', // Bright pink
+      '#FF8C00', // Vivid orange
+      '#00FFFF', // Cyan
+      '#0080FF', // Vivid blue
+      '#FF1493', // Deep pink
+    ],
+    savings: [
+      '#9400D3', // Vivid purple
+      '#00FF00', // Neon green
+      '#FFD700', // Bright yellow
+      '#00BFFF', // Deep sky blue
+      '#FF4500', // Bright orange-red
+      '#DC143C', // Crimson
+      '#FF6347', // Tomato red
+      '#1E90FF', // Dodger blue
+      '#ADFF2F', // Bright green yellow
+      '#FF69B4', // Hot pink
+    ]
+  };
 
+  // First, add these colors at the component level
+  const PIE_COLORS = {
+    productCost: '#FF6B6B',    // Coral red
+    installationCost: '#4ECDC4', // Turquoise
+    maintenanceCost: '#FFB347'  // Pastel orange
+  };
   return (
     <>
       {!open && (
@@ -385,7 +417,6 @@ const TechnoEconomicAnalysis = ({
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
-          invisible: true,
         }}
         disableEscapeKeyDown
         sx={{
@@ -393,7 +424,13 @@ const TechnoEconomicAnalysis = ({
           alignItems: "center",
           justifyContent: "center",
           zIndex: 9999,
+          // Add these styles to prevent backdrop click from closing modal
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          },
         }}
+        // Prevent modal from closing when clicking outside
+        disableBackdropClick
       >
         <Fade in={open}>
           <Container
@@ -414,14 +451,129 @@ const TechnoEconomicAnalysis = ({
                 backgroundColor: "#64748b",
                 borderRadius: "4px",
               },
+              // Add these styles to prevent click propagation
+              position: "relative",
+              // Add padding bottom to ensure last content is visible when scrolling
+              paddingBottom: "2rem",
             }}
+            // Add onClick handler to prevent event propagation
+            onClick={(e) => e.stopPropagation()}
           >
 
-
             <Box>
-              <Typography variant="h4" gutterBottom sx={{ textAlign: "center", fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  borderBottom: "2px solid #64748b",
+                  pb: 2,
+                  color: '#f59e0b', // Amber color for title
+                  fontSize: '2rem',
+                  letterSpacing: '0.5px',
+                  mb: 3
+                }}
+              >
                 Techno-Economic Analysis
               </Typography>
+
+              <Box
+                sx={{
+                  textAlign: "center",
+                  mt: 3,
+                  mb: 4,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: 2
+                }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={async () => {
+                    if (!data || Object.keys(data).length === 0) {
+                      console.error("No data available for PDF export!");
+                      return; // Exit early if no data is available
+                    }
+
+                    // Fetch user data
+                    const fetchUserData = async () => {
+                      try {
+                        const response = await axios.get('http://localhost:3001/user', { withCredentials: true });
+                        return response.data.user; // Assuming the user data is returned in the `user` field
+                      } catch (error) {
+                        console.error("Error fetching user data:", error);
+                        return null;
+                      }
+                    };
+
+                    const userData = await fetchUserData();
+
+                    if (userData) {
+                      // Call ExportToPDF with user data
+                      exportToPDF(
+                        costBenefitRef,
+                        savingsRef,
+                        carbonRef,
+                        energyUsageRef,
+                        totalCostRef,
+                        costBreakdownRef,
+                        data,
+                        userData
+                      );
+                    } else {
+                      console.error("User data not available. Cannot export PDF.");
+                    }
+                  }}
+                  sx={{
+                    backgroundColor: '#22c55e', // Green for export
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: '8px',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    boxShadow: '0 4px 6px -1px rgb(34 197 94 / 0.2)',
+                    '&:hover': {
+                      backgroundColor: '#16a34a',
+                      boxShadow: '0 6px 8px -1px rgb(34 197 94 / 0.3)',
+                      transform: 'translateY(-1px)',
+                    },
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
+                >
+                  <span>Export to PDF</span>
+                </Button>
+
+                <Button
+                  variant="contained"
+                  onClick={saveData}
+                  sx={{
+                    backgroundColor: '#3b82f6', // Blue for save
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: '8px',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    boxShadow: '0 4px 6px -1px rgb(59 130 246 / 0.2)',
+                    '&:hover': {
+                      backgroundColor: '#2563eb',
+                      boxShadow: '0 6px 8px -1px rgb(59 130 246 / 0.3)',
+                      transform: 'translateY(-1px)',
+                    },
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
+                >
+                  <span>Save Data</span>
+                </Button>
+              </Box>
 
               {/* Cost vs. Benefit Analysis */}
               <Box sx={{ mt: 3, p: 3, backgroundColor: "#334155", borderRadius: 2 }}>
@@ -431,26 +583,80 @@ const TechnoEconomicAnalysis = ({
                 >
                   Cost vs. Benefit Analysis
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mt: 2, color: '#94a3b8' }}>
                   This section compares the total cost of each renewable energy source with the estimated annual savings. The payback period is calculated based on the annual savings.
                 </Typography>
                 <Box ref={costBenefitRef} sx={{ mt: 2, overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", color: "white" }}>
+                  <table style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    color: '#94a3b8', // Light gray color for better contrast
+                  }}>
                     <thead>
                       <tr>
-                        <th style={{ padding: "10px", borderBottom: "2px solid #64748b" }}>Source</th>
-                        <th style={{ padding: "10px", borderBottom: "2px solid #64748b" }}>Total Cost</th>
-                        <th style={{ padding: "10px", borderBottom: "2px solid #64748b" }}>Annual Savings</th>
-                        <th style={{ padding: "10px", borderBottom: "2px solid #64748b" }}>Payback Period</th>
+                        <th style={{
+                          padding: "12px",
+                          borderBottom: "2px solid #64748b",
+                          color: '#f59e0b', // Amber color for headers
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          textAlign: 'left'
+                        }}>Source</th>
+                        <th style={{
+                          padding: "12px",
+                          borderBottom: "2px solid #64748b",
+                          color: '#f59e0b',
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          textAlign: 'left'
+                        }}>Total Cost</th>
+                        <th style={{
+                          padding: "12px",
+                          borderBottom: "2px solid #64748b",
+                          color: '#f59e0b',
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          textAlign: 'left'
+                        }}>Annual Savings</th>
+                        <th style={{
+                          padding: "12px",
+                          borderBottom: "2px solid #64748b",
+                          color: '#f59e0b',
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          textAlign: 'left'
+                        }}>Payback Period</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.entries(data).map(([key, cost]) => (
-                        <tr key={key}>
-                          <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>{key}</td>
-                          <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>₱{cost.totalCost}</td>
-                          <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>₱{cost.annualSavings.toFixed(2)}</td>
-                          <td style={{ padding: "10px", borderBottom: "1px solid #64748b" }}>
+                      {Object.entries(data).map(([key, cost], index) => (
+                        <tr
+                          key={key}
+                          style={{
+                            backgroundColor: index % 2 === 0 ? 'rgba(15, 23, 42, 0.3)' : 'transparent'
+                          }}
+                        >
+                          <td style={{
+                            padding: "12px",
+                            borderBottom: "1px solid #64748b",
+                            color: '#60a5fa', // Blue for source names
+                            fontWeight: 500
+                          }}>{key}</td>
+                          <td style={{
+                            padding: "12px",
+                            borderBottom: "1px solid #64748b",
+                            color: '#4ade80' // Green for costs
+                          }}>₱{cost.totalCost.toLocaleString()}</td>
+                          <td style={{
+                            padding: "12px",
+                            borderBottom: "1px solid #64748b",
+                            color: '#22d3ee' // Cyan for savings
+                          }}>₱{cost.annualSavings.toLocaleString()}</td>
+                          <td style={{
+                            padding: "12px",
+                            borderBottom: "1px solid #64748b",
+                            color: '#a78bfa' // Purple for payback period
+                          }}>
                             {isNaN(cost.paybackPeriod) || cost.paybackPeriod === null
                               ? "0 year"
                               : `${cost.paybackPeriod.toFixed(2)} years`}
@@ -471,16 +677,86 @@ const TechnoEconomicAnalysis = ({
                 <Typography variant="body1" sx={{ mt: 2 }}>
                   The bar chart below shows the total cost and estimated annual savings for each renewable energy source.
                 </Typography>
-                <Box ref={savingsRef} sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                  <BarChart width={800} height={300} data={barChartData}>
+                <Box
+                  ref={savingsRef}
+                  sx={{
+                    mt: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    overflowX: "auto",
+                    "&::-webkit-scrollbar": {
+                      height: "8px",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#64748b",
+                      borderRadius: "4px",
+                    },
+                  }}
+                >
+                  <BarChart
+                    width={1200}
+                    height={400}
+                    data={barChartData}
+                    margin={{
+                      top: 20,
+                      right: 30,
+                      left: 20,
+                      bottom: 100
+                    }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="name" fill="#82ca9d" name="Renewable Source" />
-                    <Bar dataKey="totalCost" fill="#8884d8" name="Total Cost" />
-                    <Bar dataKey="savings" fill="#82ca9d" name="Estimated Annual Savings" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      interval={0}
+                      tick={{ fill: '#0088FE' }}
+                    />
+                    <YAxis
+                      tick={{ fill: '#FFBB28' }}
+                      tickFormatter={(value) => `₱${value.toLocaleString()}`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #64748b',
+                        borderRadius: '8px',
+                        color: '#ffffff'  // This ensures tooltip text is white
+                      }}
+                      formatter={(value, name) => [`₱${value.toLocaleString()}`, name]}
+                      labelStyle={{ color: '#ffffff' }}  // This ensures the label text is white
+                    />
+                    <Legend
+                      verticalAlign="top"
+                      height={36}
+                    />
+                    <Bar
+                      dataKey="totalCost"
+                      name="Total Cost"
+                      fill="#4ade80"
+                      radius={[4, 4, 0, 0]}
+                    >
+                      {barChartData.map((entry, index) => (
+                        <Cell
+                          key={`totalCost-${index}`}
+                          fill={BAR_COLORS.totalCost[index % BAR_COLORS.totalCost.length]}
+                        />
+                      ))}
+                    </Bar>
+                    <Bar
+                      dataKey="savings"
+                      name="Annual Savings"
+                      fill="#af19ff"
+                      radius={[4, 4, 0, 0]}
+                    >
+                      {barChartData.map((entry, index) => (
+                        <Cell
+                          key={`savings-${index}`}
+                          fill={BAR_COLORS.savings[index % BAR_COLORS.savings.length]}
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </Box>
               </Box>
@@ -490,43 +766,155 @@ const TechnoEconomicAnalysis = ({
                 <Typography variant="h5" sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
                   Carbon Payback Period Analysis
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mt: 2, color: '#94a3b8' }}>
                   The carbon payback period is the time it takes to offset the carbon emissions produced during the manufacturing, installation, and maintenance of the renewable energy systems.
                 </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="h6">Total Carbon Emissions: {totalCarbonEmissions} kg CO₂</Typography>
-                  <Typography variant="h6">Carbon Payback Period: {carbonPaybackPeriod} years</Typography>
+                <Box sx={{
+                  mt: 3,
+                  p: 3,
+                  backgroundColor: 'rgba(15, 23, 42, 0.3)',
+                  borderRadius: 1,
+                  border: '1px solid #475569'
+                }}>
+
+                  <Typography variant="h6" sx={{
+                    color: '#60a5fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    mt: 1
+                  }}>
+                    Carbon Payback Period: <span style={{ color: '#10b981' }}>{carbonPaybackPeriod} years</span>
+                  </Typography>
+                  <Typography variant="h6" sx={{
+                    color: '#60a5fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}>
+                    Total Carbon Emissions: <span style={{ color: '#f43f5e' }}>{totalCarbonEmissions} kg CO₂</span>
+                  </Typography>
                 </Box>
-                <Box ref={carbonRef} sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 4 }}>
-                  <BarChart width={300} height={300} data={carbonPaybackData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" fill="#FF8042" name="Carbon Payback Period (years)" />
+                <Box
+                  ref={carbonRef}
+                  sx={{
+                    mt: 3,
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 4,
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <BarChart
+                    width={400}
+                    height={300}
+                    data={carbonPaybackData}
+                    margin={{
+                      top: 20,
+                      right: 30,
+                      left: 20,
+                      bottom: 20
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fill: '#60a5fa' }}
+                      axisLine={{ stroke: '#475569' }}
+                    />
+                    <YAxis
+                      tick={{ fill: '#60a5fa' }}
+                      axisLine={{ stroke: '#475569' }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #475569',
+                        borderRadius: '8px',
+                        color: '#60a5fa'
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{ color: '#FFBB28' }}
+                    />
+                    <Bar
+                      dataKey="value"
+                      name="Carbon Payback Period (years)"
+                      fill="#FFBB28"
+                    >
+                      {carbonPaybackData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill="#22c55e"
+                          radius={[4, 4, 0, 0]}
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
-                  <BarChart width={300} height={300} data={totalCarbonData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" fill="#0088FE" name="Total Carbon Emissions (kg CO₂)" />
+                  <BarChart
+                    width={400}
+                    height={300}
+                    data={totalCarbonData}
+                    margin={{
+                      top: 20,
+                      right: 30,
+                      left: 20,
+                      bottom: 20
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fill: '#60a5fa' }}
+                      axisLine={{ stroke: '#475569' }}
+                    />
+                    <YAxis
+                      tick={{ fill: '#60a5fa' }}
+                      axisLine={{ stroke: '#475569' }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #475569',
+                        borderRadius: '8px',
+                        color: '#60a5fa'
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{ color: '#FFBB28' }}
+                    />
+                    <Bar
+                      dataKey="value"
+                      name="Total Carbon Emissions (kg CO₂)"
+                      fill="#FFBB28"
+                    >
+                      {totalCarbonData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill="#ef4444"
+                          radius={[4, 4, 0, 0]}
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </Box>
               </Box>
 
-              {/* Pie Chart for Cost Breakdown */}
+
               <Box sx={{ mt: 5, p: 3, backgroundColor: "#334155", borderRadius: 2 }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
                   Cost Breakdown
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mt: 2, color: '#94a3b8' }}>
                   The pie chart below shows the breakdown of total costs into product, installation, and maintenance costs.
                 </Typography>
-                <Box ref={costBreakdownRef} sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                  <PieChart width={700} height={300}>
+                <Box ref={costBreakdownRef} sx={{
+                  mt: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center"
+                }}>
+                  <PieChart width={500} height={300}>
                     <Pie
                       data={pieChartData}
                       cx="50%"
@@ -535,13 +923,35 @@ const TechnoEconomicAnalysis = ({
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="value"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, value, percent }) => (
+                        `${name}: ₱${(value / 1000).toFixed(0)}k (${(percent * 100).toFixed(0)}%)`
+                      )}
                     >
                       {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={Object.values(PIE_COLORS)[index]}
+                          stroke="#1e293b"
+                          strokeWidth={2}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                      formatter={(value) => `₱${(value / 1000).toFixed(0)}k`}
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #475569',
+                        borderRadius: '8px',
+                        color: '#ffffff'
+                      }}
+                    />
+                    <Legend
+                      verticalAlign="bottom"
+                      height={36}
+                      formatter={(value) => (
+                        <span style={{ color: '#94a3b8', fontSize: '12px' }}>{value}</span>
+                      )}
+                    />
                   </PieChart>
                 </Box>
               </Box>
@@ -551,17 +961,40 @@ const TechnoEconomicAnalysis = ({
                 <Typography variant="h5" sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
                   Energy Usage by Source
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mt: 2, color: '#94a3b8' }}>
                   This section shows the percentage of energy used by each renewable energy source based on the carbon emissions.
                 </Typography>
                 <Box ref={energyUsageRef} sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                   <LineChart width={800} height={300} data={lineChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="type" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="emissions" stroke="#8884d8" name="Carbon Emissions (kg CO₂)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                    <XAxis
+                      dataKey="type"
+                      tick={{ fill: '#60a5fa' }}
+                      axisLine={{ stroke: '#475569' }}
+                    />
+                    <YAxis
+                      tick={{ fill: '#60a5fa' }}
+                      axisLine={{ stroke: '#475569' }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #475569',
+                        borderRadius: '8px',
+                        color: '#60a5fa'
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{ color: '#60a5fa' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="emissions"
+                      stroke="#22c55e"
+                      strokeWidth={2}
+                      name="Carbon Emissions (kg CO₂)"
+                      dot={{ fill: '#22c55e', stroke: '#22c55e', strokeWidth: 2 }}
+                    />
                   </LineChart>
                 </Box>
               </Box>
@@ -571,71 +1004,43 @@ const TechnoEconomicAnalysis = ({
                 <Typography variant="h5" sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
                   Total Costs
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mt: 2, color: '#94a3b8' }}>
                   This section summarizes the total costs associated with the renewable energy systems.
                 </Typography>
-                <Box ref={totalCostRef} sx={{ mt: 2 }}>
-                  <Typography variant="h6">Total Product Cost: ₱{totalProductCost}</Typography>
-                  <Typography variant="h6">Total Installation Cost: ₱{totalInstallationCost}</Typography>
-                  <Typography variant="h6">Total Maintenance Cost: ₱{totalMaintenanceCost}</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", color: "#facc15", mt: 2 }}>
-                    Grand Total: ₱{totalCost}
+                <Box
+                  ref={totalCostRef}
+                  sx={{
+                    mt: 3,
+                    p: 3,
+                    backgroundColor: 'rgba(15, 23, 42, 0.3)',
+                    borderRadius: 1,
+                    border: '1px solid #475569'
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                    Total Product Cost: <span style={{ color: "#4ADE80" }}>₱{totalProductCost}</span>
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                    Total Installation Cost: <span style={{ color: "#60A5FA" }}>₱{totalInstallationCost}</span>
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Total Maintenance Cost: <span style={{ color: "#FACC15" }}>₱{totalMaintenanceCost}</span>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: "bold",
+                      color: "#ee2400",
+                      mt: 2,
+                      pt: 2,
+                      borderTop: '1px solid #475569'
+                    }}
+                  >
+                    Grand Total: ₱{totalCost.toLocaleString()}
                   </Typography>
                 </Box>
               </Box>
             </Box>
-
-            {/* Export Button */}
-            <Box sx={{ textAlign: "center", mt: 3 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={async () => {
-                  if (!data || Object.keys(data).length === 0) {
-                    console.error("No data available for PDF export!");
-                    return; // Exit early if no data is available
-                  }
-
-                  // Fetch user data
-                  const fetchUserData = async () => {
-                    try {
-                      const response = await axios.get('http://localhost:3001/user', { withCredentials: true });
-                      return response.data.user; // Assuming the user data is returned in the `user` field
-                    } catch (error) {
-                      console.error("Error fetching user data:", error);
-                      return null;
-                    }
-                  };
-
-                  const userData = await fetchUserData();
-
-                  if (userData) {
-                    // Call ExportToPDF with user data
-                    exportToPDF(
-                      costBenefitRef,
-                      savingsRef,
-                      carbonRef,
-                      energyUsageRef,
-                      totalCostRef,
-                      costBreakdownRef,
-                      data,
-                      userData
-                    );
-                  } else {
-                    console.error("User data not available. Cannot export PDF.");
-                  }
-                }}
-                sx={{ mr: 2 }} // Adds right margin
-              >
-                Export to PDF
-              </Button>
-
-
-              <Button variant="contained" color="primary" onClick={saveData}>
-                Save Data
-              </Button>
-            </Box>
-
           </Container>
         </Fade>
       </Modal>

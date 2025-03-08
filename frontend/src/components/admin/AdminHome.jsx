@@ -8,8 +8,8 @@ import { useTheme } from '@mui/material/styles';
 import { Divider } from '@mui/material';
 import Logout from '../Logout'; // Import the Logout component
 import greensphereLogo from '../../assets/images/greenspherelogo.png'; // Import the logo
-import {  
-  Doughnut 
+import {
+  Doughnut
 } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -25,16 +25,17 @@ import {
   Filler
 } from 'chart.js';
 import { Bar as ChartBar, Line as ChartLine, Pie as ChartPie, Doughnut as ChartDoughnut } from 'react-chartjs-2';
-import { 
-  SpaceDashboard, 
-  Groups, 
-  StarRate, 
-  Comment, 
-  EnergySavingsLeaf, 
-  PriceCheck, 
+import {
+  SpaceDashboard,
+  Groups,
+  StarRate,
+  Comment,
+  EnergySavingsLeaf,
+  PriceCheck,
   Co2,
   Logout as LogoutIconNew
 } from '@mui/icons-material';
+import MUIDataTable from "mui-datatables";
 
 // Register Chart.js components properly
 ChartJS.register(
@@ -310,8 +311,8 @@ const AdminHome = () => {
               padding: '10px 16px',
             }}
           >
-            <ListItemIcon 
-              sx={{ 
+            <ListItemIcon
+              sx={{
                 color: activeSection === item.section ? '#FFFFFF' : 'inherit',
                 minWidth: '40px',
                 display: 'flex',
@@ -320,14 +321,14 @@ const AdminHome = () => {
             >
               {item.icon}
             </ListItemIcon>
-            <ListItemText 
-              primary={item.text} 
-              sx={{ 
+            <ListItemText
+              primary={item.text}
+              sx={{
                 color: '#EAEAEA',
                 '& .MuiTypography-root': {
                   fontWeight: activeSection === item.section ? 'bold' : 'normal',
                 }
-              }} 
+              }}
             />
           </ListItem>
         ))}
@@ -345,7 +346,7 @@ const AdminHome = () => {
   const UserGraph = ({ users }) => {
     const adminCount = users.filter(user => user.role === 'admin').length;
     const userCount = users.filter(user => user.role === 'user').length;
-    
+
     const data = {
       labels: ['Admin', 'User'],
       datasets: [
@@ -358,7 +359,7 @@ const AdminHome = () => {
         },
       ],
     };
-    
+
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -379,7 +380,7 @@ const AdminHome = () => {
         },
       },
     };
-    
+
     return (
       <div style={{ height: 250 }}>
         <ChartBar data={data} options={options} />
@@ -395,7 +396,7 @@ const AdminHome = () => {
       const month = new Date(feedback.createdAt).toLocaleString('default', { month: 'short' });
       monthlyFeedbacks[month] = (monthlyFeedbacks[month] || 0) + 1;
     });
-    
+
     const data = {
       labels: Object.keys(monthlyFeedbacks),
       datasets: [
@@ -408,7 +409,7 @@ const AdminHome = () => {
         },
       ],
     };
-    
+
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -428,7 +429,7 @@ const AdminHome = () => {
         },
       },
     };
-    
+
     return (
       <div style={{ height: 250 }}>
         <ChartBar data={data} options={options} />
@@ -443,7 +444,7 @@ const AdminHome = () => {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 10)
       .reverse(); // Reverse to show chronological order
-    
+
     const data = {
       labels: recentFeedbacks.map(feedback => {
         const date = new Date(feedback.createdAt);
@@ -471,7 +472,7 @@ const AdminHome = () => {
         }
       ],
     };
-    
+
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -486,19 +487,19 @@ const AdminHome = () => {
           cornerRadius: 8,
           boxPadding: 6,
           callbacks: {
-            title: function(context) {
+            title: function (context) {
               const index = context[0].dataIndex;
               const feedback = recentFeedbacks[index];
               const date = new Date(feedback.createdAt);
-              return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
+              return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
               });
             },
-            label: function(context) {
+            label: function (context) {
               const index = context.dataIndex;
               const feedback = recentFeedbacks[index];
               return [
@@ -518,7 +519,7 @@ const AdminHome = () => {
           max: 5,
           ticks: {
             stepSize: 1,
-            callback: function(value) {
+            callback: function (value) {
               return value + (value === 1 ? ' Star' : ' Stars');
             }
           },
@@ -533,7 +534,7 @@ const AdminHome = () => {
         }
       }
     };
-    
+
     return (
       <div style={{ height: 250 }}>
         <ChartLine data={data} options={options} />
@@ -546,7 +547,7 @@ const AdminHome = () => {
     const activeUsers = users.filter(user => user.role === 'user').length;
     const totalUsers = users.length;
     const percentage = (activeUsers / totalUsers * 100).toFixed(1);
-    
+
     const data = {
       labels: ['Active Users', 'Total Users'],
       datasets: [
@@ -559,7 +560,7 @@ const AdminHome = () => {
         },
       ],
     };
-    
+
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -574,7 +575,7 @@ const AdminHome = () => {
           cornerRadius: 8,
           boxPadding: 6,
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               const value = context.raw;
               const datasetLabel = context.dataset.label || '';
               const label = context.label || '';
@@ -588,7 +589,7 @@ const AdminHome = () => {
         },
       },
     };
-    
+
     return (
       <div style={{ height: 250 }}>
         <ChartBar data={data} options={options} />
@@ -600,9 +601,9 @@ const AdminHome = () => {
   const DashboardOverview = ({ users, feedbacks }) => (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={3} sx={{ 
-          padding: "2rem", 
-          borderRadius: "12px", 
+        <Paper elevation={3} sx={{
+          padding: "2rem",
+          borderRadius: "12px",
           backgroundColor: "#fff",
           boxShadow: 3,
           position: "relative"
@@ -615,9 +616,9 @@ const AdminHome = () => {
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={3} sx={{ 
-          padding: "2rem", 
-          borderRadius: "12px", 
+        <Paper elevation={3} sx={{
+          padding: "2rem",
+          borderRadius: "12px",
           backgroundColor: "#fff",
           boxShadow: 3,
           position: "relative"
@@ -630,9 +631,9 @@ const AdminHome = () => {
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={3} sx={{ 
-          padding: "2rem", 
-          borderRadius: "12px", 
+        <Paper elevation={3} sx={{
+          padding: "2rem",
+          borderRadius: "12px",
           backgroundColor: "#fff",
           boxShadow: 3,
           position: "relative"
@@ -647,9 +648,9 @@ const AdminHome = () => {
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper elevation={3} sx={{ 
-          padding: "2rem", 
-          borderRadius: "12px", 
+        <Paper elevation={3} sx={{
+          padding: "2rem",
+          borderRadius: "12px",
           backgroundColor: "#fff",
           boxShadow: 3,
           position: "relative"
@@ -668,9 +669,9 @@ const AdminHome = () => {
       <Grid item xs={12}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
+            <Paper elevation={3} sx={{
+              padding: "2rem",
+              borderRadius: "12px",
               backgroundColor: "#fff",
               boxShadow: 3,
               position: "relative"
@@ -680,9 +681,9 @@ const AdminHome = () => {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
+            <Paper elevation={3} sx={{
+              padding: "2rem",
+              borderRadius: "12px",
               backgroundColor: "#fff",
               boxShadow: 3,
               position: "relative"
@@ -692,9 +693,9 @@ const AdminHome = () => {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
+            <Paper elevation={3} sx={{
+              padding: "2rem",
+              borderRadius: "12px",
               backgroundColor: "#fff",
               boxShadow: 3,
               position: "relative"
@@ -704,9 +705,9 @@ const AdminHome = () => {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
+            <Paper elevation={3} sx={{
+              padding: "2rem",
+              borderRadius: "12px",
               backgroundColor: "#fff",
               boxShadow: 3,
               position: "relative"
@@ -732,8 +733,8 @@ const AdminHome = () => {
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
-        <Toolbar sx={{ 
-          display: 'flex', 
+        <Toolbar sx={{
+          display: 'flex',
           justifyContent: 'space-between',
           minHeight: '90px', // Increased from 70px to 90px for more height
           py: 2, // Add vertical padding
@@ -750,11 +751,11 @@ const AdminHome = () => {
               <MenuIcon />
             </IconButton>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography 
+              <Typography
                 variant="h5" // Increased from h6 to h5
-                noWrap 
+                noWrap
                 component="div"
-                sx={{ 
+                sx={{
                   fontWeight: 700, // Increased from 600 to 700
                   fontSize: '1.4rem', // Increased from 1.2rem
                   letterSpacing: '0.5px',
@@ -763,9 +764,9 @@ const AdminHome = () => {
               >
                 Welcome, {adminName || 'Admin'}!
               </Typography>
-              <Typography 
+              <Typography
                 variant="subtitle1" // Increased from subtitle2
-                sx={{ 
+                sx={{
                   opacity: 0.8,
                   display: { xs: 'none', sm: 'block' },
                   fontSize: '0.95rem' // Slightly larger font
@@ -775,12 +776,12 @@ const AdminHome = () => {
               </Typography>
             </Box>
           </Box>
-          
+
           {/* Right side - avatar with improved styling */}
           <Box>
             <Tooltip title="Account">
-              <IconButton 
-                edge="end" 
+              <IconButton
+                edge="end"
                 color="inherit"
                 aria-label="account of current user"
                 aria-haspopup="true"
@@ -794,7 +795,7 @@ const AdminHome = () => {
                   }
                 }}
               >
-                <Avatar sx={{ 
+                <Avatar sx={{
                   width: 45, // Increased from 38
                   height: 45, // Increased from 38
                   bgcolor: '#7b8b57',
@@ -852,57 +853,156 @@ const AdminHome = () => {
       >
         {activeSection === 'dashboard' && <DashboardOverview users={users} feedbacks={feedbacks} />}
         {activeSection === 'users' && (
-          <Box sx={{ marginBottom: "2rem", marginTop: "2rem" }}>
-            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                Users:
-              </Typography>
-              <TableContainer sx={{ 
-                maxHeight: "500px", 
-                overflow: "auto", 
-                borderRadius: "8px",
-                boxShadow: 2,
-                '& .MuiTableCell-head': {
-                  backgroundColor: '#f5f5f5',
-                  fontWeight: 'bold',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1
-                },
-                '& .MuiTableRow-root:hover': {
-                  backgroundColor: '#f9f9f9'
+          <Box sx={{ marginBottom: "2rem", marginTop: "0rem" }}>
+            <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
+                minHeight: "calc(100vh - 550px)",
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <MUIDataTable
+                title={
+                  <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333" }}>
+                    Users Management
+                  </Typography>
                 }
-              }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Role</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user._id}>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar sx={{ marginRight: 2 }}>{user.name[0]}</Avatar>
-                            {user.name}
-                          </Box>
-                        </TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.role}</TableCell>
-                        <TableCell>
-                          <Button variant="contained" color="secondary" onClick={() => handleEditClick(user._id, user.role)}>
-                            Edit
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                data={users.map(user => [
+                  user.name, // Plain text name for both display and export
+                  user.email,
+                  user.role, // Plain text role for both display and export
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: '#7b8b57',
+                      '&:hover': {
+                        backgroundColor: '#515c3a',
+                      }
+                    }}
+                    onClick={() => handleEditClick(user._id, user.role)}
+                  >
+                    Edit Role
+                  </Button>
+                ])}
+                columns={[
+                  {
+                    name: "Name",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "200px", maxWidth: "200px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "200px", maxWidth: "200px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ marginRight: 2, bgcolor: '#7b8b57' }}>{value[0]}</Avatar>
+                          {value}
+                        </Box>
+                      )
+                    }
+                  },
+                  {
+                    name: "Email",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "250px", maxWidth: "250px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "250px", maxWidth: "250px" }
+                      })
+                    }
+                  },
+                  {
+                    name: "Role",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "120px", maxWidth: "120px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "120px", maxWidth: "120px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Typography
+                          sx={{
+                            color: value === 'admin' ? '#7b8b57' : '#666',
+                            fontWeight: value === 'admin' ? 'bold' : 'normal'
+                          }}
+                        >
+                          {value}
+                        </Typography>
+                      )
+                    }
+                  },
+                  {
+                    name: "Actions",
+                    options: {
+                      filter: false,
+                      sort: false,
+                      download: false,
+                      print: false,
+                      setCellProps: () => ({
+                        style: { minWidth: "120px", maxWidth: "120px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "120px", maxWidth: "120px" }
+                      })
+                    }
+                  }
+                ]}
+                options={{
+                  filterType: 'dropdown',
+                  responsive: 'standard',
+                  selectableRows: 'none',
+                  download: true,
+                  print: true,
+                  elevation: 0,
+                  search: true,
+                  viewColumns: true,
+                  rowsPerPage: 5,
+                  rowsPerPageOptions: [5, 10, 25, 50],
+                  searchPlaceholder: "Search Users...",
+                  searchAlwaysOpen: false,
+                  downloadOptions: {
+                    filename: 'GreenSphere_Users.csv',
+                    separator: ',',
+                  },
+                  fixedHeader: true,
+                  tableBodyHeight: 'calc(100vh - 400px)', // Adjust this value as needed
+                  setTableProps: () => ({
+                    sx: {
+                      '& .MuiTableCell-root': {
+                        padding: '16px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      },
+                      '& .MuiTableRow-root:hover': {
+                        backgroundColor: 'rgba(123, 139, 87, 0.08) !important',
+                      },
+                      '& .MuiToolbar-root': {
+                        borderRadius: '8px 8px 0 0',
+                      },
+                      '& .MuiTable-root': {
+                        tableLayout: 'fixed'
+                      },
+                      '& .MuiTableContainer-root': {
+                        maxHeight: 'none'
+                      }
+                    }
+                  }),
+                }}
+              />
             </Paper>
           </Box>
         )}
@@ -910,22 +1010,22 @@ const AdminHome = () => {
         {activeSection === 'feedbackRatings' && (
           <Grid container spacing={3}>
             <Grid item xs={12} md={12}>
-              <Paper elevation={3} sx={{ 
-                padding: "2rem", 
-                borderRadius: "12px", 
+              <Paper elevation={3} sx={{
+                padding: "2rem",
+                borderRadius: "12px",
                 backgroundColor: "#fff",
                 boxShadow: 3,
                 position: "relative"
               }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                  Feedback Ratings Distribution:
+                  Feedback Ratings Distribution
                 </Typography>
-                <Box sx={{ 
+                <Box sx={{
                   position: "relative",
                   zIndex: 2,
-                  height: 350 
+                  height: 350
                 }}>
-                  <ChartDoughnut 
+                  <ChartDoughnut
                     data={{
                       labels: feedbackChartData.map(item => item.rating),
                       datasets: [
@@ -958,7 +1058,7 @@ const AdminHome = () => {
                           cornerRadius: 8,
                           boxPadding: 6,
                           callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                               const value = context.raw;
                               const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
                               const percentage = ((value / total) * 100).toFixed(0);
@@ -984,21 +1084,21 @@ const AdminHome = () => {
 
             {/* Enhanced Feedback Sentiment Bar Chart Section */}
             <Grid item xs={12} md={12}>
-              <Paper elevation={3} sx={{ 
-                padding: "2rem", 
-                borderRadius: "12px", 
+              <Paper elevation={3} sx={{
+                padding: "2rem",
+                borderRadius: "12px",
                 backgroundColor: "#fff",
                 marginTop: "2rem",
                 boxShadow: 3,
                 position: "relative"
               }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                  Feedback Sentiment Distribution:
+                  Feedback Sentiment Distribution
                 </Typography>
-                <Box sx={{ 
+                <Box sx={{
                   position: "relative",
                   zIndex: 2,
-                  height: 350 
+                  height: 350
                 }}>
                   <ChartBar
                     data={{
@@ -1039,7 +1139,7 @@ const AdminHome = () => {
                           cornerRadius: 8,
                           boxPadding: 6,
                           callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                               return `${context.dataset.label}: ${context.raw} feedbacks`;
                             }
                           }
@@ -1074,50 +1174,182 @@ const AdminHome = () => {
 
         {activeSection === 'feedbacks' && (
           <Box sx={{ marginBottom: "2rem" }}>
-            <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px", backgroundColor: "#fff" }}>
-              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                Feedbacks:
-              </Typography>
-
-              <TableContainer sx={{ 
-                maxHeight: "500px", 
-                overflow: "auto", 
-                borderRadius: "8px",
-                boxShadow: 2,
-                '& .MuiTableCell-head': {
-                  backgroundColor: '#f5f5f5',
-                  fontWeight: 'bold',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1
-                },
-                '& .MuiTableRow-root:hover': {
-                  backgroundColor: '#f9f9f9'
+            <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
+                minHeight: "calc(100vh - 550px)",
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <MUIDataTable
+                title={
+                  <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333" }}>
+                    Feedbacks
+                  </Typography>
                 }
-              }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Rating</TableCell>
-                      <TableCell>Comment</TableCell>
-                      <TableCell>Date</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {feedbacks.map((feedback) => (
-                      <TableRow key={feedback._id}>
-                        <TableCell>{feedback.name}</TableCell>
-                        <TableCell>
-                          <Rating name="feedback-rating" value={feedback.rating} readOnly precision={0.5} />
-                        </TableCell>
-                        <TableCell>{feedback.comment}</TableCell>
-                        <TableCell>{new Date(feedback.createdAt).toLocaleDateString()}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                data={feedbacks.map(feedback => [
+                  feedback.name,
+                  feedback.rating,
+                  feedback.comment,
+                  new Date(feedback.createdAt).toLocaleDateString()
+                ])}
+                columns={[
+                  {
+                    name: "Name",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ marginRight: 2, bgcolor: '#7b8b57' }}>{value[0]}</Avatar>
+                          {value}
+                        </Box>
+                      )
+                    }
+                  },
+                  {
+                    name: "Rating",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Rating
+                          name="feedback-rating"
+                          value={value}
+                          readOnly
+                          precision={0.5}
+                          sx={{ color: '#7b8b57' }}
+                        />
+                      )
+                    }
+                  },
+                  {
+                    name: "Comment",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "400px", maxWidth: "400px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "400px", maxWidth: "400px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Typography
+                          sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                          }}
+                        >
+                          {value}
+                        </Typography>
+                      )
+                    }
+                  },
+                  {
+                    name: "Date",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "120px", maxWidth: "120px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "120px", maxWidth: "120px" }
+                      })
+                    }
+                  }
+                ]}
+                options={{
+                  filterType: 'dropdown',
+                  responsive: 'standard',
+                  selectableRows: 'none',
+                  download: true,
+                  print: true,
+                  elevation: 0,
+                  search: true,
+                  viewColumns: true,
+                  rowsPerPage: 5,
+                  rowsPerPageOptions: [5, 10, 25, 50],
+                  searchPlaceholder: "Search Feedbacks...",
+                  searchAlwaysOpen: false,
+                  downloadOptions: {
+                    filename: 'GreenSphere_Feedbacks.csv',
+                    separator: ',',
+                  },
+                  fixedHeader: true,
+                  tableBodyHeight: 'calc(100vh - 450px)',
+                  textLabels: {
+                    body: {
+                      noMatch: "Sorry, no matching feedbacks found",
+                      toolTip: "Sort",
+                    },
+                    pagination: {
+                      next: "Next Page",
+                      previous: "Previous Page",
+                      rowsPerPage: "Rows per page:",
+                      displayRows: "of",
+                    },
+                    toolbar: {
+                      search: "Search Feedbacks",
+                      downloadCsv: "Download CSV",
+                      print: "Print",
+                      viewColumns: "View Columns",
+                      filterTable: "Filter Table",
+                    },
+                    filter: {
+                      all: "All",
+                      title: "FILTERS",
+                      reset: "RESET",
+                    },
+                    viewColumns: {
+                      title: "Show Columns",
+                      titleAria: "Show/Hide Table Columns",
+                    },
+                  },
+                  setTableProps: () => ({
+                    sx: {
+                      '& .MuiTableCell-root': {
+                        padding: '16px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      },
+                      '& .MuiTableRow-root:hover': {
+                        backgroundColor: 'rgba(123, 139, 87, 0.08) !important',
+                      },
+                      '& .MuiToolbar-root': {
+                        borderRadius: '8px 8px 0 0',
+                      },
+                      '& .MuiTable-root': {
+                        tableLayout: 'fixed'
+                      },
+                      '& .MuiTableContainer-root': {
+                        maxHeight: 'none'
+                      }
+                    }
+                  }),
+                }}
+              />
             </Paper>
           </Box>
         )}
@@ -1125,20 +1357,20 @@ const AdminHome = () => {
         {activeSection === 'renewableSources' && (
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <Paper elevation={3} sx={{ 
-                padding: "2rem", 
-                borderRadius: "12px", 
+              <Paper elevation={3} sx={{
+                padding: "2rem",
+                borderRadius: "12px",
                 backgroundColor: "#fff",
                 boxShadow: 3,
                 position: "relative"
               }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                  Total Used Renewable Energy:
+                  Total Used Renewable Energy
                 </Typography>
-                <Box sx={{ 
-                  position: "relative", 
+                <Box sx={{
+                  position: "relative",
                   zIndex: 2,
-                  height: 350 
+                  height: 350
                 }}>
                   <ChartLine
                     data={{
@@ -1174,7 +1406,7 @@ const AdminHome = () => {
                           cornerRadius: 8,
                           boxPadding: 6,
                           callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                               return `Energy Used: ${context.raw} kWh`;
                             }
                           }
@@ -1195,7 +1427,7 @@ const AdminHome = () => {
                             color: '#f0f0f0'
                           },
                           ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                               return `${value} kWh`;
                             }
                           }
@@ -1207,10 +1439,10 @@ const AdminHome = () => {
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ 
-                padding: "1.5rem", 
-                borderRadius: "12px", 
-                backgroundColor: "#fff", 
+              <Paper elevation={3} sx={{
+                padding: "1.5rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
                 marginTop: "1rem",
                 boxShadow: 3,
                 position: "relative",
@@ -1220,18 +1452,18 @@ const AdminHome = () => {
                   <ListItemIcon>
                     <WindPower sx={{ color: '#42a5f5', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Wind Energy</Typography>} 
-                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Wind Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  <ListItemText
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Wind Energy</Typography>}
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Wind Energy')?.totalUsed || 0} kWh`}</Typography>}
                   />
                 </ListItem>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ 
-                padding: "1.5rem", 
-                borderRadius: "12px", 
-                backgroundColor: "#fff", 
+              <Paper elevation={3} sx={{
+                padding: "1.5rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
                 marginTop: "1rem",
                 boxShadow: 3,
                 position: "relative",
@@ -1241,18 +1473,18 @@ const AdminHome = () => {
                   <ListItemIcon>
                     <Water sx={{ color: '#29b6f6', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>HydroPower Energy</Typography>} 
-                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'HydroPower Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  <ListItemText
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>HydroPower Energy</Typography>}
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'HydroPower Energy')?.totalUsed || 0} kWh`}</Typography>}
                   />
                 </ListItem>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ 
-                padding: "1.5rem", 
-                borderRadius: "12px", 
-                backgroundColor: "#fff", 
+              <Paper elevation={3} sx={{
+                padding: "1.5rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
                 marginTop: "1rem",
                 boxShadow: 3,
                 position: "relative",
@@ -1262,18 +1494,18 @@ const AdminHome = () => {
                   <ListItemIcon>
                     <SolarPanel sx={{ color: '#ffa726', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Solar Energy</Typography>} 
-                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Solar Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  <ListItemText
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Solar Energy</Typography>}
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Solar Energy')?.totalUsed || 0} kWh`}</Typography>}
                   />
                 </ListItem>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3} sx={{ 
-                padding: "1.5rem", 
-                borderRadius: "12px", 
-                backgroundColor: "#fff", 
+              <Paper elevation={3} sx={{
+                padding: "1.5rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
                 marginTop: "1rem",
                 boxShadow: 3,
                 position: "relative",
@@ -1283,9 +1515,9 @@ const AdminHome = () => {
                   <ListItemIcon>
                     <LocalFlorist sx={{ color: '#66bb6a', fontSize: 38 }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Geothermal Energy</Typography>} 
-                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Geothermal Energy')?.totalUsed || 0} kWh`}</Typography>} 
+                  <ListItemText
+                    primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>Geothermal Energy</Typography>}
+                    secondary={<Typography variant="body1" sx={{ color: '#616161', fontSize: '1.1rem' }}>{`${renewableData.find(item => item.source === 'Geothermal Energy')?.totalUsed || 0} kWh`}</Typography>}
                   />
                 </ListItem>
               </Paper>
@@ -1296,73 +1528,209 @@ const AdminHome = () => {
         {activeSection === 'costAnalysis' && (
           <Box>
             {/* First Container: Cost Analysis Table */}
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
-              backgroundColor: "#fff",
-              boxShadow: 3,
-              marginBottom: "2rem",
-              position: "relative"
-            }}>
-              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                Cost Analysis:
-              </Typography>
-              <TableContainer sx={{ 
-                maxHeight: "400px", 
-                overflow: "auto",
-                boxShadow: 2,
-                borderRadius: "8px",
-                '& .MuiTableCell-head': {
-                  backgroundColor: '#f5f5f5',
-                  fontWeight: 'bold',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1
-                },
-                '& .MuiTableRow-root:hover': {
-                  backgroundColor: '#f9f9f9'
+            <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
+                minHeight: "calc(100vh - 550px)",
+                display: 'flex',
+                flexDirection: 'column',
+                marginBottom: "2rem"
+              }}
+            >
+              <MUIDataTable
+                title={
+                  <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333" }}>
+                    Cost Analysis
+                  </Typography>
                 }
-              }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>User</TableCell>
-                      <TableCell>Total Product Cost</TableCell>
-                      <TableCell>Total Installation Cost</TableCell>
-                      <TableCell>Total Maintenance Cost</TableCell>
-                      <TableCell>Grand Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {costAnalysisData.map((data) => (
-                      <TableRow key={data._id}>
-                        <TableCell>{data.user_id.email}</TableCell>
-                        <TableCell>₱{data.TotalProductCost.toLocaleString()}</TableCell>
-                        <TableCell>₱{data.TotalInstallationCost.toLocaleString()}</TableCell>
-                        <TableCell>₱{data.TotalMaintenanceCost.toLocaleString()}</TableCell>
-                        <TableCell>₱{data.GrandTotal.toLocaleString()}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                data={costAnalysisData.map(data => [
+                  data.user_id.email,
+                  data.TotalProductCost,
+                  data.TotalInstallationCost,
+                  data.TotalMaintenanceCost,
+                  data.GrandTotal
+                ])}
+                columns={[
+                  {
+                    name: "User",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "200px", maxWidth: "200px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "200px", maxWidth: "200px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ marginRight: 2, bgcolor: '#7b8b57' }}>{value[0]}</Avatar>
+                          {value}
+                        </Box>
+                      )
+                    }
+                  },
+                  {
+                    name: "Total Product Cost",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Typography>₱{value.toLocaleString()}</Typography>
+                      )
+                    }
+                  },
+                  {
+                    name: "Total Installation Cost",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Typography>₱{value.toLocaleString()}</Typography>
+                      )
+                    }
+                  },
+                  {
+                    name: "Total Maintenance Cost",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Typography>₱{value.toLocaleString()}</Typography>
+                      )
+                    }
+                  },
+                  {
+                    name: "Grand Total",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "150px", maxWidth: "150px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Typography sx={{
+                          fontWeight: 'bold',
+                          color: '#7b8b57'
+                        }}>
+                          ₱{value.toLocaleString()}
+                        </Typography>
+                      )
+                    }
+                  }
+                ]}
+                options={{
+                  filterType: 'dropdown',
+                  responsive: 'standard',
+                  selectableRows: 'none',
+                  download: true,
+                  print: true,
+                  elevation: 0,
+                  search: true,
+                  viewColumns: true,
+                  rowsPerPage: 5,
+                  rowsPerPageOptions: [5, 10, 25, 50],
+                  searchPlaceholder: "Search Cost Analysis...",
+                  searchAlwaysOpen: false,
+                  downloadOptions: {
+                    filename: 'GreenSphere_CostAnalysis.csv',
+                    separator: ',',
+                  },
+                  fixedHeader: true,
+                  tableBodyHeight: 'calc(100vh - 450px)',
+                  textLabels: {
+                    body: {
+                      noMatch: "Sorry, no matching cost analysis data found",
+                      toolTip: "Sort",
+                    },
+                    pagination: {
+                      next: "Next Page",
+                      previous: "Previous Page",
+                      rowsPerPage: "Rows per page:",
+                      displayRows: "of",
+                    },
+                    toolbar: {
+                      search: "Search Cost Analysis",
+                      downloadCsv: "Download CSV",
+                      print: "Print",
+                      viewColumns: "View Columns",
+                      filterTable: "Filter Table",
+                    },
+                    filter: {
+                      all: "All",
+                      title: "FILTERS",
+                      reset: "RESET",
+                    },
+                    viewColumns: {
+                      title: "Show Columns",
+                      titleAria: "Show/Hide Table Columns",
+                    },
+                  },
+                  setTableProps: () => ({
+                    sx: {
+                      '& .MuiTableCell-root': {
+                        padding: '16px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      },
+                      '& .MuiTableRow-root:hover': {
+                        backgroundColor: 'rgba(123, 139, 87, 0.08) !important',
+                      },
+                      '& .MuiToolbar-root': {
+                        borderRadius: '8px 8px 0 0',
+                      },
+                      '& .MuiTable-root': {
+                        tableLayout: 'fixed'
+                      },
+                      '& .MuiTableContainer-root': {
+                        maxHeight: 'none'
+                      }
+                    }
+                  }),
+                }}
+              />
             </Paper>
 
             {/* Second Container: Overall Cost Breakdown */}
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
+            <Paper elevation={3} sx={{
+              padding: "2rem",
+              borderRadius: "12px",
               backgroundColor: "#fff",
               boxShadow: 3,
               position: "relative"
             }}>
               <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                Overall Cost Breakdown:
+                Overall Cost Breakdown
               </Typography>
-              <Box sx={{ 
-                position: "relative", 
+              <Box sx={{
+                position: "relative",
                 zIndex: 2,
-                height: 350 
+                height: 350
               }}>
                 <ChartBar
                   data={{
@@ -1405,7 +1773,7 @@ const AdminHome = () => {
                         cornerRadius: 8,
                         boxPadding: 6,
                         callbacks: {
-                          label: function(context) {
+                          label: function (context) {
                             return `${context.dataset.label}: ₱${context.raw.toLocaleString()}`;
                           }
                         }
@@ -1426,7 +1794,7 @@ const AdminHome = () => {
                           color: '#f0f0f0'
                         },
                         ticks: {
-                          callback: function(value) {
+                          callback: function (value) {
                             return `₱${value.toLocaleString()}`;
                           }
                         }
@@ -1442,87 +1810,236 @@ const AdminHome = () => {
         {activeSection === 'carbonPayback' && (
           <Box>
             {/* First Container: Carbon Payback Table */}
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
-              backgroundColor: "#fff",
-              boxShadow: 3,
-              marginBottom: "2rem",
-              position: "relative"
-            }}>
-              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1rem" }}>
-                Carbon Payback Period Analysis:
-              </Typography>
-              <TableContainer sx={{ 
-                maxHeight: "400px", 
-                overflow: "auto",
-                boxShadow: 2,
-                borderRadius: "8px",
-                '& .MuiTableCell-head': {
-                  backgroundColor: '#f5f5f5',
-                  fontWeight: 'bold',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1
-                },
-                '& .MuiTableRow-root:hover': {
-                  backgroundColor: '#f9f9f9'
+            <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
+                minHeight: "calc(100vh - 550px)",
+                display: 'flex',
+                flexDirection: 'column',
+                marginBottom: "2rem"
+              }}
+            >
+              <MUIDataTable
+                title={
+                  <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333" }}>
+                    Carbon Payback Period Analysis
+                  </Typography>
                 }
-              }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>User</TableCell>
-                      <TableCell>Carbon Payback Period</TableCell>
-                      <TableCell>Total Carbon Emission</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {carbonPaybackData.map((data) => (
-                      <TableRow key={data._id}>
-                        <TableCell>{data.user_id.email}</TableCell>
-                        <TableCell>{data.CarbonPaybackPeriod}</TableCell>
-                        <TableCell>{data.TotalCarbonEmission}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                data={carbonPaybackData.map(data => [
+                  data.user_id.email,
+                  data.CarbonPaybackPeriod,
+                  data.TotalCarbonEmission
+                ])}
+                columns={[
+                  {
+                    name: "User",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: { minWidth: "200px", maxWidth: "200px" }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: { minWidth: "200px", maxWidth: "200px" }
+                      }),
+                      customBodyRender: (value) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ marginRight: 2, bgcolor: '#7b8b57' }}>{value[0]}</Avatar>
+                          {value}
+                        </Box>
+                      )
+                    }
+                  },
+                  {
+                    name: "Carbon Payback Period",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: {
+                          minWidth: "300px",
+                          maxWidth: "300px",
+                          textAlign: 'center',
+                          paddingLeft: '50px',
+                          paddingRight: '50px'
+                        }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: {
+                          minWidth: "300px",
+                          maxWidth: "300px",
+                          textAlign: 'center',
+                          paddingLeft: '50px',
+                          paddingRight: '50px'
+                        }
+                      }),
+                      customBodyRender: (value) => (
+                        <Box sx={{
+                          display: 'flex',
+                          width: '100%'
+                        }}>
+                          <Typography sx={{
+                            color: '#333',
+                            fontWeight: 'medium',
+                            textAlign: 'center',
+                            paddingLeft: '60px',
+                          }}>
+                            {value} years
+                          </Typography>
+                        </Box>
+                      )
+                    }
+                  },
+                  {
+                    name: "Total Carbon Emission",
+                    options: {
+                      filter: true,
+                      sort: true,
+                      setCellProps: () => ({
+                        style: {
+                          minWidth: "300px",
+                          maxWidth: "300px",
+                          textAlign: 'center',
+                          paddingLeft: '50px',
+                          paddingRight: '50px'
+                        }
+                      }),
+                      setCellHeaderProps: () => ({
+                        style: {
+                          minWidth: "300px",
+                          maxWidth: "300px",
+                          textAlign: 'center',
+                          paddingLeft: '50px',
+                          paddingRight: '50px'
+                        }
+                      }),
+                      customBodyRender: (value) => (
+                        <Box sx={{
+                          display: 'flex',
+                          width: '100%'
+                        }}>
+                          <Typography sx={{
+                            color: '#333',
+                            fontWeight: 'medium',
+                            textAlign: 'center',
+                            paddingLeft: '45px',
+                          }}>
+                            {value} metric tons
+                          </Typography>
+                        </Box>
+                      )
+                    }
+                  }
+                ]}
+                options={{
+                  filterType: 'dropdown',
+                  responsive: 'standard',
+                  selectableRows: 'none',
+                  download: true,
+                  print: true,
+                  elevation: 0,
+                  search: true,
+                  viewColumns: true,
+                  rowsPerPage: 5,
+                  rowsPerPageOptions: [5, 10, 25, 50],
+                  searchPlaceholder: "Search Carbon Payback Data...",
+                  searchAlwaysOpen: false,
+                  downloadOptions: {
+                    filename: 'GreenSphere_CarbonPayback.csv',
+                    separator: ',',
+                  },
+                  fixedHeader: true,
+                  tableBodyHeight: 'calc(100vh - 450px)',
+                  textLabels: {
+                    body: {
+                      noMatch: "Sorry, no matching carbon payback data found",
+                      toolTip: "Sort",
+                    },
+                    pagination: {
+                      next: "Next Page",
+                      previous: "Previous Page",
+                      rowsPerPage: "Rows per page:",
+                      displayRows: "of",
+                    },
+                    toolbar: {
+                      search: "Search Carbon Payback Data",
+                      downloadCsv: "Download CSV",
+                      print: "Print",
+                      viewColumns: "View Columns",
+                      filterTable: "Filter Table",
+                    },
+                    filter: {
+                      all: "All",
+                      title: "FILTERS",
+                      reset: "RESET",
+                    },
+                    viewColumns: {
+                      title: "Show Columns",
+                      titleAria: "Show/Hide Table Columns",
+                    },
+                  },
+                  setTableProps: () => ({
+                    sx: {
+                      '& .MuiTableCell-root': {
+                        padding: '16px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      },
+                      '& .MuiTableRow-root:hover': {
+                        backgroundColor: 'rgba(123, 139, 87, 0.08) !important',
+                      },
+                      '& .MuiToolbar-root': {
+                        borderRadius: '8px 8px 0 0',
+                      },
+                      '& .MuiTable-root': {
+                        tableLayout: 'fixed'
+                      },
+                      '& .MuiTableContainer-root': {
+                        maxHeight: 'none'
+                      }
+                    }
+                  }),
+                }}
+              />
             </Paper>
 
             {/* Second Container: Carbon Metrics Cards */}
-            <Paper elevation={3} sx={{ 
-              padding: "2rem", 
-              borderRadius: "12px", 
+            <Paper elevation={3} sx={{
+              padding: "2rem",
+              borderRadius: "12px",
               backgroundColor: "#fff",
               boxShadow: 3,
               position: "relative"
             }}>
               <Typography variant="h5" sx={{ fontWeight: "bold", color: "#333", marginBottom: "1.5rem" }}>
-                Carbon Metrics Overview:
+                Carbon Metrics Overview
               </Typography>
               <Grid container spacing={3} sx={{ pb: 2 }}>
                 <Grid item xs={12} sm={6}>
-                  <Paper elevation={3} sx={{ 
+                  <Paper elevation={3} sx={{
                     padding: "2rem",
-                    borderRadius: "12px", 
+                    borderRadius: "12px",
                     backgroundColor: "#fff",
                     height: "50%",
                     minHeight: "250px",
                     boxShadow: 3,
                     position: "relative"
                   }}>
-                    <Box sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
+                    <Box sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       flexDirection: 'column',
-                      height: '100%' // Ensure content fills the paper
+                      height: '100%'
                     }}>
-                      <Avatar sx={{ 
-                        bgcolor: '#e3f2fd', 
-                        width: 80, 
-                        height: 80, 
+                      <Avatar sx={{
+                        bgcolor: '#e3f2fd',
+                        width: 80,
+                        height: 80,
                         mb: 2,
                         boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                       }}>
@@ -1532,7 +2049,7 @@ const AdminHome = () => {
                         Total Carbon Payback Period
                       </Typography>
                       <Typography variant="h4" sx={{ mt: 1, color: '#2196f3', fontWeight: 'medium', textAlign: 'center' }}>
-                        {calculateOverallCarbonData(carbonPaybackData)[0].value}
+                        {(calculateOverallCarbonData(carbonPaybackData)[0].value * 100).toFixed(2)}
                       </Typography>
                       <Typography variant="body2" sx={{ mt: 1, color: '#757575', textAlign: 'center' }}>
                         Years to offset carbon footprint
@@ -1541,26 +2058,26 @@ const AdminHome = () => {
                   </Paper>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Paper elevation={3} sx={{ 
+                  <Paper elevation={3} sx={{
                     padding: "2rem",
-                    borderRadius: "12px", 
+                    borderRadius: "12px",
                     backgroundColor: "#fff",
                     height: "50%",
                     minHeight: "250px",
                     boxShadow: 3,
                     position: "relative"
                   }}>
-                    <Box sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
+                    <Box sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       flexDirection: 'column',
-                      height: '100%' // Ensure content fills the paper
+                      height: '100%'
                     }}>
-                      <Avatar sx={{ 
-                        bgcolor: '#fbe9e7', 
-                        width: 80, 
-                        height: 80, 
+                      <Avatar sx={{
+                        bgcolor: '#fbe9e7',
+                        width: 80,
+                        height: 80,
                         mb: 2,
                         boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                       }}>
