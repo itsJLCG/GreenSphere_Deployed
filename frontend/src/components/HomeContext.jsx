@@ -26,7 +26,28 @@ export const HomeProvider = ({ children }) => {
   const [showVerticalFarming, setShowVerticalFarming] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ name: "", type: "", infrastructure: "" });
+  const [solarWaterHeating, setSolarWaterHeating] = useState([]);
+  const [smallWindTurbines, setSmallWindTurbines] = useState([]);
+  const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
+  const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [picoHydroPower, setPicoHydroPower] = useState([]);
+  const [solarPanels, setSolarPanels] = useState([]);
+  const [solarRoofTiles, setSolarRoofTiles] = useState([]);
+  const [heatPump, setHeatPump] = useState([]);
+  const [verticalFarming, setVerticalFarming] = useState([]);
 
+  const resetRenewableSources = () => {
+    setSolarWaterHeating([]);
+    setSmallWindTurbines([]);
+    setVerticalAxisWindTurbines([]);
+    setMicroHydroPowerSystem([]);
+    setPicoHydroPower([]);
+    setSolarPanels([]);
+    setSolarRoofTiles([]);
+    setHeatPump([]);
+    setVerticalFarming([]);
+  };
+  
   return (
     <HomeContext.Provider
       value={{
@@ -76,6 +97,25 @@ export const HomeProvider = ({ children }) => {
         setIsModalOpen,
         modalContent,
         setModalContent,
+        solarWaterHeating,
+        setSolarWaterHeating,
+        smallWindTurbines,
+        setSmallWindTurbines,
+        verticalAxisWindTurbines,
+        setVerticalAxisWindTurbines,
+        microHydroPowerSystem,
+        setMicroHydroPowerSystem,
+        picoHydroPower,
+        setPicoHydroPower,
+        solarPanels,
+        setSolarPanels,
+        solarRoofTiles,
+        setSolarRoofTiles,
+        heatPump,
+        setHeatPump,
+        verticalFarming,
+        setVerticalFarming,
+        resetRenewableSources,
       }}
     >
       {children}

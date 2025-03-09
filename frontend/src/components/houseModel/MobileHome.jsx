@@ -1,5 +1,6 @@
 import { useTexture, useGLTF, useAnimations } from "@react-three/drei";
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useContext } from "react";
+import { HomeContext } from "../HomeContext.jsx";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
 import { Html } from "@react-three/drei";
@@ -27,7 +28,8 @@ const useOccupiedCells = () => {
   return { isCellOccupied, occupyCell, releaseCell };
 };
 
-export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating, occupiedCells }) => {
+export const SolarWaterHeatingTiles = ({ onSelect, showSolarWaterHeating, occupiedCells }) => {
+  const { solarWaterHeating, setSolarWaterHeating } = useContext(HomeContext);
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
 
   // Platform settings
@@ -128,9 +130,10 @@ export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWa
   );
 };
 
-export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem, occupiedCells }) => {
+export const MicroHydroPowerSystemTiles = ({ onSelect, showMicroHydroPowerSystem, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/microHydropowerSystem.glb");
   const { actions } = useAnimations(animations, scene);
+  const { microHydroPowerSystem, setMicroHydroPowerSystem } = useContext(HomeContext);
 
   // Ref to store mixers for each turbine
   const mixers = useRef([]);
@@ -269,9 +272,10 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
   );
 };
 
-export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines, occupiedCells }) => {
+export const SmallWindTurbinesTiles = ({ onSelect, showSmallWindTurbines, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/wind_turbine(2).glb");
   const { actions } = useAnimations(animations, scene);
+  const { smallWindTurbines, setSmallWindTurbines } = useContext(HomeContext);
 
   // Ref to store mixers for each turbine
   const mixers = useRef([]);
@@ -408,9 +412,10 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
   );
 };
 
-export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines, occupiedCells }) => {
+export const VerticalAxisWindTurbinesTiles = ({ onSelect, showVerticalAxisWindTurbines, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/verticalAxisWindTurbineAnimated.glb");
   const { actions } = useAnimations(animations, scene);
+  const { verticalAxisWindTurbines, setVerticalAxisWindTurbines } = useContext(HomeContext);
 
   // Ref to store mixers for each turbine
   const mixers = useRef([]);
@@ -546,8 +551,9 @@ export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbin
   );
 };
 
-export const PicoHydroPowerTiles = ({ onSelect, picoHydroPower, setPicoHydroPower, showPicoHydroPower, occupiedCells }) => {
+export const PicoHydroPowerTiles = ({ onSelect, showPicoHydroPower, occupiedCells }) => {
   const gltf = useGLTF("../assets/models/picoHydroPower.glb");
+  const { picoHydroPower, setPicoHydroPower } = useContext(HomeContext);
 
   // Platform settings
   const platformSize = 20;
@@ -717,11 +723,19 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
   const doorTexture = useTexture("../assets/images/mobiledoor.jpg");
   const wheelTexture = useTexture("../assets/images/wheel.jpg");
   const [solarPanels, setSolarPanels] = useState([]);
-  const [solarWaterHeating, setSolarWaterHeating] = useState([]);
+/*   const [solarWaterHeating, setSolarWaterHeating] = useState([]);
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
   const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
-  const [picoHydroPower, setPicoHydroPower] = useState([]);
+  const [picoHydroPower, setPicoHydroPower] = useState([]); */
+
+  const { 
+    solarWaterHeating,
+    smallWindTurbines,
+    verticalAxisWindTurbines,
+    microHydroPowerSystem,
+    picoHydroPower 
+  } = useContext(HomeContext);
 
   // Shared state for occupied cells
   const occupiedCells = useOccupiedCells();
@@ -814,32 +828,24 @@ const MobileHome = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWa
 
       {/* Renewable Source Components */}
       <SolarWaterHeatingTiles
-        solarWaterHeating={solarWaterHeating}
-        setSolarWaterHeating={setSolarWaterHeating}
+/*         solarWaterHeating={solarWaterHeating}
+        setSolarWaterHeating={setSolarWaterHeating} */
         showSolarWaterHeating={showSolarWaterHeating}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <SmallWindTurbinesTiles
-        smallWindTurbines={smallWindTurbines}
-        setSmallWindTurbines={setSmallWindTurbines}
         showSmallWindTurbines={showSmallWindTurbines}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <VerticalAxisWindTurbinesTiles
-        verticalAxisWindTurbines={verticalAxisWindTurbines}
-        setVerticalAxisWindTurbines={setVerticalAxisWindTurbines}
         showVerticalAxisWindTurbines={showVerticalAxisWindTurbines}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <MicroHydroPowerSystemTiles
-        microHydroPowerSystem={microHydroPowerSystem}
-        setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <PicoHydroPowerTiles
-        picoHydroPower={picoHydroPower}
-        setPicoHydroPower={setPicoHydroPower}
         showPicoHydroPower={showPicoHydroPower}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />

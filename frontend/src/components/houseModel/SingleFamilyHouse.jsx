@@ -2,7 +2,8 @@ import { useTexture, useAnimations } from "@react-three/drei";
 import { useGLTF } from "@react-three/drei";
 import SolarPanel from "../renewableModel/SolarPanel.jsx";
 import SolarRoofTiles from "../renewableModel/SolarRoofTiles.jsx";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { HomeContext } from "../HomeContext.jsx";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
 import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -28,8 +29,9 @@ const useOccupiedCells = () => {
   return { isCellOccupied, occupyCell, releaseCell };
 };
 
-export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWaterHeating, showSolarWaterHeating, occupiedCells }) => {
+export const SolarWaterHeatingTiles = ({ onSelect, showSolarWaterHeating, occupiedCells }) => {
   const gltf = useGLTF("../assets/models/solarwaterheater.glb");
+  const { solarWaterHeating, setSolarWaterHeating } = useContext(HomeContext);
 
   // Platform settings
   const platformSize = 20;
@@ -124,9 +126,10 @@ export const SolarWaterHeatingTiles = ({ onSelect, solarWaterHeating, setSolarWa
 };
 
 
-export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, setMicroHydroPowerSystem, showMicroHydroPowerSystem, occupiedCells }) => {
+export const MicroHydroPowerSystemTiles = ({ onSelect, showMicroHydroPowerSystem, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/microHydropowerSystem.glb");
   const { actions } = useAnimations(animations, scene);
+  const { microHydroPowerSystem, setMicroHydroPowerSystem } = useContext(HomeContext);
 
   // Ref to store mixers for each turbine
   const mixers = useRef([]);
@@ -247,8 +250,9 @@ export const MicroHydroPowerSystemTiles = ({ onSelect, microHydroPowerSystem, se
   );
 };
 
-export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump }) => {
+export const HeatPumpTiles = ({ onSelect, showHeatPump }) => {
   const gltf = useGLTF("../assets/models/heatPump.glb");
+  const { heatPump, setHeatPump } = useContext(HomeContext);
 
   // Platform settings
   const platformSize = 20;
@@ -331,9 +335,10 @@ export const HeatPumpTiles = ({ onSelect, heatPump, setHeatPump, showHeatPump })
   );
 };
 
-export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWindTurbines, showSmallWindTurbines, occupiedCells }) => {
+export const SmallWindTurbinesTiles = ({ onSelect, showSmallWindTurbines, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/wind_turbine(2).glb");
   const { actions } = useAnimations(animations, scene);
+  const { smallWindTurbines, setSmallWindTurbines } = useContext(HomeContext);
 
   // Ref to store animation mixers
   const mixers = useRef([]);
@@ -458,10 +463,11 @@ export const SmallWindTurbinesTiles = ({ onSelect, smallWindTurbines, setSmallWi
   );
 };
 
-export const VerticalAxisWindTurbinesTiles = ({ onSelect, verticalAxisWindTurbines, setVerticalAxisWindTurbines, showVerticalAxisWindTurbines, occupiedCells }) => {
+export const VerticalAxisWindTurbinesTiles = ({ onSelect, showVerticalAxisWindTurbines, occupiedCells }) => {
   const { scene, animations } = useGLTF("../assets/models/verticalAxisWindTurbineAnimated.glb");
   const { actions } = useAnimations(animations, scene);
   const mixers = useRef([]);
+  const { verticalAxisWindTurbines, setVerticalAxisWindTurbines } = useContext(HomeContext);
 
   useEffect(() => {
     if (actions && actions["Object_6.001Action"]) {
@@ -1093,12 +1099,19 @@ const SingleFamilyHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, show
   // Move the state here
   const [solarPanels, setSolarPanels] = useState([]);
   const [solarRoofTiles, setSolarRoofTiles] = useState([]);
-  const [solarWaterHeating, setSolarWaterHeating] = useState([]);
+/*   const [solarWaterHeating, setSolarWaterHeating] = useState([]);
   const [heatPump, setHeatPump] = useState([]);
   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
-  const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]); */
 
+    const { 
+      solarWaterHeating,
+      smallWindTurbines,
+      verticalAxisWindTurbines,
+      microHydroPowerSystem,
+      heatPump,
+    } = useContext(HomeContext);
 
   const occupiedCells = useOccupiedCells();
 
@@ -1195,32 +1208,22 @@ const SingleFamilyHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, show
         })}
 
       <SolarWaterHeatingTiles
-        solarWaterHeating={solarWaterHeating}
-        setSolarWaterHeating={setSolarWaterHeating}
         showSolarWaterHeating={showSolarWaterHeating}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <HeatPumpTiles
-        heatPump={heatPump}
-        setHeatPump={setHeatPump}
         showHeatPump={showHeatPump}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <SmallWindTurbinesTiles
-        smallWindTurbines={smallWindTurbines}
-        setSmallWindTurbines={setSmallWindTurbines}
         showSmallWindTurbines={showSmallWindTurbines}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <VerticalAxisWindTurbinesTiles
-        verticalAxisWindTurbines={verticalAxisWindTurbines}
-        setVerticalAxisWindTurbines={setVerticalAxisWindTurbines}
         showVerticalAxisWindTurbines={showVerticalAxisWindTurbines}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <MicroHydroPowerSystemTiles
-        microHydroPowerSystem={microHydroPowerSystem}
-        setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />

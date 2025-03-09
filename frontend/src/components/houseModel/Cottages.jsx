@@ -1,5 +1,6 @@
 import { useTexture } from "@react-three/drei";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext } from "react";
+import { HomeContext } from "../HomeContext.jsx";
 import { Roofs, SolarWaterHeatingTiles, MicroHydroPowerSystemTiles, HeatPumpTiles, SmallWindTurbinesTiles, VerticalAxisWindTurbinesTiles, GableRoofGrid, GableRoofGridTiles } from "./SingleFamilyHouse.jsx";
 import TechnoEconomicAnalysis from "../TechnoEconomicAnalysis.jsx";
 import { Html } from "@react-three/drei";
@@ -38,14 +39,21 @@ const WindowCottage = ({ position }) => {
 const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSolarWaterHeating, showHeatPump, showSmallWindTurbines, showVerticalAxisWindTurbines, showMicroHydroPowerSystem }) => {
   const wallTexture = useTexture("../assets/images/cottagewall.webp");
   const doorTexture = useTexture("../assets/images/cottagedoor.jpg");
-  const [solarWaterHeating, setSolarWaterHeating] = useState([]);
-  const [heatPump, setHeatPump] = useState([]);
+/*   const [solarWaterHeating, setSolarWaterHeating] = useState([]);
+  const [heatPump, setHeatPump] = useState([]); */
   const [solarPanels, setSolarPanels] = useState([]);
   const [solarRoofTiles, setSolarRoofTiles] = useState([]);
-  const [smallWindTurbines, setSmallWindTurbines] = useState([]);
+/*   const [smallWindTurbines, setSmallWindTurbines] = useState([]);
   const [verticalAxisWindTurbines, setVerticalAxisWindTurbines] = useState([]);
-  const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]);
+  const [microHydroPowerSystem, setMicroHydroPowerSystem] = useState([]); */
 
+  const { 
+    solarWaterHeating,
+    smallWindTurbines,
+    verticalAxisWindTurbines,
+    microHydroPowerSystem,
+    heatPump, 
+  } = useContext(HomeContext);
   
   const occupiedCells = useOccupiedCells();
 
@@ -146,32 +154,22 @@ const CottagesHouse = ({ roofType, showSolarPanels, showSolarRoofTiles, showSola
       />
 
       <SolarWaterHeatingTiles
-        solarWaterHeating={solarWaterHeating}
-        setSolarWaterHeating={setSolarWaterHeating}
         showSolarWaterHeating={showSolarWaterHeating}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <HeatPumpTiles
-        heatPump={heatPump}
-        setHeatPump={setHeatPump}
         showHeatPump={showHeatPump}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <SmallWindTurbinesTiles
-        smallWindTurbines={smallWindTurbines}
-        setSmallWindTurbines={setSmallWindTurbines}
         showSmallWindTurbines={showSmallWindTurbines}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <VerticalAxisWindTurbinesTiles
-        verticalAxisWindTurbines={verticalAxisWindTurbines}
-        setVerticalAxisWindTurbines={setVerticalAxisWindTurbines}
         showVerticalAxisWindTurbines={showVerticalAxisWindTurbines}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />
       <MicroHydroPowerSystemTiles
-        microHydroPowerSystem={microHydroPowerSystem}
-        setMicroHydroPowerSystem={setMicroHydroPowerSystem}
         showMicroHydroPowerSystem={showMicroHydroPowerSystem}
         occupiedCells={occupiedCells} // Pass occupiedCells here
       />

@@ -266,6 +266,7 @@ const Home = () => {
     setIsModalOpen,
     modalContent,
     setModalContent,
+    resetRenewableSources,
   } = useContext(HomeContext);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -520,6 +521,7 @@ const Home = () => {
                       key={option}
                       onClick={() => {
                         setSelection(option);
+                        resetRenewableSources();
                         label === "Houses" ? setSelectedBuilding(null) : setSelectedHouse(null);
                       }}
                       style={{
