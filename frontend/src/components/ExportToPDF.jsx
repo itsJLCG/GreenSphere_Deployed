@@ -113,7 +113,7 @@ const generateRecommendations = (data) => {
   // 🔹 Best for annual savings
   if (bestSavingsSource && bestSavingsSource.annualSavings > 0) {
     recommendations.push(
-      `• ${bestSavingsSource.source} offers the highest annual savings (₱${bestSavingsSource.annualSavings.toLocaleString()}). This is the best option if your goal is to maximize financial returns.`
+      `• Small Wind Turbines offers the highest annual savings (${bestSavingsSource.annualSavings.toLocaleString()}). This is the best option if your goal is to maximize financial returns.`
     );
   }
 

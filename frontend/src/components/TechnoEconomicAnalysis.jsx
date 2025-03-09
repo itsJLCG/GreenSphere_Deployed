@@ -22,99 +22,127 @@ import axios from "axios";
 const PRICES = {
   solarPanels: {
     type: 'Solar Energy',
-    productCost: 30000,
-    installation: 40000,
-    maintenance: 15000,
-    carbonEmissions: 40,
-    energyProduction: 500, // kWh per year per unit
-    electricityCost: 0.15 // Cost per kWh in your region
+    productCost: 35000,
+    installation: 150000,
+    maintenance: 6500,
+    carbonEmissions: 4.9, // Metric tons per unit
+    energyProduction: 639, // kWh per year per unit
+    electricityCost: 12 // Cost per kWh in Philippine Meralco Company
   },
   solarWaterHeating: {
     type: 'Solar Energy',
-    productCost: 380000,
-    installation: 20000,
-    maintenance: 5000,
-    carbonEmissions: 0,
-    energyProduction: 400,
-    electricityCost: 0.15
+    productCost: 285000,
+    installation: 28500,
+    maintenance: 5700,
+    carbonEmissions: 3,
+    energyProduction: 2500,
+    electricityCost: 12
   },
   smallWindTurbines: {
     type: 'Wind Energy',
-    productCost: 111000,
-    installation: 50000,
-    maintenance: 10000,
-    carbonEmissions: 10,
-    energyProduction: 600,
-    electricityCost: 0.12
+    productCost: 2565000,
+    installation: 1909500,
+    maintenance: 256500,
+    carbonEmissions: 4.54,
+    energyProduction: 17520,
+    electricityCost: 12
   },
   verticalAxisWindTurbines: {
     type: 'Wind Energy',
-    productCost: 110000,
-    installation: 60000,
-    maintenance: 12000,
-    carbonEmissions: 10,
-    energyProduction: 700,
-    electricityCost: 0.12
+    productCost: 627000,
+    installation: 570000,
+    maintenance: 142500,
+    carbonEmissions: 4.54,
+    energyProduction: 13140,
+    electricityCost: 12
   },
   microHydroPowerSystem: {
     type: 'HydroPower Energy',
-    productCost: 200000,
-    installation: 100000,
-    maintenance: 15000,
-    carbonEmissions: 10,
+    productCost: 384750,
+    installation: 157000,
+    maintenance: 28500,
+    carbonEmissions: 2.1,
     energyProduction: 3000,
-    electricityCost: 0.10
+    electricityCost: 12
   },
   picoHydroPower: {
     type: 'HydroPower Energy',
-    productCost: 300000,
-    installation: 40000,
-    maintenance: 5000,
-    carbonEmissions: 0,
-    energyProduction: 1500,
-    electricityCost: 0.10
+    productCost: 826500,
+    installation: 285000,
+    maintenance: 17100,
+    carbonEmissions: 1.05,
+    energyProduction: 87600,
+    electricityCost: 12
   },
   solarRoofTiles: {
     type: 'Solar Energy',
-    productCost: 20000,
-    installation: 100000,
-    maintenance: 15000,
-    carbonEmissions: 40,
-    energyProduction: 550,
-    electricityCost: 0.15
+    productCost: 131100,
+    installation: 79800,
+    maintenance: 11400,
+    carbonEmissions: 3,
+    energyProduction: 544,
+    electricityCost: 12
   },
   heatPump: {
     type: 'Geothermal Energy',
-    productCost: 150000,
-    installation: 200000,
-    maintenance: 10000,
-    carbonEmissions: 10,
-    energyProduction: 2500,
-    electricityCost: 0.13
+    productCost: 591858,
+    installation: 287500,
+    maintenance: 57750,
+    carbonEmissions: 5,
+    energyProduction: 4500,
+    electricityCost: 12
   },
   verticalFarming: {
     type: 'Urban Farming',
-    productCost: 500000,
-    installation: 200000,
-    maintenance: 20000,
-    carbonEmissions: 1,
+    productCost: 672600,
+    installation: 57600,
+    maintenance: 25560,
+    carbonEmissions: 2.2,
     energyProduction: 0,  // Not applicable
-    electricityCost: 0 // Not applicable
+    electricityCost: 12 // Not applicable
   }
 };
+
+// Grid Carbon Intensity (kg CO₂/kWh) for the Philippines
+const GRID_CARBON_INTENSITY = 0.691; // kg CO₂ per kWh (Philippines average)
+
 const calculateTotalCost = (source, count) => {
   const { productCost, installation, maintenance, carbonEmissions, energyProduction, electricityCost } = PRICES[source];
-  const annualSavings = energyProduction * electricityCost * count;
+
+  console.log(`Calculating for: ${source}, Quantity: ${count}`);
+
+  // Calculate total annual energy production
+  const totalAnnualEnergy = energyProduction * count;
+  console.log(`Total Annual Energy Production (${source}): ${totalAnnualEnergy} kWh`);
+
+  // Calculate annual savings from electricity production
+  const annualSavings = totalAnnualEnergy * electricityCost; // 12 pesos per kWh (Meralco rate)
+  console.log(`Annual Savings (${source}): PHP ${annualSavings}`);
+
+  // Convert energy savings to annual carbon savings in metric tons
+  const annualCarbonSavings = (totalAnnualEnergy * GRID_CARBON_INTENSITY) / 1000;
+  console.log(`Annual Carbon Savings (${source}): ${annualCarbonSavings.toFixed(4)} metric tons`);
+
+  // Calculate total carbon emissions
+  const totalCarbonEmissions = carbonEmissions * count;
+  console.log(`Total Carbon Emissions (${source}): ${totalCarbonEmissions} metric tons`);
+
+  // Calculate carbon payback period
+  const carbonPaybackPeriod = totalCarbonEmissions / annualCarbonSavings;
+  console.log(`Carbon Payback Period (${source}): ${carbonPaybackPeriod.toFixed(2)} years`);
+
   return {
     totalProductCost: productCost * count,
     totalInstallationCost: installation * count,
     totalMaintenanceCost: maintenance * count,
-    totalCarbonEmissions: carbonEmissions * count,
+    totalCarbonEmissions: totalCarbonEmissions,
     totalCost: productCost * count + installation * count + maintenance * count,
     annualSavings: annualSavings,
-    paybackPeriod: (productCost * count + installation * count + maintenance * count) / annualSavings
+    paybackPeriod: (productCost * count + installation * count + maintenance * count) / annualSavings,
+    carbonPaybackPeriod: carbonPaybackPeriod,
   };
 };
+
 
 const TechnoEconomicAnalysis = ({
   solarPanels = [],
@@ -151,14 +179,14 @@ const TechnoEconomicAnalysis = ({
   const totalProductCost = Object.values(data).reduce((sum, item) => sum + item.totalProductCost, 0);
   const totalInstallationCost = Object.values(data).reduce((sum, item) => sum + item.totalInstallationCost, 0);
   const totalMaintenanceCost = Object.values(data).reduce((sum, item) => sum + item.totalMaintenanceCost, 0);
-  const totalCarbonEmissions = Object.values(data).reduce((sum, item) => sum + item.totalCarbonEmissions, 0);
+  const totalCarbonEmissions = Object.values(data).reduce((sum, item) => sum + item.totalCarbonEmissions, 0).toFixed(2);
   const totalCost = totalProductCost + totalInstallationCost + totalMaintenanceCost;
 
   // Carbon Payback Period Calculation (in years)
-  const carbonPaybackPeriod = (totalCarbonEmissions / 1000).toFixed(2); // Example calculation
-
-  // Dynamic Percentage Calculation for Energy Usage
-  const totalEnergyUsage = Object.values(data).reduce((sum, item) => sum + item.totalCarbonEmissions, 0);
+  const carbonPaybackPeriod = Object.values(data)
+    .filter(item => item.carbonPaybackPeriod && !isNaN(item.carbonPaybackPeriod)) // Filter out invalid values
+    .reduce((acc, item) => acc + item.carbonPaybackPeriod, 0)
+    .toFixed(2) || "0.00"; // Default to "0.00" if result is NaN
 
   const toCamelCase = (str) => {
     return str
@@ -172,27 +200,38 @@ const TechnoEconomicAnalysis = ({
   };
 
   const energyUsageByType = Object.entries(data).reduce((acc, [key, value]) => {
-    const formattedKey = toCamelCase(key); // Convert to camelCase
-    const priceData = PRICES[formattedKey]; // Find matching entry in PRICES
+    const formattedKey = toCamelCase(key);
+    const priceData = PRICES[formattedKey];
 
     if (!priceData) {
       console.warn(`Warning: Key "${formattedKey}" not found in PRICES.`);
-      return acc; // Skip if key doesn't exist
+      return acc;
     }
+
+    // Calculate total annual energy production for this source
+    const count = key === "Solar Panels" ? solarPanels.length :
+      key === "Solar Water Heating" ? solarWaterHeating.length :
+        key === "Solar Roof Tiles" ? solarRoofTiles.length :
+          key === "Heat Pump" ? heatPump.length :
+            key === "Small Wind Turbines" ? smallWindTurbines.length :
+              key === "Vertical Axis Wind Turbines" ? verticalAxisWindTurbines.length :
+                key === "Micro Hydro Power System" ? microHydroPowerSystem.length :
+                  key === "Pico Hydro Power" ? picoHydroPower.length :
+                    key === "Vertical Farming" ? verticalFarming.length : 0;
+
+    const annualEnergy = priceData.energyProduction * count;
 
     const type = priceData.type;
     if (!acc[type]) {
       acc[type] = 0;
     }
-    acc[type] += value.totalCarbonEmissions;
+    acc[type] += annualEnergy;
     return acc;
   }, {});
 
-
-  // Convert the grouped data into an array for the line chart
-  const lineChartData = Object.entries(energyUsageByType).map(([type, emissions]) => ({
+  const lineChartData = Object.entries(energyUsageByType).map(([type, energy]) => ({
     type,
-    emissions,
+    energy
   }));
 
 
@@ -200,7 +239,7 @@ const TechnoEconomicAnalysis = ({
   const barChartData = Object.entries(data).map(([key, cost]) => ({
     name: key,
     totalCost: cost.totalCost,
-    savings: cost.totalCost * 0.2,
+    savings: cost.annualSavings,
   }));
 
   const pieChartData = [
@@ -792,7 +831,7 @@ const TechnoEconomicAnalysis = ({
                     alignItems: 'center',
                     gap: 1
                   }}>
-                    Total Carbon Emissions: <span style={{ color: '#f43f5e' }}>{totalCarbonEmissions} kg CO₂</span>
+                    Total Carbon Emissions: <span style={{ color: '#f43f5e' }}>{totalCarbonEmissions} Metric Ton of CO₂</span>
                   </Typography>
                 </Box>
                 <Box
@@ -885,7 +924,7 @@ const TechnoEconomicAnalysis = ({
                     />
                     <Bar
                       dataKey="value"
-                      name="Total Carbon Emissions (kg CO₂)"
+                      name="Total Carbon Emissions (Metric Ton of CO₂)"
                       fill="#FFBB28"
                     >
                       {totalCarbonData.map((entry, index) => (
@@ -914,7 +953,7 @@ const TechnoEconomicAnalysis = ({
                   flexDirection: "column",
                   alignItems: "center"
                 }}>
-                  <PieChart width={500} height={300}>
+                  <PieChart width={800} height={300}>
                     <Pie
                       data={pieChartData}
                       cx="50%"
@@ -923,9 +962,19 @@ const TechnoEconomicAnalysis = ({
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="value"
-                      label={({ name, value, percent }) => (
-                        `${name}: ₱${(value / 1000).toFixed(0)}k (${(percent * 100).toFixed(0)}%)`
-                      )}
+                      label={({ name, value, percent }) => {
+                        let formattedValue;
+
+                        if (value >= 1_000_000) {
+                          formattedValue = `₱${(value / 1_000_000).toFixed(1)}M`; // Millions
+                        } else if (value >= 1_000) {
+                          formattedValue = `₱${(value / 1_000).toFixed(1)}K`; // Thousands
+                        } else {
+                          formattedValue = `₱${value}`; // No formatting for small numbers
+                        }
+
+                        return `${name}: ${formattedValue} (${(percent * 100).toFixed(0)}%)`;
+                      }}
                     >
                       {pieChartData.map((entry, index) => (
                         <Cell
@@ -959,10 +1008,10 @@ const TechnoEconomicAnalysis = ({
               {/* Energy Usage Section */}
               <Box sx={{ mt: 5, p: 3, backgroundColor: "#334155", borderRadius: 2 }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", borderBottom: "2px solid #64748b", pb: 1 }}>
-                  Energy Usage by Source
+                  Energy Usage by Source Type
                 </Typography>
                 <Typography variant="body1" sx={{ mt: 2, color: '#94a3b8' }}>
-                  This section shows the percentage of energy used by each renewable energy source based on the carbon emissions.
+                  This section shows the total annual energy production (kWh) by each type of renewable energy source.
                 </Typography>
                 <Box ref={energyUsageRef} sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                   <LineChart width={800} height={300} data={lineChartData}>
@@ -975,6 +1024,7 @@ const TechnoEconomicAnalysis = ({
                     <YAxis
                       tick={{ fill: '#60a5fa' }}
                       axisLine={{ stroke: '#475569' }}
+                      tickFormatter={(value) => `${value.toLocaleString()} kWh`}
                     />
                     <Tooltip
                       contentStyle={{
@@ -983,16 +1033,17 @@ const TechnoEconomicAnalysis = ({
                         borderRadius: '8px',
                         color: '#60a5fa'
                       }}
+                      formatter={(value) => [`${value.toLocaleString()} kWh`, 'Annual Energy Production']}
                     />
                     <Legend
                       wrapperStyle={{ color: '#60a5fa' }}
                     />
                     <Line
                       type="monotone"
-                      dataKey="emissions"
+                      dataKey="energy"
                       stroke="#22c55e"
                       strokeWidth={2}
-                      name="Carbon Emissions (kg CO₂)"
+                      name="Annual Energy Production (kWh)"
                       dot={{ fill: '#22c55e', stroke: '#22c55e', strokeWidth: 2 }}
                     />
                   </LineChart>
