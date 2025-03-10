@@ -3,6 +3,7 @@ import axios from "axios";
 import { Rating } from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import './Feedback.css'
+import Swal from 'sweetalert2';
 
 const Feedback = () => {
   const [rating, setRating] = useState(4);
@@ -51,11 +52,31 @@ const Feedback = () => {
         setComment("");
         setRating(4);
         fetchFeedbacks();
+        Swal.fire({
+          title: 'Thank you!',
+          text: 'Your feedback has been submitted successfully',
+          icon: 'success',
+          confirmButtonColor: '#4caf50',
+          background: '#f8f9fa',
+          backdrop: `rgba(0,0,0,0.4)`,
+          showConfirmButton: false,
+          timer: 2000
+        });
       } else {
-        setError("Failed to submit feedback. Please try again.");
+        Swal.fire({
+          title: 'Oops!',
+          text: 'Failed to submit feedback. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#f44336'
+        });
       }
     } catch (err) {
-      setError("An error occurred while submitting feedback.");
+      Swal.fire({
+        title: 'Error!',
+        text: 'An error occurred while submitting feedback.',
+        icon: 'error',
+        confirmButtonColor: '#f44336'
+      });
     }
   };
 
@@ -153,18 +174,86 @@ const Feedback = () => {
       </div>
 
       {/* Feedback Rating Analysis */}
-      <div className="feedback-analysis" style={{ padding: "20px", borderRadius: "10px" }}>
-        <h2>Feedback Rating Analysis</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={ratingCounts} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="rating" tick={{ fill: "#333", fontSize: 14 }} />
-            <YAxis tick={{ fill: "#333", fontSize: 14 }} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="count" name="Total Reviews" fill="#8884d8">
-              {ratingCounts.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={getRatingColor(entry.rating)} />
+      <div className="feedback-analysis" style={{
+        padding: "40px",
+        borderRadius: "20px",
+        backgroundColor: "#1e2746",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+        margin: "30px 0",
+        border: "1px solid rgba(0,0,0,0.05)",
+      }}>
+        <h2 style={{
+          textAlign: "center",
+          marginBottom: "30px",
+          color: "#ffffff",
+          fontSize: "28px",
+          fontWeight: "600",
+          textShadow: "1px 1px 2px rgba(0,0,0,0.1)"
+        }}>Feedback Rating Analysis</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart
+            data={ratingCounts}
+            margin={{ top: 20, right: 30, left: 20, bottom: 25 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+            <XAxis
+              dataKey="rating"
+              tick={{ fill: "#ffffff", fontSize: 14, fontWeight: "500" }}
+              label={{
+                value: "Rating Stars",
+                position: "bottom",
+                offset: 15,
+                fill: "#ffffff",
+                fontSize: 16,
+                fontWeight: "bold"
+              }}
+            />
+            <YAxis
+              tick={{ fill: "#ffffff", fontSize: 14, fontWeight: "500" }}
+              label={{
+                value: "Number of Reviews",
+                angle: -90,
+                position: "insideLeft",
+                offset: -5,
+                fill: "#ffffff",
+                fontSize: 16,
+                fontWeight: "bold"
+              }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#fff",
+                border: "none",
+                borderRadius: "12px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                padding: "12px"
+              }}
+              cursor={{ fill: "rgba(0,0,0,0.05)" }}
+            />
+            <Legend
+              verticalAlign="top"
+              height={36}
+              wrapperStyle={{
+                paddingBottom: "20px",
+                fontSize: "16px",
+                fontWeight: "500"
+              }}
+            />
+            <Bar
+              dataKey="count"
+              name="Total Reviews"
+              radius={[8, 8, 0, 0]}
+              animationDuration={1500}
+              animationEasing="ease-in-out"
+            >
+              {ratingCounts.map((entry) => (
+                <Cell
+                  key={`cell-${entry.rating}`}
+                  fill={getRatingColor(parseInt(entry.rating))}
+                  style={{
+                    filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))"
+                  }}
+                />
               ))}
             </Bar>
           </BarChart>
