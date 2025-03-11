@@ -72,6 +72,7 @@ const LandingPage = () => {
 
   // Developer Data
   const developers = [
+    { name: "Mrs. Pops V. Madriaga", image: "assets/images/mamPops.jpg", role: "Project Adviser" },
     { name: "Gayapa, Jhon Ludwig C.", image: "assets/images/ludwig.jpg", role: "Backend and Frontend" },
     { name: "Barte, Gwyn S.", image: "assets/images/gwyn.jpg", role: "Backend", },
     { name: "Obreros, Jhun Mark G.", image: "assets/images/jm.jpg", role: "Frontend" },
@@ -139,73 +140,73 @@ const LandingPage = () => {
 
   const RenewableEnergyCarousel = () => {
     const models = [
-      { 
-        path: "/assets/models/heatPump.glb", 
-        name: "Heat Pump", 
-        scale: [3, 3, 3], 
+      {
+        path: "/assets/models/heatPump.glb",
+        name: "Heat Pump",
+        scale: [3, 3, 3],
         position: [0, -1.7, 0],
         info: "A heat pump is an energy-efficient system that extracts heat from the air, water, or ground to provide heating and cooling for residential and commercial buildings. It works by transferring heat from a cooler space to a warmer space, making it an excellent alternative to traditional heating systems. Heat pumps are environmentally friendly, as they reduce greenhouse gas emissions and rely on renewable energy sources."
       },
-      { 
-        path: "/assets/models/microHydropowerSystem.glb", 
-        name: "Micro Hydro Power System", 
-        scale: [1, 1, 1], 
-        position: [0, -2, 0], 
+      {
+        path: "/assets/models/microHydropowerSystem.glb",
+        name: "Micro Hydro Power System",
+        scale: [1, 1, 1],
+        position: [0, -2, 0],
         rotation: [0, -Math.PI / 2, 0],
         info: "Micro hydropower systems are small-scale electricity generation systems that harness the energy of flowing water to produce power. These systems are particularly useful in rural or remote areas where access to the main power grid is limited. They are environmentally friendly, cost-effective, and can provide a reliable source of electricity for communities, farms, or small industries."
       },
-      { 
-        path: "/assets/models/picoHydroPower.glb", 
-        name: "Pico Hydro Power", 
-        scale: [0.2, 0.2, 0.2], 
+      {
+        path: "/assets/models/picoHydroPower.glb",
+        name: "Pico Hydro Power",
+        scale: [0.2, 0.2, 0.2],
         position: [0, -0.1, 0],
         info: "Pico hydro systems are ultra-small-scale hydroelectric power systems that generate under 5 kW of electricity. These systems are ideal for powering small homes, workshops, or remote communities. They are easy to install, require minimal maintenance, and provide a sustainable energy solution for off-grid locations. Pico hydro systems are a great way to bring electricity to underserved areas."
       },
-      { 
-        path: "/assets/models/solarwaterheater.glb", 
-        name: "Solar Water Heater", 
-        scale: [7, 7, 7], 
+      {
+        path: "/assets/models/solarwaterheater.glb",
+        name: "Solar Water Heater",
+        scale: [7, 7, 7],
         position: [0, -0.5, 0],
         info: "Solar water heaters are devices that use sunlight to heat water for residential, commercial, or industrial use. They consist of solar collectors that absorb solar energy and transfer it to water stored in a tank. Solar water heaters are energy-efficient, reduce electricity bills, and lower carbon footprints. They are an excellent choice for regions with abundant sunlight and a high demand for hot water."
       },
-      { 
-        path: "/assets/models/verticalAxisWindTurbineAnimated.glb", 
-        name: "Vertical Axis Wind Turbine", 
-        scale: [0.3, 0.3, 0.3], 
-        position: [0, 0.6, 0], 
+      {
+        path: "/assets/models/verticalAxisWindTurbineAnimated.glb",
+        name: "Vertical Axis Wind Turbine",
+        scale: [0.3, 0.3, 0.3],
+        position: [0, 0.6, 0],
         rotation: [Math.PI / 2, 0, 0],
         info: "Vertical axis wind turbines (VAWTs) are innovative wind energy systems that capture wind from all directions, making them suitable for urban environments and areas with turbulent wind conditions. Unlike traditional horizontal axis turbines, VAWTs are compact, quieter, and easier to maintain. They are ideal for small-scale energy generation and can be installed on rooftops or in densely populated areas."
       },
-      { 
-        path: "/assets/models/windTurbine.glb", 
-        name: "Wind Turbine", 
-        scale: [0.3, 0.3, 0.3], 
+      {
+        path: "/assets/models/windTurbine.glb",
+        name: "Wind Turbine",
+        scale: [0.3, 0.3, 0.3],
         position: [0, -3, 0],
         info: "Traditional wind turbines are large structures that convert wind energy into electricity using rotating blades. They are commonly used in wind farms to generate power on a utility scale. Wind turbines are a clean and renewable energy source, reducing reliance on fossil fuels and decreasing greenhouse gas emissions. They are most effective in areas with consistent and strong wind patterns."
       },
-      { 
-        path: "/assets/models/solarPanel.glb", 
-        name: "Solar Panel", 
-        scale: [1, 1, 1], 
+      {
+        path: "/assets/models/solarPanel.glb",
+        name: "Solar Panel",
+        scale: [1, 1, 1],
         position: [0, 0, 0],
         info: "Solar panels, also known as photovoltaic (PV) panels, convert sunlight into electricity using photovoltaic cells. They are widely used in residential, commercial, and industrial settings to generate clean and renewable energy. Solar panels are durable, low-maintenance, and can significantly reduce electricity costs. They are a key component of the global transition to sustainable energy."
       },
-      { 
-        path: "/assets/models/solarRoofTiles.glb", 
-        name: "Solar Roof Tiles", 
-        scale: [0.01, 0.01, 0.01], 
+      {
+        path: "/assets/models/solarRoofTiles.glb",
+        name: "Solar Roof Tiles",
+        scale: [0.01, 0.01, 0.01],
         position: [0, -1, 0],
         info: "Solar roof tiles are an innovative roofing solution that integrates solar technology with traditional roofing materials. They blend seamlessly with the architecture of a building while generating electricity from sunlight. Solar roof tiles are aesthetically pleasing, durable, and provide a sustainable energy solution for homeowners. They are an excellent choice for those looking to combine functionality with design."
       },
-      { 
-        path: "/assets/models/verticalFarm.glb", 
-        name: "Vertical Farm", 
-        scale: [0.2, 0.2, 0.2], 
+      {
+        path: "/assets/models/verticalFarm.glb",
+        name: "Vertical Farm",
+        scale: [0.2, 0.2, 0.2],
         position: [0, 0, 0],
         info: "Vertical farms are agricultural systems that use stacked layers to grow crops efficiently in controlled environments. They are designed to maximize space and resources, making them ideal for urban areas with limited land availability. Vertical farms use advanced technologies such as hydroponics, aeroponics, and LED lighting to optimize plant growth. They offer a sustainable solution to food production, reducing water usage and transportation costs."
       }
     ];
-  
+
     const ModelViewer = ({ modelPath, scale, position, rotation = [0, 0, 0] }) => {
       const { scene } = useGLTF(modelPath);
       return (
@@ -217,22 +218,22 @@ const LandingPage = () => {
         </Canvas>
       );
     };
-  
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [hoveredInfo, setHoveredInfo] = useState("");
-  
+
     const handlePopoverOpen = (event, info) => {
       setAnchorEl(event.currentTarget);
       setHoveredInfo(info);
     };
-  
+
     const handlePopoverClose = () => {
       setAnchorEl(null);
       setHoveredInfo("");
     };
-  
+
     const open = Boolean(anchorEl);
-  
+
     return (
       <Container sx={{ py: 5 }}>
         <Typography variant="h4" align="center" fontWeight="bold" color="white" gutterBottom sx={{ mb: 5 }}>
@@ -273,27 +274,27 @@ const LandingPage = () => {
           ))}
         </Grid>
         <Popover
-  id="mouse-over-popover"
-  sx={{ 
-    pointerEvents: "none", 
-    "& .MuiPaper-root": { backgroundColor: "rgba(255, 255, 255, 0.1)" } 
-  }}
-  open={open}
-  anchorEl={anchorEl}
-  onClose={handlePopoverClose}
-  disableRestoreFocus
-  anchorOrigin={{ vertical: "top", horizontal: "center" }}
-  transformOrigin={{ vertical: "bottom", horizontal: "center" }}
->
-  <Typography sx={{ p: 2, maxWidth: 300, textAlign: "justify", color: "white" }}>
-    {hoveredInfo}
-  </Typography>
-</Popover>
+          id="mouse-over-popover"
+          sx={{
+            pointerEvents: "none",
+            "& .MuiPaper-root": { backgroundColor: "rgba(255, 255, 255, 0.1)" }
+          }}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Typography sx={{ p: 2, maxWidth: 300, textAlign: "justify", color: "white" }}>
+            {hoveredInfo}
+          </Typography>
+        </Popover>
 
       </Container>
     );
   };
-  
+
   const features = [
     { icon: <LocalFlorist fontSize="large" />, title: "Eco-Friendly", desc: "We prioritize sustainability with green energy solutions tailored to meet the needs of modern living." },
     { icon: <Lightbulb fontSize="large" />, title: "User-Friendly", desc: "Our intuitive and easy-to-use platform makes it simple for anyone to design and apply renewable energy projects." },
@@ -321,15 +322,6 @@ const LandingPage = () => {
       <meshStandardMaterial emissive="yellow" emissiveIntensity={2} color="yellow" />
     </Sphere>
   );
-
-
-
-
-
-
-
-
-
 
   return (
     <div className="landing-container">
@@ -509,76 +501,76 @@ const LandingPage = () => {
       </motion.div>
 
       {/* Mission & Vision Section */}
-<div className="container" style={{ marginTop: "100px", paddingBottom: "40px", display: "flex", justifyContent: "center" }}>
-  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "50px", padding: "50px 20px", maxWidth: "1200px" }}>
+      <div className="container" style={{ marginTop: "100px", paddingBottom: "40px", display: "flex", justifyContent: "center" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "50px", padding: "50px 20px", maxWidth: "1200px" }}>
 
-    {/* Mission Section (Left) */}
-    <div style={{
-      background: "linear-gradient(135deg, #1E3A5F, #2C5A85)",
-      borderRadius: "20px",
-      padding: "40px",
-      width: "48%",
-      textAlign: "center",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      cursor: "pointer",
-      ":hover": {
-        transform: "translateY(-10px)",
-        boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.4)",
-      },
-    }}>
-      {/* Mission 3D Model */}
-      <div style={{ position: "relative", width: "100%", height: "200px", overflow: "hidden", borderRadius: "15px", marginBottom: "-10px" }}>
-        <Canvas style={{ width: "100%", height: "100%" }}>
-          <ambientLight intensity={1} />
-          <MissionModel />
-          <OrbitControls enableZoom={true} enablePan={false} />
-        </Canvas>
-      </div>
+          {/* Mission Section (Left) */}
+          <div style={{
+            background: "linear-gradient(135deg, #1E3A5F, #2C5A85)",
+            borderRadius: "20px",
+            padding: "40px",
+            width: "48%",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            cursor: "pointer",
+            ":hover": {
+              transform: "translateY(-10px)",
+              boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.4)",
+            },
+          }}>
+            {/* Mission 3D Model */}
+            <div style={{ position: "relative", width: "100%", height: "200px", overflow: "hidden", borderRadius: "15px", marginBottom: "-10px" }}>
+              <Canvas style={{ width: "100%", height: "100%" }}>
+                <ambientLight intensity={1} />
+                <MissionModel />
+                <OrbitControls enableZoom={true} enablePan={false} />
+              </Canvas>
+            </div>
 
-      <p style={{ textAlign: "justify", color: "white", fontSize: "1.1rem", lineHeight: "1.8", fontFamily: "'Roboto', sans-serif" }}>
-        Our mission is to empower individuals and organizations with an interactive and immersive platform for designing, simulating, and analyzing renewable energy solutions.
-        GreenSphere strives to foster sustainable innovation by providing an engaging, educational experience that promotes eco-conscious decision-making for a greener future.
-      </p>
-    </div>
+            <p style={{ textAlign: "justify", color: "white", fontSize: "1.1rem", lineHeight: "1.8", fontFamily: "'Roboto', sans-serif" }}>
+              Our mission is to empower individuals and organizations with an interactive and immersive platform for designing, simulating, and analyzing renewable energy solutions.
+              GreenSphere strives to foster sustainable innovation by providing an engaging, educational experience that promotes eco-conscious decision-making for a greener future.
+            </p>
+          </div>
 
-    {/* Vision Section (Right) */}
-    <div style={{
-      background: "linear-gradient(135deg, #1E3A5F, #2C5A85)",
-      borderRadius: "20px",
-      padding: "40px",
-      width: "48%",
-      textAlign: "center",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      cursor: "pointer",
-      ":hover": {
-        transform: "translateY(-10px)",
-        boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.4)",
-      },
-    }}>
-      {/* Vision 3D Model */}
-      <div style={{ position: "relative", width: "100%", height: "200px", overflow: "hidden", borderRadius: "15px", marginBottom: "-10px" }}>
-        <Canvas style={{ width: "100%", height: "100%" }}>
-          <ambientLight intensity={1} />
-          <VisionModel />
-          <OrbitControls enableZoom={true} enablePan={false} />
-        </Canvas>
-      </div>
+          {/* Vision Section (Right) */}
+          <div style={{
+            background: "linear-gradient(135deg, #1E3A5F, #2C5A85)",
+            borderRadius: "20px",
+            padding: "40px",
+            width: "48%",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            cursor: "pointer",
+            ":hover": {
+              transform: "translateY(-10px)",
+              boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.4)",
+            },
+          }}>
+            {/* Vision 3D Model */}
+            <div style={{ position: "relative", width: "100%", height: "200px", overflow: "hidden", borderRadius: "15px", marginBottom: "-10px" }}>
+              <Canvas style={{ width: "100%", height: "100%" }}>
+                <ambientLight intensity={1} />
+                <VisionModel />
+                <OrbitControls enableZoom={true} enablePan={false} />
+              </Canvas>
+            </div>
 
-      <p style={{ textAlign: "justify", color: "white", fontSize: "1.1rem", lineHeight: "1.8", fontFamily: "'Roboto', sans-serif" }}>
-        Our vision is to be the leading simulation platform for renewable energy solutions, fostering a world where sustainability seamlessly integrates into infrastructure and daily life.
-        We aspire to create a future where every user can explore, learn, and implement clean energy strategies, shaping a resilient and environmentally responsible society.
-      </p>
-    </div>
+            <p style={{ textAlign: "justify", color: "white", fontSize: "1.1rem", lineHeight: "1.8", fontFamily: "'Roboto', sans-serif" }}>
+              Our vision is to be the leading simulation platform for renewable energy solutions, fostering a world where sustainability seamlessly integrates into infrastructure and daily life.
+              We aspire to create a future where every user can explore, learn, and implement clean energy strategies, shaping a resilient and environmentally responsible society.
+            </p>
+          </div>
 
-  </div>
+        </div>
 
 
 
@@ -677,19 +669,19 @@ const LandingPage = () => {
 
       {/* Developers Section (Gray Background) */}
       <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 2 }}>
-        <Box sx={{ minHeight: "60vh", display: "flex", alignItems: "center", py: 6, }}>
-          <Container>
+        <Box sx={{ minHeight: "60vh", display: "flex", alignItems: "center", py: 6 }}>
+          <Container maxWidth="xl">
             <Typography variant="h4" align="center" fontWeight="bold" color="white" gutterBottom sx={{ mb: 6 }}>
               Developers of the System
             </Typography>
             <Grid container spacing={3} justifyContent="center">
               {developers.map((dev, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index}>
+                <Grid item xs={12} sm={6} md={2.4} key={index}>
                   <Box
                     sx={{
                       textAlign: "center",
-                      padding: 3,
-                      backgroundColor: "rgba(255, 255, 255, 0.3)", // Slightly transparent
+                      padding: 2,
+                      backgroundColor: "rgba(255, 255, 255, 0.3)",
                       borderRadius: "12px",
                       transition: "transform 0.3s ease-in-out",
                       '&:hover': {
@@ -700,14 +692,14 @@ const LandingPage = () => {
                     <Avatar
                       src={dev.image}
                       sx={{
-                        width: 140,
-                        height: 140,
+                        width: 120,
+                        height: 120,
                         margin: "auto",
                         border: "4px solid rgba(255, 255, 255, 0.5)",
                         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
                       }}
                     />
-                    <Typography variant="h6" color="#0e0a36" sx={{ mt: 2, fontWeight: "bold" }}>
+                    <Typography variant="h6" color="#0e0a36" sx={{ mt: 2, fontWeight: "bold", fontSize: "1rem" }}>
                       {dev.name}
                     </Typography>
                     <Typography variant="body2" color="#333" sx={{ mt: 1 }}>
