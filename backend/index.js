@@ -21,22 +21,42 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-    'https://green-sphere-deployed-wkpe.vercel.app', // Production URL
-    'http://localhost:5173' // Development URL
+    'https://green-sphere-deployed-wkpe.vercel.app',
+    'https://green-sphere-deployed.vercel.app',
+    'http://localhost:5173'
 ];
+
 
 app.use(cors({
     origin: function(origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error(`Not allowed by CORS: ${origin}`));
         }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"]
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Access-Control-Allow-Origin'],
+    preflightContinue: true,
+    optionsSuccessStatus: 204
 }));
+
+// Add headers middleware
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
+// Handle OPTIONS preflight requests
+app.options('*', cors());
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
