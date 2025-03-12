@@ -18,7 +18,6 @@ const EnergyUsageBySourceModel = require('./model/EnergyUsageBySource');
 
 dotenv.config();
 const app = express();
-app.use(express.json());
 
 const allowedOrigins = [
     'https://green-sphere-deployed-wkpe.vercel.app',
@@ -28,7 +27,7 @@ const allowedOrigins = [
 
 
 app.use(cors({
-    origin: function(origin, callback) {
+    origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -37,26 +36,10 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Access-Control-Allow-Origin'],
-    preflightContinue: true,
-    optionsSuccessStatus: 204
+    preflightContinue: false
 }));
-
-// Add headers middleware
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
-
-// Handle OPTIONS preflight requests
-app.options('*', cors());
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
@@ -69,12 +52,18 @@ app.listen(process.env.PORT, () => {
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URI
     }),
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }
+    cookie: {
+        sameSite: 'none',
+        secure: true, // Required for cross-site cookies
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
+
+app.use(express.json());
 
 app.post("/signup", async (req, res) => {
     try {
