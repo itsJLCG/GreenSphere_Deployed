@@ -416,4 +416,9 @@ app.get("/admin/carbon-payback", async (req, res) => {
     }
 });
 
-
+app.get("/", (req, res) => {
+    res.json({
+        message: "🚀 GreenSphere Backend is Running!",
+        timestamp: new Date().toISOString()
+    });
+});
