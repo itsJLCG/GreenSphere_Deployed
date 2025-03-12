@@ -25,8 +25,9 @@ const allowedOrigins = [
     'http://localhost:5173'
 ];
 
+// Update CORS configuration
 app.use(cors({
-    origin: function (origin, callback) {
+    origin: function(origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -41,26 +42,22 @@ app.use(cors({
     optionsSuccessStatus: 204
 }));
 
-// Add this middleware right after CORS configuration
+// Add OPTIONS handling middleware
+app.options('*', cors());
+
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header('Access-Control-Allow-Credentials', true);
-    res.header(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    
     if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-        return res.status(200).json({});
+        return res.status(200).end();
     }
     next();
 });
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("Connected to MongoDB"))
-    .catch(err => console.log("Failed to connect to MongoDb", err));
-
-// Add this at the end of your file, before app.listen
+// Add this at the end of your file
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({
@@ -68,6 +65,10 @@ app.use((err, req, res, next) => {
         error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("Connected to MongoDB"))
+    .catch(err => console.log("Failed to connect to MongoDb", err));
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
@@ -82,10 +83,11 @@ app.use(session({
         mongoUrl: process.env.MONGO_URI
     }),
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true, // Required for production
         httpOnly: true,
+        sameSite: 'none', // Required for cross-origin
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: 'none'
+        domain: '.vercel.app' // Match your domain
     }
 }));
 
