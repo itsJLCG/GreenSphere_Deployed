@@ -18,57 +18,15 @@ const EnergyUsageBySourceModel = require('./model/EnergyUsageBySource');
 
 dotenv.config();
 const app = express();
-
-// Define allowed origins
-const allowedOrigins = [
-    'https://green-sphere-deployed-wkpe.vercel.app',
-    'https://green-sphere-deployed.vercel.app',
-    'http://localhost:5173'
-];
-
-// Configure CORS first
-app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error(`Not allowed by CORS: ${origin}`));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
-
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
-        ttl: 24 * 60 * 60 // Session TTL in seconds
-    }),
-    cookie: {
-        sameSite: 'none',
-        secure: true,
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    },
-    name: 'sessionId' // Custom session cookie name
-}));
-
-// Add security headers
-app.use((req, res, next) => {
-    res.set({
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'X-XSS-Protection': '1; mode=block'
-    });
-    next();
-});
-
 app.use(express.json());
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"]
+}));
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.log("Failed to connect to MongoDb", err));
@@ -76,6 +34,16 @@ mongoose.connect(process.env.MONGO_URI)
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
 });
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI
+    }),
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }
+}));
 
 app.post("/signup", async (req, res) => {
     try {
@@ -416,9 +384,3 @@ app.get("/admin/carbon-payback", async (req, res) => {
 });
 
 
-app.get("/", (req, res) => {
-    res.json({
-        message: "🚀 GreenSphere Backend is Running!",
-        timestamp: new Date().toISOString()
-    });
-});
