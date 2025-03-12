@@ -20,12 +20,14 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"]
-}));
+app.use(
+    cors({
+        origin: "https://green-sphere-deployed-frontend.vercel.app", // Allow only your frontend
+        credentials: true, // Allow cookies and authentication
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"], // Allow Authorization header
+    })
+);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
