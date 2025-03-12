@@ -12,7 +12,11 @@ const Logout = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post("http://localhost:3001/logout", null, { withCredentials: true });
+            const response = await axios.post(
+                `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/logout`, 
+                null, 
+                { withCredentials: true }
+            );
             if (response.status === 200) {
                 setIsLoggedIn(false);
                 navigate("/login");

@@ -74,7 +74,7 @@ const AdminHome = () => {
   // Fetch feedback data and user data from the backend
   useEffect(() => {
     // Fetch feedbacks
-    axios.get('http://localhost:3001/admin/feedback', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/feedback`, { withCredentials: true })
       .then(response => {
         setFeedbacks(response.data);
         processFeedbackData(response.data); // Process feedback data for the Pie chart
@@ -85,7 +85,7 @@ const AdminHome = () => {
       });
 
     // Fetch users
-    axios.get('http://localhost:3001/admin/users', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/users`, { withCredentials: true })
       .then(response => {
         setUsers(response.data);
       })
@@ -94,7 +94,7 @@ const AdminHome = () => {
       });
 
     // Fetch the admin's name
-    axios.get('http://localhost:3001/user', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/user`, { withCredentials: true })
       .then(response => {
         if (response.data.user) {
           setAdminName(response.data.user.name);
@@ -105,7 +105,7 @@ const AdminHome = () => {
       });
 
     // Fetch cost analysis data
-    axios.get('http://localhost:3001/admin/cost-analysis', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/cost-analysis`, { withCredentials: true })
       .then(response => {
         setCostAnalysisData(response.data);
       })
@@ -120,7 +120,7 @@ const AdminHome = () => {
     fetchRenewableData();
 
     if (activeSection === 'carbonPayback') {
-      axios.get('http://localhost:3001/admin/carbon-payback', { withCredentials: true })
+      axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/carbon-payback`, { withCredentials: true })
         .then(response => {
           setCarbonPaybackData(response.data);
         })
@@ -177,7 +177,7 @@ const AdminHome = () => {
 
   const fetchCarbonPaybackData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/admin/carbon-payback', { withCredentials: true });
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/carbon-payback`, { withCredentials: true });
       setCarbonPaybackData(response.data);
     } catch (error) {
       console.error("There was an error fetching carbon payback data!", error);
@@ -186,7 +186,7 @@ const AdminHome = () => {
 
   const fetchRenewableData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/admin/renewable-energy', { withCredentials: true });
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/renewable-energy`, { withCredentials: true });
       setRenewableData(response.data);
     } catch (error) {
       console.error("There was an error fetching renewable energy data!", error);
@@ -213,7 +213,11 @@ const AdminHome = () => {
   // Save the updated role
   const handleSave = () => {
     // Send the updated role to the backend
-    axios.put(`http://localhost:3001/admin/users/${selectedUserId}`, { role: selectedRole }, { withCredentials: true })
+    axios.put(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/users/${selectedUserId}`,
+      { role: selectedRole },
+      { withCredentials: true }
+    )
       .then(() => {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>

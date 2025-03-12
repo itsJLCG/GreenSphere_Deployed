@@ -27,7 +27,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const loginResponse = await axios.post(
-        "http://localhost:3001/login",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/login`,
         { email, password },
         { withCredentials: true }
       );

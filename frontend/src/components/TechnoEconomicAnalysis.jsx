@@ -268,7 +268,7 @@ const TechnoEconomicAnalysis = ({
   const saveData = async () => {
     try {
       // Fetch logged-in user ID from the backend
-      const userResponse = await fetch("http://localhost:3001/user", {
+      const userResponse = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/user`, {
         method: "GET",
         credentials: "include", // Required to send cookies/session data
       });
@@ -317,13 +317,13 @@ const TechnoEconomicAnalysis = ({
       console.log("📩 Sending Filtered Energy Usage:", energyUsageData);
 
       // Send requests
-      const costResponse = await fetch("http://localhost:3001/api/cost-analysis", {
+      const costResponse = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/cost-analysis`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(costAnalysisData),
       });
 
-      const carbonResponse = await fetch("http://localhost:3001/api/carbon-analysis", {
+      const carbonResponse = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/carbon-analysis`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(carbonAnalysisData),
@@ -338,7 +338,7 @@ const TechnoEconomicAnalysis = ({
       // Send energy usage requests in parallel
       const energyUsageResponses = await Promise.all(
         energyUsageData.map((entry) =>
-          fetch("http://localhost:3001/api/energy-usage", {
+          fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/energy-usage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(entry),
@@ -538,7 +538,9 @@ const TechnoEconomicAnalysis = ({
                     // Fetch user data
                     const fetchUserData = async () => {
                       try {
-                        const response = await axios.get('http://localhost:3001/user', { withCredentials: true });
+                        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/user`, { 
+                          withCredentials: true 
+                      });
                         return response.data.user; // Assuming the user data is returned in the `user` field
                       } catch (error) {
                         console.error("Error fetching user data:", error);

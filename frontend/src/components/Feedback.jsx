@@ -30,7 +30,7 @@ const Feedback = () => {
 
   const fetchFeedbacks = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/feedback", {
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/feedback`, {
         withCredentials: true,
       });
       setFeedbacks(response.data);
@@ -43,7 +43,7 @@ const Feedback = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3001/feedback",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/feedback`,
         { rating, comment },
         { withCredentials: true }
       );

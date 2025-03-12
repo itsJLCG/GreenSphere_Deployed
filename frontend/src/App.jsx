@@ -27,7 +27,7 @@ function App() {
     const [userName, setUserName] = useState(""); // ✅ Store User's Name
 
     useEffect(() => {
-        axios.get('http://localhost:3001/user', { withCredentials: true })
+        axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/user`, { withCredentials: true })
             .then(response => {
                 if (response.data.user) {
                     setIsLoggedIn(true);

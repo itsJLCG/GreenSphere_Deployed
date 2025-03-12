@@ -22,7 +22,9 @@ const Signup = () => {
   const handleSignup = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3001/signup", { name, email, password })
+      .post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/signup`,
+        { name, email, password }
+      )
       .then((result) => {
         if (result.status === 201) {
           console.log("User created successfully");

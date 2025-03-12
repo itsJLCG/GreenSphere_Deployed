@@ -28,7 +28,7 @@ const EnergyPromoting = () => {
   const [selectedEnergy, setSelectedEnergy] = useState("Wind Energy");
 
   useEffect(() => {
-    fetch('http://localhost:3001/admin/renewable-energy')
+    fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/renewable-energy`)
       .then(response => response.json())
       .then(data => setEnergyData(data))
       .catch(error => console.error('Error fetching data:', error));

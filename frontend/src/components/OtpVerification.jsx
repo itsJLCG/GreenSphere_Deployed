@@ -64,7 +64,10 @@ const OtpVerification = () => {
 
     const handleVerifyOtp = async (enteredOtp) => {
         try {
-            const response = await axios.post('http://localhost:3001/verify-otp', { email, otp: enteredOtp });
+            const response = await axios.post(
+                `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/verify-otp`, 
+                { email, otp: enteredOtp }
+            );
             if (response.status === 200) {
                 toast.success('OTP Verified Successfully!', {
                     position: "top-center",
@@ -86,7 +89,10 @@ const OtpVerification = () => {
     const handleResendOtp = async () => {
         setIsResending(true);
         try {
-            await axios.post('http://localhost:3001/resend-otp', { email });
+            await axios.post(
+                `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/resend-otp`, 
+                { email }
+            );
             toast.success('New OTP sent to your email!', {
                 position: "top-center",
                 autoClose: 2000,
