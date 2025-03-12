@@ -19,26 +19,7 @@ const EnergyUsageBySourceModel = require('./model/EnergyUsageBySource');
 dotenv.config();
 const app = express();
 
-// Define allowed origins
-const allowedOrigins = [
-    process.env.FRONTEND_URL, // Use the Vercel environment variable
-    'http://localhost:5173' // Allow local development
-];
-
-// Configure CORS first
-app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            console.log(`Blocked by CORS: ${origin}`); // Debugging log
-            callback(new Error(`Not allowed by CORS: ${origin}`));
-        }
-    },
-    credentials: true,  // Ensure cookies & authentication tokens work
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+app.use(cors());
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
