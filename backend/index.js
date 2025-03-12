@@ -21,8 +21,9 @@ const app = express();
 
 // Define allowed origins
 const allowedOrigins = [
-    process.env.FRONTEND_URL, // Use the Vercel environment variable
-    'http://localhost:5173' // Allow local development
+    'https://green-sphere-deployed-wkpe.vercel.app',
+    'https://green-sphere-deployed.vercel.app',
+    'http://localhost:5173'
 ];
 
 // Configure CORS first
@@ -31,11 +32,10 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.log(`Blocked by CORS: ${origin}`); // Debugging log
             callback(new Error(`Not allowed by CORS: ${origin}`));
         }
     },
-    credentials: true,  // Ensure cookies & authentication tokens work
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
@@ -69,7 +69,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.log("Failed to connect to MongoDb", err));
@@ -415,6 +414,7 @@ app.get("/admin/carbon-payback", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 app.get("/", (req, res) => {
     res.json({
