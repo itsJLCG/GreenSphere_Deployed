@@ -116,6 +116,15 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+// Add this before your POST /login route
+app.options("/login", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "https://green-sphere-deployed-frontend.vercel.app");
+    res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.status(200).send();
+  });
+  
 app.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
