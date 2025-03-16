@@ -44,6 +44,7 @@ app.use(cors({
 
 // Add OPTIONS handling middleware
 app.options('*', cors());
+app.options('/login', cors()); // Enable preflight for /login
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
