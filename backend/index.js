@@ -21,8 +21,7 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-    'https://green-sphere-deployed-frontend.vercel.app',
-    'http://localhost:5173'
+    'https://green-sphere-deployed-frontend.vercel.app'
 ];
 
 // Update CORS configuration
