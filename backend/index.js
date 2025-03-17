@@ -22,7 +22,7 @@ app.use(express.json());
 
 const allowedOrigins = [
     'https://green-sphere-deployed-frontend.vercel.app'
-];n
+];
 
 // Update CORS configuration
 app.use(cors({
